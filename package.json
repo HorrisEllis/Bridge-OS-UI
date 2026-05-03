@@ -1,0 +1,78 @@
+{
+  "name": "bridge-os",
+  "version": "4.1.0",
+  "description": "Bridge OS \u2014 Sovereign Distributed Node Runtime",
+  "main": "main.js",
+  "author": "James Brooks (Erosmancer)",
+  "private": true,
+  "copyright": "Copyright \u00a9 2024-2026 James Brooks (Erosmancer). All rights reserved.",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder --win --x64",
+    "build:dir": "electron-builder --win --x64 --dir",
+    "pack": "electron-builder --win --x64 --publish never",
+    "integrity": "node scripts/gen-manifest.js",
+    "pack:portable": "electron-packager . \"Bridge OS\" --platform=win32 --arch=x64 --out=dist --overwrite --asar --asar-unpack=bridge-node/**",
+    "pack:dir": "electron-builder --win --x64 --dir"
+  },
+  "devDependencies": {
+    "electron": "^41.2.1",
+    "electron-builder": "^26.8.1",
+    "electron-packager": "^17.1.2"
+  },
+  "build": {
+    "appId": "world.rheon.bridge-os",
+    "productName": "Bridge OS",
+    "copyright": "Copyright \u00a9 2024-2026 James Brooks (Erosmancer). All rights reserved.",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "asar": true,
+    "asarUnpack": [
+      "bridge-node/**/*"
+    ],
+    "files": [
+      "main.js",
+      "preload.js",
+      "bridge-ui.html",
+      "manifest.lock",
+      "assets/**/*",
+      "bridge-node/**/*",
+      "!bridge-node/node_modules/**/*",
+      "!bridge-node/.git/**/*",
+      "!bridge-node/dist/**/*",
+      "!node_modules/**/*",
+      "!dist/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "artifactName": "BridgeOS-Setup-${version}.exe",
+      "requestedExecutionLevel": "asInvoker",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Bridge OS",
+      "perMachine": false
+    },
+    "extraMetadata": {
+      "version": "4.1.0"
+    }
+  }
+}

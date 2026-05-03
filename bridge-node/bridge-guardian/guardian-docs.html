@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guardian — System Documentation v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#05080f;--bg1:#080d17;--bg2:#0b1120;--bg3:#0e1628;
+  --border:#1a2a40;--border2:#1e3050;
+  --c:#00d4ff;--g:#00ff88;--r:#ff2d55;--y:#ffcc00;--m:#cc44ff;--o:#ff6b35;
+  --text:#b8cfe0;--text2:#5a7a96;--text3:#2e4a60;
+  --mono:'DM Mono',monospace;--disp:'Bebas Neue',sans-serif;--body:'Space Grotesk',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14px;line-height:1.7;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,.004) 2px,rgba(0,212,255,.004) 4px);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 10% 0%,rgba(0,212,255,.06) 0%,transparent 50%),radial-gradient(ellipse at 90% 100%,rgba(204,68,255,.04) 0%,transparent 50%);}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 24px 80px;}
+
+.hero{padding:60px 0 48px;border-bottom:1px solid var(--border2);margin-bottom:48px;position:relative;overflow:hidden;}
+.hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.4;}
+.hero-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--c);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.hero-eyebrow::before{content:'';display:inline-block;width:20px;height:1px;background:var(--c);}
+h1{font-family:var(--disp);font-size:clamp(52px,8vw,80px);letter-spacing:.2em;background:linear-gradient(90deg,var(--c) 0%,var(--m) 40%,var(--g) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:16px;}
+.hero-sub{font-size:15px;color:var(--text2);max-width:600px;line-height:1.6;margin-bottom:24px;}
+.hero-meta{display:flex;gap:12px;flex-wrap:wrap;}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;border:1px solid;padding:3px 10px;border-radius:2px;}
+.tag-c{border-color:rgba(0,212,255,.35);color:var(--c);}
+.tag-g{border-color:rgba(0,255,136,.35);color:var(--g);}
+.tag-m{border-color:rgba(204,68,255,.35);color:var(--m);}
+.tag-y{border-color:rgba(255,204,0,.35);color:var(--y);}
+.tag-r{border-color:rgba(255,45,85,.35);color:var(--r);}
+
+.toc{background:var(--bg1);border:1px solid var(--border2);border-radius:3px;padding:20px 24px;margin-bottom:48px;}
+.toc-title{font-family:var(--disp);font-size:13px;letter-spacing:.2em;color:var(--c);margin-bottom:14px;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:2px 8px;}
+.toc a{font-family:var(--mono);font-size:11px;color:var(--text2);text-decoration:none;padding:3px 0;display:flex;align-items:center;gap:6px;transition:color .15s;}
+.toc a::before{content:'·';color:var(--text3);}
+.toc a:hover{color:var(--c);}
+.toc .ch{font-size:9px;color:var(--text3);flex-shrink:0;}
+
+.section{margin-bottom:60px;scroll-margin-top:24px;}
+h2{font-family:var(--disp);font-size:26px;letter-spacing:.15em;color:var(--c);margin-bottom:4px;display:flex;align-items:center;gap:12px;}
+.ch-num{font-size:12px;color:var(--text3);letter-spacing:.08em;font-family:var(--mono);flex-shrink:0;}
+h2::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent 80%);}
+.section-sub{font-size:12px;color:var(--text3);font-family:var(--mono);letter-spacing:.06em;margin-bottom:20px;}
+h3{font-family:var(--disp);font-size:15px;letter-spacing:.14em;color:var(--text);margin:24px 0 10px;}
+p{margin-bottom:12px;color:var(--text);font-size:14px;}
+ul{margin:8px 0 12px;padding-left:0;list-style:none;}
+ul li{font-size:13px;color:var(--text2);padding:3px 0 3px 14px;position:relative;}
+ul li::before{content:'·';position:absolute;left:0;color:var(--text3);}
+
+.card{background:var(--bg1);border:1px solid var(--border2);border-radius:3px;overflow:hidden;margin-bottom:12px;}
+.card.m{border-color:rgba(204,68,255,.2);}.card.g{border-color:rgba(0,255,136,.15);}
+.card.y{border-color:rgba(255,204,0,.15);}.card.r{border-color:rgba(255,45,85,.15);}
+.card-head{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg2);border-bottom:1px solid var(--border);font-family:var(--disp);font-size:11px;letter-spacing:.18em;color:var(--c);}
+.card.m .card-head{color:var(--m);}.card.g .card-head{color:var(--g);}
+.card.y .card-head{color:var(--y);}.card.r .card-head{color:var(--r);}
+.card-body{padding:14px 16px;}
+
+.kv{display:flex;flex-direction:column;}
+.kv-row{display:flex;align-items:flex-start;gap:16px;padding:9px 0;border-bottom:1px solid rgba(26,42,64,.5);}
+.kv-row:last-child{border-bottom:none;}
+.kv-key{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--c);flex:0 0 155px;padding-top:2px;}
+.kv-key.m{color:var(--m);}.kv-key.g{color:var(--g);}.kv-key.y{color:var(--y);}.kv-key.r{color:var(--r);}
+.kv-val{font-size:13px;color:var(--text2);flex:1;line-height:1.6;}
+
+.steps{display:flex;flex-direction:column;}
+.step{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid rgba(26,42,64,.6);}
+.step:last-child{border-bottom:none;}
+.step-num{font-family:var(--disp);font-size:22px;color:var(--c);opacity:.3;flex-shrink:0;width:28px;line-height:1.2;}
+.step-body{flex:1;}
+.step-title{font-family:var(--disp);font-size:13px;letter-spacing:.12em;color:var(--text);margin-bottom:3px;}
+.step-desc{font-size:13px;color:var(--text2);line-height:1.6;}
+
+.callout{border-radius:3px;padding:12px 16px;margin:14px 0;font-size:13px;line-height:1.6;display:flex;gap:12px;}
+.callout-icon{font-size:15px;flex-shrink:0;margin-top:2px;}
+.callout-body{flex:1;}
+.callout-title{font-family:var(--disp);font-size:11px;letter-spacing:.15em;margin-bottom:4px;}
+.callout.tip{background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.18);}
+.callout.tip .callout-title{color:var(--g);}
+.callout.warn{background:rgba(255,204,0,.04);border:1px solid rgba(255,204,0,.18);}
+.callout.warn .callout-title{color:var(--y);}
+.callout.info{background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.15);}
+.callout.info .callout-title{color:var(--c);}
+.callout.danger{background:rgba(255,45,85,.04);border:1px solid rgba(255,45,85,.18);}
+.callout.danger .callout-title{color:var(--r);}
+.callout.rule{background:rgba(204,68,255,.04);border:1px solid rgba(204,68,255,.2);}
+.callout.rule .callout-title{color:var(--m);}
+
+code{font-family:var(--mono);font-size:11px;color:var(--c);background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.15);padding:1px 6px;border-radius:2px;}
+pre{background:var(--bg2);border:1px solid var(--border2);border-radius:3px;padding:14px 16px;overflow-x:auto;margin:12px 0;}
+pre code{background:none;border:none;padding:0;font-size:12px;color:var(--text);line-height:1.7;}
+.hl-c{color:var(--c);}.hl-g{color:var(--g);}.hl-m{color:var(--m);}.hl-y{color:var(--y);}
+.comment{color:var(--text3);}
+
+table{width:100%;border-collapse:collapse;font-size:12px;margin:12px 0;}
+th{font-family:var(--disp);font-size:10px;letter-spacing:.15em;color:var(--text3);text-align:left;padding:6px 10px;border-bottom:1px solid var(--border2);}
+td{padding:8px 10px;border-bottom:1px solid rgba(26,42,64,.4);color:var(--text2);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td:first-child{font-family:var(--mono);font-size:11px;color:var(--c);}
+
+.arch{display:flex;flex-direction:column;font-family:var(--mono);font-size:11px;margin:14px 0;}
+.arch-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border:1px solid var(--border2);border-radius:2px;margin-bottom:2px;}
+.arch-row.c{border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.04);}
+.arch-row.m{border-color:rgba(204,68,255,.3);background:rgba(204,68,255,.05);}
+.arch-row.g{border-color:rgba(0,255,136,.25);background:rgba(0,255,136,.04);}
+.arch-row.y{border-color:rgba(255,204,0,.2);background:rgba(255,204,0,.03);}
+.arch-lbl{font-family:var(--disp);font-size:12px;letter-spacing:.12em;flex:0 0 130px;}
+.arch-desc{font-size:11px;color:var(--text2);}
+.arch-arrow{text-align:center;color:var(--text3);font-size:13px;padding:2px 0;}
+
+.state-chain{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;margin:10px 0;}
+.state{padding:3px 10px;border-radius:2px;border:1px solid var(--border2);color:var(--text2);}
+.state.ok{border-color:rgba(0,212,255,.4);color:var(--c);}
+.state.fail{border-color:rgba(255,45,85,.4);color:var(--r);}
+.state-arr{color:var(--text3);}
+
+.shortcuts{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:5px;}
+.shortcut{display:flex;align-items:center;gap:12px;padding:7px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:2px;}
+.shortcut-key{font-family:var(--mono);font-size:10px;color:var(--y);border:1px solid rgba(255,204,0,.3);padding:2px 8px;border-radius:2px;flex-shrink:0;}
+.shortcut-desc{font-size:12px;color:var(--text2);}
+
+.dot-row{display:flex;align-items:center;gap:8px;margin:5px 0;}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot.g{background:var(--g);box-shadow:0 0 5px rgba(0,255,136,.6);}
+.dot.c{background:var(--c);box-shadow:0 0 5px rgba(0,212,255,.6);}
+.dot.m{background:var(--m);box-shadow:0 0 5px rgba(204,68,255,.6);}
+.dot.r{background:var(--r);}
+.dot.off{background:var(--text3);}
+
+.footer{margin-top:80px;padding:24px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);}
+@media(max-width:600px){.wrap{padding:0 16px 60px;}h1{font-size:44px;}.kv-row{flex-direction:column;gap:4px;}.kv-key{flex:none;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <div class="hero-eyebrow">SYSTEM DOCUMENTATION</div>
+  <h1>GUARDIAN</h1>
+  <p class="hero-sub">Firefox extension. CDP execution and observation layer. Causal-Nexus bridge with IR Resolver routing, Listener subsystem, Pulse mesh, and URCK causal kernel.</p>
+  <div class="hero-meta">
+    <span class="tag tag-c">v3.0.0</span>
+    <span class="tag tag-g">URCK v4.1</span>
+    <span class="tag tag-m">IR RESOLVER v1.0</span>
+    <span class="tag tag-y">LISTENER SUBSYSTEM</span>
+    <span class="tag tag-r">Firefox MV2</span>
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-title">17 CHAPTERS · v3.4.0</div>
+  <div class="toc-grid">
+    <a href="#ch1"><span class="ch">01</span>System Architecture</a>
+    <a href="#ch2"><span class="ch">02</span>Installation</a>
+    <a href="#ch3"><span class="ch">03</span>Interface Overview</a>
+    <a href="#ch4"><span class="ch">04</span>Guardian Layer</a>
+    <a href="#ch5"><span class="ch">05</span>Callto Object</a>
+    <a href="#ch6"><span class="ch">06</span>IR Resolver</a>
+    <a href="#ch7"><span class="ch">07</span>Element Picker</a>
+    <a href="#ch8"><span class="ch">08</span>Listener Subsystem</a>
+    <a href="#ch9"><span class="ch">09</span>Callto Index</a>
+    <a href="#ch10"><span class="ch">10</span>Devices &amp; Connections</a>
+    <a href="#ch11"><span class="ch">11</span>Pulse System</a>
+    <a href="#ch12"><span class="ch">12</span>Nexus Service</a>
+    <a href="#ch13"><span class="ch">13</span>URCK Kernel</a>
+    <a href="#ch14"><span class="ch">14</span>Diagnostics &amp; Settings</a>
+    <a href="#ch15"><span class="ch">15</span>Troubleshooting</a>
+    <a href="#ch16"><span class="ch">16</span>Integration Guide</a>
+  </div>
+</div>
+
+<!-- ══ CH 1 ══ -->
+  <h2><span class="ch-num">01</span>SYSTEM ARCHITECTURE</h2>
+  <p class="section-sub">four layers · strict separation · one authority per concern</p>
+
+  <p>The Guardian–Nexus system is built from four distinct layers. Each layer has exactly one job and does not bleed into another's responsibility. Violating these boundaries is the primary cause of routing chaos in systems like this.</p>
+
+  <div class="arch">
+    <div class="arch-row c"><span class="arch-lbl" style="color:var(--c)">GUARDIAN</span><span class="arch-desc">CDP execution engine + DOM observer. The only system that touches the browser.</span></div>
+    <div class="arch-arrow">↓ emits Callto objects ↓</div>
+    <div class="arch-row m"><span class="arch-lbl" style="color:var(--m)">IR RESOLVER</span><span class="arch-desc">Intent classification + routing. The only system that decides where a Callto goes.</span></div>
+    <div class="arch-arrow">↓ routes to ↓</div>
+    <div class="arch-row g"><span class="arch-lbl" style="color:var(--g)">NEXUS</span><span class="arch-desc">Memory + orchestration + policy. The only system that retains meaning over time.</span></div>
+    <div class="arch-arrow" style="color:var(--text3);font-size:11px;text-align:left;padding-left:4px;margin-top:6px">also inside Guardian ↓</div>
+    <div class="arch-row y"><span class="arch-lbl" style="color:var(--y)">LISTENER</span><span class="arch-desc">Persistent DOM observer (Guardian subsystem). Continuous event generator only. No routing or decision authority.</span></div>
+  </div>
+
+  <div class="callout rule">
+    <div class="callout-icon">◈</div>
+    <div class="callout-body">
+      <div class="callout-title">THREE AUTHORITY LAWS</div>
+      <strong style="color:var(--c)">Guardian</strong> is the only system that touches the browser.<br>
+      <strong style="color:var(--m)">IR Resolver</strong> is the only system that decides where a Callto goes.<br>
+      <strong style="color:var(--g)">Nexus</strong> is the only system that retains meaning over time.
+    </div>
+  </div>
+
+  <h3>SYSTEM FLOWS</h3>
+  <div class="card"><div class="card-head">PRIMARY INGESTION (observation)</div><div class="card-body"><pre><code>DOM event
+→ Guardian (CDP capture)
+→ <span class="hl-c">Callto object</span>
+→ IR Resolver (classify intent + select route)
+→ <span class="hl-g">Nexus</span> (store + contextualize)</code></pre></div></div>
+
+  <div class="card"><div class="card-head">EXECUTION FLOW (command)</div><div class="card-body"><pre><code>Nexus instruction
+→ IR Resolver (build ExecutionPlan)
+→ <span class="hl-c">Guardian</span> (CDP execution)
+→ Callto result
+→ <span class="hl-g">Nexus</span> (update state)</code></pre></div></div>
+
+  <div class="card m"><div class="card-head">LISTENER FLOW (reactive)</div><div class="card-body"><pre><code>DOM mutation
+→ <span class="hl-y">Guardian Listener subsystem</span>
+→ Callto (type: "mutation" | "listen")
+→ IR Resolver (optional reroute)
+→ <span class="hl-g">Nexus</span> (state update or trigger workflow)</code></pre></div></div>
+
+  <h3>NO-OVERLAP RULES</h3>
+  <ul>
+    <li>Guardian must never decide routing targets</li>
+    <li>Nexus must never execute CDP operations</li>
+    <li>IR Resolver must never persist long-term state as authority — transient decisions only</li>
+    <li>Listener must never route, interpret, or make decisions — only emit Callto events</li>
+    <li>No direct module-to-module communication — all execution routes through the event bus</li>
+  </ul>
+</div>
+
+<!-- ══ CH 2 ══ -->
+<div class="section" id="ch2">
+  <h2><span class="ch-num">02</span>INSTALLATION</h2>
+  <p class="section-sub">firefox · about:debugging · temporary add-on</p>
+
+  <div class="card">
+    <div class="card-head">◈ LOADING THE EXTENSION</div>
+    <div class="card-body">
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">EXTRACT THE ZIP</div><div class="step-desc">Unzip <code>GUARDIAN-v3.zip</code> to a permanent folder. Firefox loads directly from this folder — do not delete or move it while the extension is active.</div></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">OPEN ABOUT:DEBUGGING</div><div class="step-desc">Navigate to <code>about:debugging</code> in Firefox and click <strong>This Firefox</strong> in the left sidebar.</div></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">LOAD TEMPORARY ADD-ON</div><div class="step-desc">Click <strong>Load Temporary Add-on…</strong>, navigate to the extracted folder, and select <code>manifest.json</code>. Guardian appears in the add-ons list.</div></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">PIN THE ICON</div><div class="step-desc">Click the puzzle-piece icon → find Guardian → pin it. The G icon appears in the toolbar permanently.</div></div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">START NEXUS</div><div class="step-desc">Start your Nexus server on <code>localhost:3748</code>. Register routes via <code>registerGuardianRoutes(app, BUS)</code> from <code>nexus-guardian-bridge.js</code>. The NEXUS pill turns blue within 2 seconds as the IR pulse connects.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon">⚠</div>
+    <div class="callout-body">
+      <div class="callout-title">TEMPORARY ADD-ONS RESET ON RESTART</div>
+      Temporary add-ons are removed when Firefox restarts. Reload from <code>about:debugging</code> after each restart. All calltos, manual connections, and settings persist in <code>browser.storage.local</code>.
+    </div>
+  </div>
+</div>
+
+<!-- ══ CH 3 ══ -->
+<div class="section" id="ch3">
+  <h2><span class="ch-num">03</span>INTERFACE OVERVIEW</h2>
+  <p class="section-sub">420px popup · 5 tabs · route selector bar · status indicators</p>
+
+  <p>Click the G icon in the Firefox toolbar to open the popup. The popup is 420px wide. Layout from top to bottom: header → meta bar → IR route selector bar → navigation tabs → panel content → footer.</p>
+
+  <h3>HEADER BAR</h3>
+  <div class="card"><div class="card-body"><div class="kv">
+    <div class="kv-row"><div class="kv-key">G logo</div><div class="kv-val">Pulses with a glow animation when the bridge is alive.</div></div>
+    <div class="kv-row"><div class="kv-key">NEXUS pill</div><div class="kv-val">Blue/animated = Nexus reachable at <code>localhost:3748</code> and receiving pulses. Red = offline.</div></div>
+    <div class="kv-row"><div class="kv-key">BRIDGE pill</div><div class="kv-val">Green = <code>bridge-node.js</code> at <code>localhost:3747</code> online. Polled every 6 seconds.</div></div>
+    <div class="kv-row"><div class="kv-key">Session badge</div><div class="kv-val">Active browser tabs registered with the bridge session registry.</div></div>
+  </div></div></div>
+
+  <h3>IR ROUTE SELECTOR BAR</h3>
+  <p>Persistent bar above the tabs. Every callto dispatched goes through the selected route. This is the IR Resolver's control surface. See Chapter 6 for the full route reference.</p>
+
+  <h3>TABS</h3>
+  <div class="shortcuts">
+    <div class="shortcut"><span class="shortcut-key">HOME</span><span class="shortcut-desc">Actions, IR Layer status, modules, recent captures</span></div>
+    <div class="shortcut"><span class="shortcut-key">CAPTURE</span><span class="shortcut-desc">Callto index — export, copy, clear</span></div>
+    <div class="shortcut"><span class="shortcut-key">LISTEN</span><span class="shortcut-desc">Active listeners — stop individually or all</span></div>
+    <div class="shortcut"><span class="shortcut-key">DEVICES</span><span class="shortcut-desc">Pulse scanner, connections, manual add</span></div>
+    <div class="shortcut"><span class="shortcut-key">SETTINGS</span><span class="shortcut-desc">URLs, modules, URCK, diagnostics, about</span></div>
+  </div>
+</div>
+
+<!-- ══ CH 4 ══ -->
+<div class="section" id="ch4">
+  <h2><span class="ch-num">04</span>GUARDIAN LAYER</h2>
+  <p class="section-sub">cdp execution + dom observation · the only system that touches the browser</p>
+
+  <p>Guardian is the browser-resident execution engine and DOM observer. It operates inside real authenticated browser sessions and has direct CDP control. It does not interpret intent. It does not decide routing.</p>
+
+  <h3>RESPONSIBILITIES</h3>
+  <div class="card"><div class="card-body"><div class="kv">
+    <div class="kv-row"><div class="kv-key">DOM interaction</div><div class="kv-val">click, type, hover, focus, extract, screenshot via CDP</div></div>
+    <div class="kv-row"><div class="kv-key">Element resolution</div><div class="kv-val">CSS selector, XPath, bounding rect, fingerprint generation</div></div>
+    <div class="kv-row"><div class="kv-key">Mutation observation</div><div class="kv-val">DOM changes, re-renders, attribute changes via MutationObserver</div></div>
+    <div class="kv-row"><div class="kv-key">Event capture</div><div class="kv-val">User + system interactions → Callto objects</div></div>
+    <div class="kv-row"><div class="kv-key">Listener management</div><div class="kv-val">Subscribe to, pause, stop, and re-bind DOM/event change observers</div></div>
+    <div class="kv-row"><div class="kv-key">Instruction execution</div><div class="kv-val">Execute commands received from Nexus or local triggers</div></div>
+    <div class="kv-row"><div class="kv-key">Callto generation</div><div class="kv-val">Produce Callto objects from observed or executed actions</div></div>
+  </div></div></div>
+
+  <h3>INPUTS / OUTPUTS</h3>
+  <table>
+    <tr><th>DIRECTION</th><th>TYPE</th><th>DESCRIPTION</th></tr>
+    <tr><td>Input</td><td>User actions</td><td>UI interactions in browser</td></tr>
+    <tr><td>Input</td><td>Nexus commands</td><td>Execution requests from orchestration layer</td></tr>
+    <tr><td>Input</td><td>Listener triggers</td><td>DOM mutation events</td></tr>
+    <tr><td>Input</td><td>CDP events</td><td>Navigation, network, render updates</td></tr>
+    <tr><td>Output</td><td>Callto objects</td><td>Canonical event representation</td></tr>
+    <tr><td>Output</td><td>Execution results</td><td>success/failure + metadata</td></tr>
+    <tr><td>Output</td><td>Live stream updates</td><td>Listener mutation events</td></tr>
+    <tr><td>Output</td><td>DOM snapshots</td><td>Optional, on request</td></tr>
+  </table>
+
+  <h3>SITE MODULES (GUARDIAN SUBSYSTEMS)</h3>
+  <p>Domain-scoped content script observers. Active only on matching hostnames. Emit URCK events — no routing or decision authority.</p>
+  <table>
+    <tr><th>MODULE</th><th>DOMAINS</th><th>EVENTS</th></tr>
+    <tr><td>instagram</td><td><code>instagram.com</code></td><td><code>guardian.ig.dm</code>, <code>guardian.ig.post</code></td></tr>
+    <tr><td>threads</td><td><code>threads.net</code></td><td><code>guardian.threads.post</code></td></tr>
+    <tr><td>chatgpt</td><td><code>chatgpt.com</code>, <code>chat.openai.com</code></td><td><code>guardian.chat.message</code>, <code>guardian.chat.response</code></td></tr>
+    <tr><td>claude</td><td><code>claude.ai</code></td><td><code>guardian.chat.message</code>, <code>guardian.chat.response</code></td></tr>
+  </table>
+</div>
+
+<!-- ══ CH 5 ══ -->
+<div class="section" id="ch5">
+  <h2><span class="ch-num">05</span>CALLTO OBJECT</h2>
+  <p class="section-sub">immutable event snapshot · atomic system record · no routing logic inside</p>
+
+  <p>A Callto is the atomic record of an interaction, observation, or instruction. Immutable after creation. Contains no routing logic — routing is fully externalized to the IR Resolver.</p>
+
+  <h3>SCHEMA</h3>
+  <pre><code>{
+  <span class="hl-y">id</span>:          "callto-a1b2c3d4",
+  <span class="hl-y">source</span>:      "guardian",
+  <span class="hl-y">instanceId</span>:  "guardian-3000b1c2-0669-4d5a-a9b4-3f1e06cc4420", <span class="comment">// opaque string — format: guardian-{uuid}</span>
+  <span class="hl-y">type</span>:        "capture|execute|listen|mutation|error",
+  <span class="hl-y">intent</span>:      "click|type|extract|observe|stream|system",
+  <span class="hl-y">selector</span>:    "css-selector",
+  <span class="hl-y">xpath</span>:       "//path/to/element",
+  <span class="hl-y">url</span>:         "https://...",
+  <span class="hl-y">host</span>:        "example.com",
+  <span class="hl-y">payload</span>:     {},
+  <span class="hl-y">fingerprint</span>: { rect: {top,left,width,height}, text: "..." },
+  <span class="hl-y">state</span>:       "created|executed|failed|observed",
+  <span class="hl-y">timestamp</span>:   1713312000000,
+  <span class="hl-y">route</span>:       { type: "nexus" },            <span class="comment">// RouteSpec — assigned by IR Resolver</span>
+  <span class="hl-y">routeTrace</span>:  [],                           <span class="comment">// populated as packet moves through IR</span>
+  <span class="hl-y">routeHint</span>:   {}                            <span class="comment">// optional hint from Guardian to IR</span>
+}</code></pre>
+
+  <h3>STATE MACHINE</h3>
+  <div class="state-chain">
+    <div class="state ok">CREATED</div><div class="state-arr">→</div>
+    <div class="state ok">ROUTED</div><div class="state-arr">→</div>
+    <div class="state ok">DISPATCHED</div><div class="state-arr">→</div>
+    <div class="state ok">IN_TRANSIT</div><div class="state-arr">→</div>
+    <div class="state ok">ACKNOWLEDGED</div><div class="state-arr">→</div>
+    <div class="state ok">STORED</div><div class="state-arr">→</div>
+    <div class="state">ARCHIVED</div>
+    <div class="state-arr"> ⤵ </div>
+    <div class="state fail">FAILED</div>
+  </div>
+
+  <h3>PROPERTIES</h3>
+  <ul>
+    <li>Immutable after creation</li>
+    <li>Traceable to DOM origin or execution trigger</li>
+    <li>Contains no routing logic — all routing externalized to IR Resolver</li>
+    <li>Every Callto includes <code>instanceId</code> (format: <code>guardian-{uuid}</code>, e.g. <code>guardian-3000b1c2-0669-…</code>) so Nexus identifies the source Guardian session</li>
+    <li>Failed Calltos enter IR Layer retry queue: backoff 1s → 5s → 15s → 60s, max 4 attempts</li>
+  </ul>
+</div>
+
+<!-- ══ CH 6 ══ -->
+<div class="section" id="ch6">
+  <h2><span class="ch-num">06</span>IR RESOLVER</h2>
+  <p class="section-sub">intent-routing layer · the only system that decides where a callto goes</p>
+
+  <p>The IR Resolver (<code>ir-layer.js</code>) converts Callto objects into executable routing plans. It is the single routing authority. No Callto reaches any destination without passing through it.</p>
+
+  <h3>RESPONSIBILITIES</h3>
+  <ul>
+    <li>Intent classification (click, stream, extract, system action, etc.)</li>
+    <li>Target resolution (Guardian-local, Nexus, storage, external node)</li>
+    <li>Route selection and execution (nexus, local, mesh, pipeline, conditional)</li>
+    <li>Fallback planning when primary routes fail</li>
+    <li>Confidence scoring for ambiguous inputs</li>
+    <li>Mutation-aware rerouting when selector becomes invalid</li>
+    <li>Retry queue management with exponential backoff</li>
+  </ul>
+
+  <h3>EXECUTIONPLAN SCHEMA</h3>
+  <pre><code>{
+  <span class="hl-g">calltoId</span>:      "callto-a1b2c3d4",
+  <span class="hl-g">target</span>:        "guardian | nexus | local | mesh",
+  <span class="hl-g">action</span>:        "click | type | extract | observe | stream",
+  <span class="hl-g">endpoint</span>:      "url | nodeId | tabId",
+  <span class="hl-g">mode</span>:          "sync | async | stream",
+  <span class="hl-g">confidence</span>:    0.95,
+  <span class="hl-g">fallbackChain</span>: [],
+  <span class="hl-g">requiresAck</span>:   true
+}</code></pre>
+
+  <h3>ROUTE TYPES</h3>
+  <table>
+    <tr><th>ROUTE</th><th>WHAT IT DOES</th><th>BEST FOR</th></tr>
+    <tr><td>nexus</td><td>POST to Nexus <code>/ingest</code>. Expects full ACK. Retries on failure.</td><td>Default production route</td></tr>
+    <tr><td>local</td><td>Saves to <code>browser.storage.local</code>. Persistent. Max 500 entries.</td><td>Offline work, backup</td></tr>
+    <tr><td>mesh</td><td>Broadcast via Nexus node registry to all registered instances. Not peer-to-peer — all routing is registry-mediated.</td><td>Multi-instance fan-out</td></tr>
+    <tr><td>analyze</td><td>URCK kernel only. Zero outbound network.</td><td>Auditing without sending</td></tr>
+    <tr><td>pipeline</td><td>Sequential multi-step execution. Steps share the same Callto packet.</td><td>Redundancy, sequential workflows</td></tr>
+    <tr><td>conditional</td><td>Rule-based: evaluates host, selector, intent, confidence. First match wins.</td><td>Domain-aware routing</td></tr>
+  </table>
+
+  <h3>NEXUS INGEST ACK — REQUIRED RESPONSE</h3>
+  <pre><code>{
+  <span class="hl-g">ok</span>:        true,
+  <span class="hl-g">calltoId</span>:  "callto-a1b2c3d4",
+  <span class="hl-g">received</span>:  true,
+  <span class="hl-g">stored</span>:    true,
+  <span class="hl-g">indexed</span>:   true,
+  <span class="hl-g">tier</span>:      "hot",
+  <span class="hl-g">serverTs</span>:  1713312000000,
+  <span class="hl-g">routePath</span>: ["guardian","nexus"]
+}</code></pre>
+  <p style="font-size:13px;color:var(--text2)">If Nexus does not return this schema, IR Resolver treats the ingest as failed and retries. No silent acceptance.</p>
+
+  <div class="callout info">
+    <div class="callout-icon">i</div>
+    <div class="callout-body">
+      <div class="callout-title">CONDITIONAL ROUTING DEFAULTS</div>
+      Built-in rules: <code>claude.ai</code> traffic routes to Nexus; fingerprint confidence below 0.6 routes to local storage. This prevents low-confidence captures from polluting the Nexus index.
+    </div>
+  </div>
+</div>
+
+<!-- ══ CH 7 ══ -->
+<div class="section" id="ch7">
+  <h2><span class="ch-num">07</span>ELEMENT PICKER</h2>
+  <p class="section-sub">green selection zone · generates callto only · listen opens separate modal</p>
+
+  <p>The element picker captures any element on the active page and generates a Callto. It always generates a Callto — it does not create listeners. The LISTEN button in the resulting popup opens a <strong>separate Listener Config Modal</strong> (see Chapter 8). These are independent operations with separate state.</p>
+
+  <div class="callout rule">
+    <div class="callout-icon">◈</div>
+    <div class="callout-body">
+      <div class="callout-title">CALLTO POPUP — BUTTON RULES</div>
+      <strong style="color:var(--g)">ADD TO INDEX</strong> — creates and dispatches a Callto only. Does not create a listener.<br>
+      <strong style="color:var(--m)">⦿ LISTEN</strong> — opens the Listener Config Modal with the current element pre-filled. Does NOT create a Callto. Callto popup stays open.<br>
+      <strong style="color:var(--c)">RE-PICK</strong> — closes popup, restarts the picker. Unchanged.<br>
+      <strong style="color:var(--text2)">CANCEL / ✕</strong> — closes popup, discards the fingerprint.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">⊕ PICKING WORKFLOW</div>
+    <div class="card-body">
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">SELECT ROUTE FIRST</div><div class="step-desc">Set the route in the selector bar above the tabs. This route is applied when ADD TO INDEX is clicked.</div></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">CLICK PICK ELEMENT</div><div class="step-desc">Press PICK ELEMENT on the HOME tab. The popup closes and a green selection zone appears on the page.</div></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">HOVER TO HIGHLIGHT</div><div class="step-desc">The page dims. A green selection zone with corner tick marks tracks the element under your cursor. Tooltip shows the CSS selector and dimensions.</div></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">CLICK TO CAPTURE</div><div class="step-desc">Click the element. The overlay clears. The callto popup appears near your click position.</div></div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-body"><div class="step-title">ADD TO INDEX OR LISTEN</div><div class="step-desc">Add a label, choose an action, and click ADD TO INDEX to create a Callto. Or click ⦿ LISTEN to open the Listener Config Modal without closing the callto popup.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>CAPTURED FIELDS</h3>
+  <table>
+    <tr><th>FIELD</th><th>EXAMPLE</th><th>DESCRIPTION</th></tr>
+    <tr><td>selector</td><td><code>button#submit.btn</code></td><td>CSS selector from tag, id, classes, name, type</td></tr>
+    <tr><td>xpath</td><td><code>//button[@id="submit"]</code></td><td>Full XPath from document root</td></tr>
+    <tr><td>label</td><td><code>submit-btn</code></td><td>Human-readable name (optional)</td></tr>
+    <tr><td>action</td><td><code>click</code></td><td>Intended bridge action</td></tr>
+    <tr><td>url / host</td><td><code>https://…</code></td><td>Page URL and hostname at capture time</td></tr>
+    <tr><td>rect</td><td><code>{top, left, w, h}</code></td><td>Element bounding box in viewport pixels</td></tr>
+    <tr><td>routeTrace</td><td><code>["guardian","nexus"]</code></td><td>Route path taken — new in v3</td></tr>
+  </table>
+</div>
+
+<!-- ══ CH 8 ══ -->
+<div class="section" id="ch8">
+  <h2><span class="ch-num">08</span>LISTENER SUBSYSTEM</h2>
+  <p class="section-sub">guardian subsystem · persistent dom observer · continuous event generator only</p>
+
+  <p>The Listener is a Guardian subsystem, not a separate layer. It is a persistent observation mode — Guardian running a standing CDP query. It does not decide what mutations mean. It only emits Callto events when DOM changes occur. Meaning is assigned by the IR Resolver.</p>
+
+  <div class="callout rule">
+    <div class="callout-icon">◈</div>
+    <div class="callout-body">
+      <div class="callout-title">WHAT LISTENER IS AND IS NOT</div>
+      <strong style="color:var(--g)">Listener IS:</strong> a continuous Callto event generator. That is its entire job.<br>
+      <strong style="color:var(--r)">Listener is NOT:</strong> a routing system, a workflow engine, a state tracker, or a decision system.<br>
+      Listeners produce signals. IR Resolver decides what those signals become.
+    </div>
+  </div>
+
+  <h3>CREATING A LISTENER — SEPARATE PATH</h3>
+  <p>Listeners are created through a completely separate path from Calltos. After picking an element, click <strong>⦿ LISTEN</strong> in the callto popup. A separate purple-themed <strong>Listener Config Modal</strong> opens. This modal has its own DOM element, its own fields, and its own confirm button. It does not share state with the callto popup.</p>
+
+  <div class="card m">
+    <div class="card-head">⦿ LISTENER CONFIG MODAL</div>
+    <div class="card-body">
+      <div class="kv">
+        <div class="kv-row"><div class="kv-key m">Element</div><div class="kv-val">Read-only. The selector of the element you picked. Re-pick to change.</div></div>
+        <div class="kv-row"><div class="kv-key m">Label</div><div class="kv-val">Optional human-readable name shown in the LISTEN tab.</div></div>
+        <div class="kv-row"><div class="kv-key m">Observe Mode</div><div class="kv-val"><code>DOM mutations</code> — all child/text changes via MutationObserver.<br><code>Input / value changes</code> — input + change events on form fields.<br><code>Chat messages (AI)</code> — MutationObserver tuned for AI chat stream containers.</div></div>
+        <div class="kv-row"><div class="kv-key m">Emit Callto Type</div><div class="kv-val"><code>mutation</code> or <code>listen</code> — the <code>type</code> field set on emitted Calltos.</div></div>
+        <div class="kv-row"><div class="kv-key m">Link Target</div><div class="kv-val">Optional routing override for mutation Calltos. Options: Another Bridge / Guardian, Trigger a Callto (by ID), External Endpoint (HTTP URL), or Nexus via IR Layer. If unset, IR Resolver default applies.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <p>Click <strong>⦿ START LISTENER</strong>. The listener attaches to the element. A purple badge appears on it. The LISTEN tab in the popup shows it as ACTIVE.</p>
+
+  <div class="callout info">
+    <div class="callout-icon">i</div>
+    <div class="callout-body">
+      <div class="callout-title">CALLTO POPUP STAYS OPEN</div>
+      When ⦿ LISTEN is clicked, the Listener Config Modal appears alongside the callto popup — it does not replace it. You can still click ADD TO INDEX to create a Callto for the same element after configuring the listener. They are independent.
+    </div>
+  </div>
+
+  <h3>LISTENER IN THE ARCHITECTURE</h3>
+  <pre><code>Nexus
+  ↓
+IR Resolver  <span class="comment">← decides "start listening"</span>
+  ↓
+Guardian (CDP)
+  ├── execute actions
+  ├── observe DOM
+  └── <span class="hl-m">LISTENER SUBSYSTEM</span>  <span class="comment">← continuous observer, no decisions</span>
+          ↓ mutation events
+     Callto(type: "mutation" | "listen")
+          ↓
+     IR Resolver → Nexus</code></pre>
+
+  <h3>LISTENER RESPONSIBILITIES</h3>
+  <div class="card"><div class="card-body"><div class="kv">
+    <div class="kv-row"><div class="kv-key">Subscription</div><div class="kv-val">Attach to selector or element. Monitor: text changes, attribute changes, node replacement, visibility changes, input events.</div></div>
+    <div class="kv-row"><div class="kv-key">Event emission</div><div class="kv-val">On trigger: emit Callto with selector (original + updated), before/after snapshot, timestamp, mutation type.</div></div>
+    <div class="kv-row"><div class="kv-key">Re-resolution</div><div class="kv-val">If element changes: re-bind via selector re-eval → XPath fallback → rect proximity. Does NOT interpret what the change means.</div></div>
+    <div class="kv-row"><div class="kv-key">State</div><div class="kv-val">active / paused / stopped · bound element reference · event count · last mutation snapshot</div></div>
+  </div></div></div>
+
+  <h3>GLOBAL KILLSWITCH</h3>
+  <p>Press <strong>ESC</strong> at any time (when not in picker mode) to stop all listeners on all tabs. The KILLSWITCH button in the popup does the same. Irreversible in the current session — listeners must be recreated.</p>
+
+  <h3>LISTEN TAB</h3>
+  <p>Shows all active listeners across all tabs. Per-listener: ID, selector, mode, event count, age, link target. Each has a STOP button. STOP ALL triggers the global killswitch.</p>
+</div>
+
+<!-- ══ CH 9 ══ -->
+<div class="section" id="ch9">
+  <h2><span class="ch-num">09</span>CALLTO INDEX</h2>
+  <p class="section-sub">capture tab · persistent storage · source of truth for mapped elements</p>
+
+  <p>The Callto Index is the persistent list of all captured elements. Stored in <code>browser.storage.local</code>. Survives browser restarts. Source of truth for what Guardian has mapped.</p>
+
+  <h3>CALLTO JSON (v3)</h3>
+  <pre><code>{
+  "id":          "callto-a1b2c3d4",
+  "selector":    "button#submit.btn-primary",
+  "xpath":       "//button[@id='submit']",
+  "label":       "Submit form",
+  "action":      "click",
+  "url":         "https://example.com/checkout",
+  "host":        "example.com",
+  "ts":          1713312000000,
+  "fingerprint": { "rect": {…}, "text": "Submit" },
+  <span class="hl-m">"route":       { "type": "nexus" },</span>
+  <span class="hl-m">"instanceId":  "guardian-3000b1c2-0669-4d5a-a9b4-3f1e06cc4420",</span>
+  <span class="hl-m">"routeTrace":  [{ "type": "nexus", "ts": 1713312000100 }]</span>
+}</code></pre>
+
+  <div class="card"><div class="card-body"><div class="kv">
+    <div class="kv-row"><div class="kv-key">EXPORT JSON</div><div class="kv-val">Downloads all calltos as a <code>.json</code> file for import into bridge or Nexus.</div></div>
+    <div class="kv-row"><div class="kv-key">COPY ALL</div><div class="kv-val">Copies the full callto index JSON to clipboard.</div></div>
+    <div class="kv-row"><div class="kv-key">CLEAR</div><div class="kv-val">Permanently deletes all calltos from local storage. Confirmation required.</div></div>
+  </div></div></div>
+</div>
+
+<!-- ══ CH 10 ══ -->
+<div class="section" id="ch10">
+  <h2><span class="ch-num">10</span>DEVICES &amp; CONNECTIONS</h2>
+  <p class="section-sub">pulse scanner · manual connection · persistent · live status</p>
+
+  <h3>THIS NODE CARD</h3>
+  <p>Shows the current instance. The <strong>INSTANCE</strong> field shows the full <code>guardian-{uuid}</code> token (e.g. <code>guardian-3000b1c2-0669-4d5a-a9b4-3f1e06cc4420</code>). The <strong>SHORT ID</strong> field shows the first 8 hex chars of the UUID segment — <code>3000b1c2</code> in that example. Both are display-only and derived — never used for routing. Share the Short ID or full instanceId with another Guardian user so they can add you via the Nexus pulse registry.</p>
+
+  <h3>PULSE SCANNER</h3>
+  <p>Click <strong>SCAN</strong> to discover nodes. The sonar ring animates during scanning. The timestamped scan log shows each probe result color-coded: green = online, red = unreachable, blue = info. Scanner checks: pulse registry from Nexus, then localhost ports <code>3747, 3748, 3749, 3750, 4747, 4748, 8080, 8747</code>, then all manual nodes.</p>
+
+  <h3>CONNECTIONS LIST</h3>
+  <div class="card"><div class="card-body"><div class="kv">
+    <div class="kv-row"><div class="kv-key">Status dot</div><div class="kv-val">Green pulsing = online (&lt;10s). Yellow = stale (10–30s). Red = offline. Grey = unknown.</div></div>
+    <div class="kv-row"><div class="kv-key">Intent tag</div><div class="kv-val">NEXUS, GUARDIAN, MESH, or MANUAL — the node's role.</div></div>
+    <div class="kv-row"><div class="kv-key">PIPE button</div><div class="kv-val">Route next callto through this node via IR Resolver <code>type: "device"</code> RouteSpec.</div></div>
+    <div class="kv-row"><div class="kv-key">CALLTO button</div><div class="kv-val">Send most recent callto to this node via IR Resolver.</div></div>
+    <div class="kv-row"><div class="kv-key">REMOVE button</div><div class="kv-val">Manual nodes only. Removes from <code>browser.storage.local</code> immediately.</div></div>
+  </div></div></div>
+
+  <h3>ADDING A MANUAL CONNECTION</h3>
+  <p>Click <strong>+ ADD</strong> to open the connection form. Two modes are available:</p>
+
+  <div class="card m">
+    <div class="card-head">BY INSTANCE ID — registry-mediated multi-instance coordination</div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Use this when you know the instanceId or short ID of another Guardian. Guardian looks it up in the Nexus pulse registry first — no IP or port needed if both instances are connected to the same Nexus.</p>
+      <div class="kv">
+        <div class="kv-row"><div class="kv-key m">INSTANCE ID</div><div class="kv-val">Paste the full <code>guardian-3000b1c2-0669-…</code> token, or just the 8-char short ID (<code>3000b1c2</code>). Both are resolved.</div></div>
+        <div class="kv-row"><div class="kv-key m">Label</div><div class="kv-val">Optional name for the connection. Shown in the node card.</div></div>
+        <div class="kv-row"><div class="kv-key m">Intent</div><div class="kv-val">Set to <strong>Another Guardian</strong> for multi-instance coordination. Determines routing behaviour and the node tag colour.</div></div>
+        <div class="kv-row"><div class="kv-key m">IP + Port fallback</div><div class="kv-val">If the instanceId is not found in the pulse registry (e.g. the other Guardian is on a different Nexus or hasn't pulsed yet), a yellow warning appears and asks for IP + port. Fill those in and click CONNECT again to connect directly.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">BY IP + PORT — Nexus, mesh, or unknown nodes</div>
+    <div class="card-body">
+      <div class="kv">
+        <div class="kv-row"><div class="kv-key">Label</div><div class="kv-val">Human-readable name shown in the connections list.</div></div>
+        <div class="kv-row"><div class="kv-key">IP</div><div class="kv-val">IP address of the target. Use <code>192.168.x.x</code> for LAN, <code>127.0.0.1</code> for local.</div></div>
+        <div class="kv-row"><div class="kv-key">Port</div><div class="kv-val">Port number. Nexus default: <code>3748</code>. Guardian bridge default: <code>3747</code>.</div></div>
+        <div class="kv-row"><div class="kv-key">Intent</div><div class="kv-val">Nexus endpoint, Another Guardian, Mesh node, or Custom.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <p>Click <strong>⊕ CONNECT</strong>. Guardian probes the node immediately and saves it to <code>browser.storage.local</code>. Persists across sessions.</p>
+
+  <div class="callout info">
+    <div class="callout-icon">i</div>
+    <div class="callout-body">
+      <div class="callout-title">MULTI-INSTANCE COORDINATION IS REGISTRY-MEDIATED</div>
+      Guardian instances do not connect peer-to-peer. All multi-instance coordination goes through the Nexus node registry. BY INSTANCE ID looks up the target instance in the pulse registry — both must be connected to the same Nexus. BY IP + PORT adds a node to the local connections list for Nexus-relayed routing. Calltos are dispatched via IR Resolver <code>type: "device"</code> RouteSpec, resolved through the registry.
+    </div>
+  </div>
+</div>
+
+<!-- ══ CH 11 ══ -->
+<div class="section" id="ch11">
+  <h2><span class="ch-num">11</span>PULSE SYSTEM</h2>
+  <p class="section-sub">ir layer heartbeat · 1.5s interval · presence registry update</p>
+
+  <p>Guardian's IR Resolver emits a pulse packet to Nexus every 1.5 seconds. This is the presence and node discovery mechanism for the entire mesh. The instanceId format is <code>guardian-{uuid}</code> — an opaque string where the prefix is separated by a hyphen, e.g. <code>guardian-3000b1c2-0669-4d5a-a9b4-3f1e06cc4420</code>. The opaque token prevents collision between instances. A display short ID is derived from the first 8 chars of the UUID segment for UI purposes — never used for routing.</p>
+
+  <h3>PULSE PACKET</h3>
+  <pre><code>{
+  type:         "guardian:pulse",
+  logicalId:    "guardian",
+  instanceId:   "guardian-3000b1c2-0669-4d5a-a9b4-3f1e06cc4420",
+  ts:           1713312000000,
+  port:         3747,  nexusPort: 3748,
+  capabilities: ["capture","callto:emit","listener","route","ir"],
+  intents:      ["nexus","local","broadcast","pipeline","analyze"],
+  version:      "3.0.0"
+}</code></pre>
+
+  <h3>NODE EXPIRY</h3>
+  <div class="card"><div class="card-body"><div class="kv">
+    <div class="kv-row"><div class="kv-key">online</div><div class="kv-val">Pulse received within last 10 seconds. Green dot.</div></div>
+    <div class="kv-row"><div class="kv-key">stale</div><div class="kv-val">No pulse for 10–30 seconds. Yellow dot. Still in registry.</div></div>
+    <div class="kv-row"><div class="kv-key">removed</div><div class="kv-val">No pulse for 30+ seconds. Auto-removed from Nexus node registry.</div></div>
+  </div></div></div>
+</div>
+
+<!-- ══ CH 12 ══ -->
+<div class="section" id="ch12">
+  <h2><span class="ch-num">12</span>NEXUS SERVICE</h2>
+  <p class="section-sub">memory + orchestration + policy · the only system that retains meaning over time</p>
+
+  <p>Nexus is the system brain. It does not interact with the DOM. It manages meaning, history, and system-wide coordination. It receives Callto objects from the IR Resolver and stores, contextualizes, and orchestrates workflows from them.</p>
+
+  <div class="callout rule">
+    <div class="callout-icon">◈</div>
+    <div class="callout-body">
+      <div class="callout-title">NEXUS DOES NOT</div>
+      Touch the DOM · Execute CDP commands · Resolve selectors · Interpret raw browser events without the IR Resolver
+    </div>
+  </div>
+
+  <h3>RESPONSIBILITIES</h3>
+  <ul>
+    <li>Persistent storage of Callto history (HOT → WARM → COLD tiers)</li>
+    <li>Workflow orchestration across multiple Calltos and sessions</li>
+    <li>Policy enforcement — routing rules and constraints fed to IR Resolver</li>
+    <li>Cross-session context aggregation and memory enrichment</li>
+    <li>Multi-step task decomposition</li>
+    <li>System-wide state tracking</li>
+    <li>Coordination of multiple Guardian instances</li>
+  </ul>
+
+  <h3>REQUIRED ENDPOINTS (v3)</h3>
+  <table>
+    <tr><th>METHOD</th><th>PATH</th><th>PURPOSE</th></tr>
+    <tr><td>POST</td><td><code>/pulse</code></td><td>IR pulse every 1.5s. Returns <code>{ ok, ack, nodes }</code>.</td></tr>
+    <tr><td>GET</td><td><code>/pulse</code></td><td>Probe endpoint — used by Devices scanner.</td></tr>
+    <tr><td>POST</td><td><code>/ingest</code></td><td>Callto ingestion. Must return full ACK schema.</td></tr>
+    <tr><td>GET</td><td><code>/nodes</code></td><td>Returns all online nodes.</td></tr>
+    <tr><td>GET</td><td><code>/health</code></td><td>NEXUS pill + diagnostics.</td></tr>
+    <tr><td>POST</td><td><code>/guardian/handshake</code></td><td>Challenge/response + instanceId registration.</td></tr>
+    <tr><td>POST</td><td><code>/guardian/heartbeat</code></td><td>Token refresh every 8 seconds.</td></tr>
+    <tr><td>GET</td><td><code>/ingest/recent</code></td><td>Query HOT tier — last N calltos. Optional.</td></tr>
+  </table>
+
+  <div class="callout tip">
+    <div class="callout-icon">✓</div>
+    <div class="callout-body">
+      <div class="callout-title">REGISTERING ROUTES</div>
+      <pre style="margin-top:6px"><code>const { registerGuardianRoutes } = require('./nexus-guardian-bridge');
+registerGuardianRoutes(app, BUS, '3.0.0');</code></pre>
+      Registers all required endpoints and starts the node registry automatically.
+    </div>
+  </div>
+
+  <div class="dot-row"><div class="dot c"></div><span style="font-size:13px;color:var(--text2)">Blue pulsing NEXUS pill — Nexus reachable and pulses acknowledged</span></div>
+  <div class="dot-row" style="margin-top:4px"><div class="dot r"></div><span style="font-size:13px;color:var(--text2)">Red NEXUS pill — offline. Calltos enter retry queue or fall back to local storage.</span></div>
+</div>
+
+<!-- ══ CH 13 ══ -->
+<div class="section" id="ch13">
+  <h2><span class="ch-num">13</span>URCK KERNEL</h2>
+  <p class="section-sub">causal event engine v4.1 · append-only ring buffer · causal-nexus protocol</p>
+
+  <p>Every Guardian action generates a URCK event before any UI update or network call. The kernel is the internal source of truth. In v3, all events include <code>instanceId</code> and integrate with the IR Resolver trace log.</p>
+
+  <h3>EVENT TYPES</h3>
+  <table>
+    <tr><th>EVENT</th><th>WHEN</th><th>CAPTURES</th></tr>
+    <tr><td>guardian.picker.capture</td><td>Element clicked, callto generated</td><td>Full callto + routeTrace</td></tr>
+    <tr><td>guardian.callto.register.ok</td><td>Nexus ACK received</td><td>calltoId, routeTrace</td></tr>
+    <tr><td>guardian.callto.register.failed</td><td>Nexus ingest rejected or timed out</td><td>reason, route attempted</td></tr>
+    <tr><td>guardian.ir.route</td><td>Every IR Resolver execution</td><td>route, state, calltoId, status</td></tr>
+    <tr><td>guardian.listener.started</td><td>Listener activated</td><td>listenerId, selector, mode</td></tr>
+    <tr><td>guardian.listener.stopped</td><td>Listener deactivated</td><td>listenerId, eventCount</td></tr>
+    <tr><td>guardian.link.route.failed</td><td>Listener link routing failed</td><td>targetType, reason</td></tr>
+    <tr><td>guardian.handshake.success</td><td>Bridge handshake completed</td><td>version, instanceId</td></tr>
+    <tr><td>guardian.session.connect</td><td>Tab registered</td><td>instanceId, sessionId</td></tr>
+    <tr><td>guardian.killswitch</td><td>Global killswitch activated</td><td>reason, originTabId</td></tr>
+    <tr><td>guardian.init</td><td>Background script init</td><td>instanceId, version, urls</td></tr>
+  </table>
+
+  <h3>CAUSAL EDGES</h3>
+  <p>When a callto executes and a result arrives, URCK links <code>command:running</code> to <code>command:success</code> or <code>command:failed</code> via a <code>causal/adapter</code> edge. Every result is traceable back to the original capture in the event graph.</p>
+
+  <h3>RING BUFFER</h3>
+  <p>Holds the last <strong>10,000 events</strong>. SNAPSHOT (HOME tab) exports the last 50 capture events plus current IR stats and selected route as JSON. RESET URCK in Settings wipes in-memory events without affecting <code>browser.storage.local</code>.</p>
+</div>
+
+<!-- ══ CH 14 ══ -->
+<div class="section" id="ch14">
+  <h2><span class="ch-num">14</span>DIAGNOSTICS &amp; SETTINGS</h2>
+  <p class="section-sub">settings tab · 7 tests · configurable urls and modules</p>
+
+  <h3>SETTINGS</h3>
+  <div class="card"><div class="card-body"><div class="kv">
+    <div class="kv-row"><div class="kv-key">BRIDGE URL</div><div class="kv-val">URL for <code>bridge-node.js</code>. Default: <code>http://localhost:3747</code>. Saving triggers re-handshake and updates IR Resolver bridgeUrl.</div></div>
+    <div class="kv-row"><div class="kv-key">NEXUS URL</div><div class="kv-val">URL for Nexus server. Default: <code>http://localhost:3748</code>. Saving restarts the pulse emitter within 2 seconds.</div></div>
+    <div class="kv-row"><div class="kv-key">MODULES</div><div class="kv-val">Toggle each site module. Persists in <code>browser.storage.local</code>. Disabling stops the DOM observer; does not affect existing calltos.</div></div>
+    <div class="kv-row"><div class="kv-key">URCK push via IR</div><div class="kv-val">When ON, URCK events are pushed to Nexus <code>/ingest</code> through the IR Resolver. Turn OFF for silent local-only mode.</div></div>
+  </div></div></div>
+
+  <h3>DIAGNOSTICS TESTS</h3>
+  <table>
+    <tr><th>TEST</th><th>WHAT IT CHECKS</th><th>PASS CONDITION</th></tr>
+    <tr><td>Bridge connection</td><td>HTTP GET to <code>bridge-node.js /health</code></td><td>2xx within 2.5s</td></tr>
+    <tr><td>Nexus service</td><td>HTTP GET to <code>localhost:3748/health</code></td><td>2xx within 2.5s</td></tr>
+    <tr><td>Handshake</td><td>Full challenge/response with bridge</td><td><code>{ ack: true, token }</code></td></tr>
+    <tr><td>IR Layer</td><td>Queries background for IR stats and instanceId</td><td>instanceId non-null</td></tr>
+    <tr><td>URCK kernel</td><td>Ingests test event, retrieves by ID</td><td>Event found, correct seq</td></tr>
+    <tr><td>Callto pipeline</td><td>Registers callto, resolves, creates causal edge</td><td>Edge exists, resolution correct</td></tr>
+    <tr><td>Content script</td><td>PING to active tab's content script</td><td><code>{ pong: true }</code></td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--text2)"><strong>RUN ALL</strong> runs all seven tests sequentially with 100ms gaps.</p>
+
+  <h3>KEYBOARD SHORTCUTS</h3>
+  <div class="shortcuts">
+    <div class="shortcut"><span class="shortcut-key">ESC (picker active)</span><span class="shortcut-desc">Cancel picker — does NOT trigger killswitch</span></div>
+    <div class="shortcut"><span class="shortcut-key">ESC (any other time)</span><span class="shortcut-desc">Global killswitch — stops all listeners on all tabs</span></div>
+    <div class="shortcut"><span class="shortcut-key">Click</span><span class="shortcut-desc">Capture highlighted element (picker mode)</span></div>
+    <div class="shortcut"><span class="shortcut-key">Hover</span><span class="shortcut-desc">Move green selection zone to element under cursor</span></div>
+  </div>
+</div>
+
+<!-- ══ CH 15 ══ -->
+<div class="section" id="ch15">
+  <h2><span class="ch-num">15</span>TROUBLESHOOTING</h2>
+  <p class="section-sub">common issues · architecture violations · diagnostic procedures</p>
+
+  <div class="card r">
+    <div class="card-head">ARCHITECTURE VIOLATION CHECKLIST — CHECK THESE FIRST</div>
+    <div class="card-body">
+      <ul style="margin:0">
+        <li>Is Guardian deciding routing targets? → It must not</li>
+        <li>Is Nexus executing CDP commands? → It must not</li>
+        <li>Is the IR Resolver persisting long-term state as authority? → It must not</li>
+        <li>Is a Listener routing, interpreting, or making decisions? → It must not</li>
+        <li>Is any module communicating directly with another without the event bus? → It must not</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card"><div class="card-body"><div class="kv">
+    <div class="kv-row"><div class="kv-key r">Extension won't install</div><div class="kv-val">Use <code>about:debugging → Load Temporary Add-on → manifest.json</code>. Never drag the zip to <code>about:addons</code>.</div></div>
+    <div class="kv-row"><div class="kv-key r">NEXUS pill stays red</div><div class="kv-val">Start Nexus on port 3748. Ensure <code>POST /pulse</code> and <code>GET /health</code> are registered. Run Nexus Service diagnostic. Check URL in Settings.</div></div>
+    <div class="kv-row"><div class="kv-key r">Calltos not reaching Nexus</div><div class="kv-val">Check route selector — must include Nexus. Run IR Layer diagnostic. If retry queue is climbing, Nexus is not returning the required ACK schema. Verify <code>/ingest</code> returns <code>{ ok, received, stored, indexed }</code>.</div></div>
+    <div class="kv-row"><div class="kv-key r">Retry queue growing</div><div class="kv-val">Nexus not responding or returning errors on <code>/ingest</code>. Check Nexus logs. Switch to <code>Nexus + Local backup</code> route so data is preserved while debugging.</div></div>
+    <div class="kv-row"><div class="kv-key r">LISTEN opens wrong thing</div><div class="kv-val">In v3, LISTEN opens a separate purple Listener Config Modal. If you see the callto popup's link screen instead, you are on v2. Update to v3.</div></div>
+    <div class="kv-row"><div class="kv-key r">Listener not attaching</div><div class="kv-val">Element not found by selector or XPath at attach time. Check the LISTEN tab for error events with <code>type: "error", reason: "Element not found"</code>. Use a more stable selector — prefer <code>id</code> attributes.</div></div>
+    <div class="kv-row"><div class="kv-key r">No nodes in Devices tab</div><div class="kv-val">Click SCAN. Ensure Nexus is running and receiving pulses. Discovered nodes come from the pulse registry. Add manually if you know the IP/port.</div></div>
+    <div class="kv-row"><div class="kv-key r">Bridge pill stays red</div><div class="kv-val">Start <code>bridge-node.js</code> on port 3747. Run Bridge Connection diagnostic for the exact error message.</div></div>
+    <div class="kv-row"><div class="kv-key r">IR Layer test fails</div><div class="kv-val">Check <code>about:debugging → Guardian → Inspect</code> for background script errors. Most common cause: <code>ir-layer.js</code> not loading before <code>background.js</code>. Verify manifest order: <code>["urck.js", "ir-layer.js", "background.js"]</code>.</div></div>
+    <div class="kv-row"><div class="kv-key r">Instance not found in registry</div><div class="kv-val">Both Guardian instances must be connected to the same Nexus for BY INSTANCE ID to work. The target must have pulsed within the last 30 seconds. If it's not in the registry, use BY IP + PORT instead. Short IDs (<code>3000b1c2</code>) work in the instance ID field.</div></div>
+    <div class="kv-row"><div class="kv-key r">Crosshair stuck on page</div><div class="kv-val">Press ESC. If that does not clear it, reload the tab.</div></div>
+    <div class="kv-row"><div class="kv-key r">Content script test fails</div><div class="kv-val">Navigate to a normal <code>http://</code> or <code>https://</code> page. Content scripts do not run on <code>about:</code> pages or the new tab page.</div></div>
+    <div class="kv-row"><div class="kv-key r">Extension lost after restart</div><div class="kv-val">Temporary add-ons are removed on Firefox restart by design. Reload from <code>about:debugging</code>. Callto index, manual nodes, and settings all persist in <code>browser.storage.local</code>.</div></div>
+    <div class="kv-row"><div class="kv-key r">Routing drifts</div><div class="kv-val">All dispatch must go through <code>IR.execute()</code> in <code>background.js</code>. No direct fetch-to-Nexus outside the IR layer. No listener-internal routing decisions.</div></div>
+  </div></div></div>
+</div>
+
+<!-- Updated chapters 16-17 + footer — injected by consolidation pass -->
+
+  <!-- ================================================================
+       CHAPTER 16 — BRIDGE ENDPOINT REFERENCE v3.11
+       Complete reference for external projects
+       ================================================================ -->
+  <h2><span class="ch-num">16</span>BRIDGE ENDPOINT REFERENCE — v3.11.0</h2>
+  <p class="section-sub">All live endpoints · auth · request shapes · response shapes · SSE events</p>
+
+  <p>The bridge runs at <code>http://127.0.0.1:3747</code> by default. All endpoints use JSON over HTTP. The SSE stream at <code>/events</code> is the primary integration point for external projects. No authentication is required for local connections — the token system is available for remote/multi-node deployments.</p>
+
+  <div class="callout rule">
+    <div class="callout-icon">◈</div>
+    <div class="callout-body">
+      <div class="callout-title">MINIMUM VIABLE INTEGRATION (3 ENDPOINTS)</div>
+      <strong style="color:var(--g)">POST /guardian/handshake</strong> — register, receive token<br>
+      <strong style="color:var(--g)">POST /pulse</strong> — heartbeat every 1.5s (keeps you alive in mesh)<br>
+      <strong style="color:var(--g)">GET  /events</strong> — SSE stream, receive all bus events in real time
+    </div>
+  </div>
+
+  <!-- ── AUTH ───────────────────────────────────────────────── -->
+  <h3>AUTH</h3>
+  <div class="card"><div class="card-body">
+    <p>Token is optional for local use. Include <code>X-Guardian-Token: {token}</code> header on all requests after handshake. Token expires in 60s — renew via <code>POST /guardian/heartbeat</code> or a fresh handshake.</p>
+    <table>
+      <tr><th>HEADER</th><th>VALUE</th><th>WHEN</th></tr>
+      <tr><td><code>Content-Type</code></td><td><code>application/json</code></td><td>All POST requests</td></tr>
+      <tr><td><code>X-Guardian-Token</code></td><td><code>{token from handshake}</code></td><td>Optional — remote deployments</td></tr>
+    </table>
+  </div></div>
+
+  <!-- ── HANDSHAKE ──────────────────────────────────────────── -->
+  <h3>POST /guardian/handshake</h3>
+  <div class="card m"><div class="card-head">REGISTER + GET TOKEN</div><div class="card-body">
+    <pre><code><span class="comment">// Request</span>
+{
+  instanceId:   <span class="hl-y">"brainos-abc123"</span>,          <span class="comment">// your unique ID</span>
+  logicalId:    <span class="hl-y">"brainos"</span>,                 <span class="comment">// human label</span>
+  challenge:    <span class="hl-y">"any-random-string"</span>,
+  capabilities: [<span class="hl-y">"canvas","pipeline"</span>],    <span class="comment">// optional</span>
+  version:      <span class="hl-y">"1.0.0"</span>
+}
+
+<span class="comment">// Response 200</span>
+{
+  ok:          true,
+  token:       <span class="hl-y">"eyJ..."</span>,               <span class="comment">// 60s TTL</span>
+  version:     <span class="hl-y">"3.11.0"</span>,
+  instanceId:  <span class="hl-y">"bridge-{uuid}"</span>,
+  nodes:       [ <span class="comment">/* known nodes */</span> ]
+}</code></pre>
+  </div></div>
+
+  <!-- ── HEARTBEAT ─────────────────────────────────────────── -->
+  <h3>POST /guardian/heartbeat</h3>
+  <div class="card"><div class="card-body">
+    <pre><code><span class="comment">// Request (include X-Guardian-Token header)</span>
+{ ts: Date.now() }
+
+<span class="comment">// Response 200</span>
+{ ok: true, ttl: 60000 }</code></pre>
+  </div></div>
+
+  <!-- ── PULSE ─────────────────────────────────────────────── -->
+  <h3>POST /pulse</h3>
+  <div class="card m"><div class="card-head">HEARTBEAT PULSE — send every 1–2s</div><div class="card-body">
+    <p>Used by Guardian IR layer and any external node. Emits <code>guardian-pulse</code> on the bus. BrainOS canvas uses this to keep nodes green. After 15s without pulse the node goes idle; after 30s it goes dead (red).</p>
+    <pre><code><span class="comment">// Request</span>
+{
+  instanceId:  <span class="hl-y">"guardian-{uuid}"</span>,
+  logicalId:   <span class="hl-y">"guardian"</span>,
+  nexusUrl:    <span class="hl-y">"http://127.0.0.1:3747"</span>,
+  bridgeUrl:   <span class="hl-y">"http://127.0.0.1:3747"</span>,
+  status:      <span class="hl-y">"online"</span>,
+  ts:          1234567890123
+}
+
+<span class="comment">// Response 200</span>
+{ ok: true, version: <span class="hl-y">"3.11.0"</span>, ts: 1234567890123 }</code></pre>
+    <pre><code><span class="comment">// GET /pulse — probe only (no body)</span>
+<span class="hl-g">GET</span> /pulse  →  { ok: true, version: "3.11.0", ts: ... }</code></pre>
+  </div></div>
+
+  <!-- ── INGEST ─────────────────────────────────────────────── -->
+  <h3>POST /ingest</h3>
+  <div class="card"><div class="card-body">
+    <p>IR layer causal event ingest. Emits <code>guardian.ir.ingest</code> on bus. Bridge stores nothing — events flow to SSE subscribers.</p>
+    <pre><code><span class="comment">// Request — any JSON payload</span>
+{ type: "element:callto:running", calltoId: "...", ts: Date.now() }
+
+<span class="comment">// Response 202</span>
+{ ok: true, ingested: true, ts: ... }</code></pre>
+  </div></div>
+
+  <!-- ── GUARDIAN STATUS ───────────────────────────────────── -->
+  <h3>GET /guardian/status</h3>
+  <div class="card"><div class="card-body">
+    <pre><code><span class="comment">// Response 200</span>
+{
+  connected: true,
+  sessions:  2,
+  nodes:     { discovered: [...], manual: [...] }
+}</code></pre>
+  </div></div>
+
+  <!-- ── AGENT HOOKS ───────────────────────────────────────── -->
+  <h3>POST /guardian/agent-hook</h3>
+  <div class="card m"><div class="card-head">WIRE AGENT → CALLTO</div><div class="card-body">
+    <p>Maps an AI agent ID to a callto input element. Once set, <code>POST /v1/messages {provider:'guardian', agentId}</code> dispatches through this callto. Persisted to <code>bridge/data/agent-hooks.json</code>.</p>
+    <pre><code><span class="comment">// Request</span>
+{
+  agentId:   <span class="hl-y">"chatgpt"</span>,          <span class="comment">// chatgpt|claude|deepseek|gemini|ollama|grok</span>
+  calltoId:  <span class="hl-y">"callto-abc123"</span>,
+  intent:    <span class="hl-y">"chat"</span>              <span class="comment">// chat|code|search</span>
+}
+
+<span class="comment">// Response 200</span>
+{ ok: true, agentId: "chatgpt", calltoId: "callto-abc123" }</code></pre>
+  </div></div>
+
+  <h3>GET /guardian/agent-hooks</h3>
+  <div class="card"><div class="card-body">
+    <pre><code><span class="comment">// Response 200 — all registered hooks</span>
+{
+  "chatgpt": { calltoId: "callto-abc123", intent: "chat", ts: 1234567890 },
+  "claude":  { calltoId: "callto-def456", intent: "chat", ts: 1234567890 }
+}</code></pre>
+  </div></div>
+
+  <!-- ── CALLTO ─────────────────────────────────────────────── -->
+  <h3>POST /userscript/callto</h3>
+  <div class="card"><div class="card-body">
+    <p>Register a callto with the bridge. Called automatically when Guardian picks an element. Also triggers <code>guardian.callto.captured</code> SSE event.</p>
+    <pre><code><span class="comment">// Request</span>
+{
+  id:       <span class="hl-y">"callto-{uuid}"</span>,
+  selector: <span class="hl-y">"div.my-2.5.flex.min-h-14"</span>,
+  label:    <span class="hl-y">"ChatGPT input"</span>,
+  url:      <span class="hl-y">"https://chatgpt.com"</span>,
+  host:     <span class="hl-y">"chatgpt.com"</span>,
+  action:   <span class="hl-y">"type"</span>,              <span class="comment">// click|type|submit|listen</span>
+  ts:       1234567890123
+}</code></pre>
+  </div></div>
+
+  <h3>GET /userscript/callto</h3>
+  <div class="card"><div class="card-body">
+    <pre><code><span class="comment">// Response 200</span>
+{ calltos: [ { id, selector, label, url, host, action, ts }, ... ] }</code></pre>
+  </div></div>
+
+  <h3>POST /userscript/callto/:id/exec</h3>
+  <div class="card"><div class="card-body">
+    <p>Trigger a callto — Guardian performs the action (click, type, submit) on the element. Response arrives via SSE <code>guardian.link.event</code>.</p>
+    <pre><code><span class="comment">// Request</span>
+{ event: { type: "exec", text: "Hello world", source: "nexus" } }
+
+<span class="comment">// Response 200</span>
+{ ok: true, calltoId: "callto-abc123" }</code></pre>
+  </div></div>
+
+  <!-- ── AI MESSAGES ───────────────────────────────────────── -->
+  <h3>POST /v1/messages</h3>
+  <div class="card m"><div class="card-head">AI ROUTING — the primary inference endpoint</div><div class="card-body">
+    <p>Routes to: Guardian (browser AI via callto), Ollama (local), DeepSeek, Claude, ChatGPT, Gemini APIs. Guardian provider requires agent-hook to be set.</p>
+    <pre><code><span class="comment">// Guardian provider — dispatches via callto, no API key needed</span>
+{
+  provider:  <span class="hl-y">"guardian"</span>,
+  agentId:   <span class="hl-y">"chatgpt"</span>,
+  messages:  [{ role: <span class="hl-y">"user"</span>, content: <span class="hl-y">"Hello world"</span> }],
+  intent:    <span class="hl-y">"chat"</span>
+}
+<span class="comment">// Response 202 — dispatched async, response arrives via GET /events</span>
+{ ok: true, status: "dispatched", provider: "guardian", agentId: "chatgpt", calltoId: "..." }
+
+<span class="comment">// Direct API provider</span>
+{
+  provider:  <span class="hl-y">"ollama"</span>,              <span class="comment">// ollama|deepseek|claude|chatgpt|gemini</span>
+  messages:  [{ role: <span class="hl-y">"user"</span>, content: <span class="hl-y">"Hello"</span> }],
+  model:     <span class="hl-y">"deepseek-r1:8b"</span>,      <span class="comment">// optional</span>
+  intent:    <span class="hl-y">"chat"</span>
+}
+<span class="comment">// Response 200 — synchronous</span>
+{
+  content: [{ type: "text", text: "..." }],
+  model: "deepseek-r1:8b",
+  usage: { input_tokens: 12, output_tokens: 48 }
+}
+
+<span class="comment">// Auto fallback chain: guardian (if hooked) → ollama → deepseek → error</span>
+{ provider: <span class="hl-y">"auto"</span>, messages: [...] }
+
+<span class="comment">// Error: no accounts and no guardian hook</span>
+<span class="comment">// Response 503</span>
+{
+  error:  "No AI configured for provider=chatgpt.",
+  hint:   "Options: 1. Guardian mode ... 2. Ollama ... 3. POST /config ...",
+  action: "open_options"
+}</code></pre>
+  </div></div>
+
+  <!-- ── BUS EMIT ──────────────────────────────────────────── -->
+  <h3>POST /bus/emit</h3>
+  <div class="card"><div class="card-body">
+    <p>Emit a custom event to all SSE subscribers. Use this to broadcast from your external project into the Guardian/NEXUS mesh.</p>
+    <pre><code><span class="comment">// Request</span>
+{
+  event:   <span class="hl-y">"myapp:status-update"</span>,
+  payload: { status: <span class="hl-y">"ready"</span>, version: <span class="hl-y">"2.0.0"</span> }
+}
+
+<span class="comment">// Response 200</span>
+{ ok: true, emitted: "myapp:status-update" }</code></pre>
+  </div></div>
+
+  <!-- ── EVENTS SSE ────────────────────────────────────────── -->
+  <h3>GET /events</h3>
+  <div class="card m"><div class="card-head">SSE STREAM — real-time event bus</div><div class="card-body">
+    <p>Server-Sent Events stream. All bus events flow here. Connect with <code>EventSource</code>. Reconnect on error — the bridge retains no state between SSE connections.</p>
+    <pre><code><span class="comment">// Connect</span>
+const evs = new EventSource('http://127.0.0.1:3747/events');
+evs.onmessage = e => {
+  const d = JSON.parse(e.data);
+  <span class="comment">// d.type — event type string</span>
+  <span class="comment">// d.payload / d.data — event data</span>
+  <span class="comment">// d.ts — unix timestamp</span>
+};
+evs.onerror = () => { evs.close(); setTimeout(reconnect, 3000); };</code></pre>
+    <table>
+      <tr><th>EVENT TYPE</th><th>WHEN</th><th>KEY FIELDS</th></tr>
+      <tr><td><code>guardian-pulse</code></td><td>Guardian extension heartbeat (every 1.5s)</td><td><code>instanceId, logicalId, status</code></td></tr>
+      <tr><td><code>guardian:init</code></td><td>Guardian extension first connection</td><td><code>instanceId, version</code></td></tr>
+      <tr><td><code>guardian:handshake</code></td><td>Handshake completed</td><td><code>token, instanceId</code></td></tr>
+      <tr><td><code>guardian.callto.captured</code></td><td>New element picked with Guardian</td><td><code>id, selector, url, host, action</code></td></tr>
+      <tr><td><code>guardian:ai:request</code></td><td>Message dispatched through Guardian</td><td><code>agentId, calltoId, text, requestId</code></td></tr>
+      <tr><td><code>guardian.link.event</code></td><td>Response captured from AI browser tab</td><td><code>text, listenerId, calltoId</code></td></tr>
+      <tr><td><code>guardian:ai:response</code></td><td>Alias for guardian.link.event</td><td><code>text, agentId, requestId</code></td></tr>
+      <tr><td><code>guardian.ir.ingest</code></td><td>IR layer causal event ingested</td><td><code>type, calltoId, ts</code></td></tr>
+      <tr><td><code>guardian:agent:hook</code></td><td>Agent hook created or updated</td><td><code>agentId, calltoId, intent</code></td></tr>
+    </table>
+  </div></div>
+
+  <!-- ── HEALTH / LOG ──────────────────────────────────────── -->
+  <h3>GET /health</h3>
+  <div class="card"><div class="card-body">
+    <pre><code><span class="comment">// Response 200</span>
+{
+  ok:      true,
+  version: <span class="hl-y">"3.11.0"</span>,
+  ts:      1234567890123,
+  uptime:  823,            <span class="comment">// seconds</span>
+  memory:  8.1             <span class="comment">// MB</span>
+}</code></pre>
+  </div></div>
+
+  <h3>GET /log</h3>
+  <div class="card"><div class="card-body">
+    <pre><code><span class="comment">// Response 200 — recent bridge log entries</span>
+[ { ts, level, msg }, ... ]  <span class="comment">// most recent last</span></code></pre>
+  </div></div>
+
+  <!-- ── CONFIG ─────────────────────────────────────────────── -->
+  <h3>POST /config</h3>
+  <div class="card"><div class="card-body">
+    <p>Set API keys and model URLs. Persisted to bridge config. Keys never returned in GET responses.</p>
+    <pre><code><span class="comment">// Request — include any subset</span>
+{
+  chatgptKey:  <span class="hl-y">"sk-..."</span>,
+  claudeKey:   <span class="hl-y">"sk-ant-..."</span>,
+  deepseekKey: <span class="hl-y">"sk-..."</span>,
+  ollamaUrl:   <span class="hl-y">"http://localhost:11434"</span>
+}
+
+<span class="comment">// Response 200</span>
+{ ok: true, configured: ["chatgptKey", "deepseekKey"] }</code></pre>
+  </div></div>
+
+  <!-- ── FULL TABLE ─────────────────────────────────────────── -->
+  <h3>COMPLETE ENDPOINT TABLE</h3>
+  <div class="card"><div class="card-body">
+    <table>
+      <tr><th>METHOD</th><th>PATH</th><th>PURPOSE</th><th>RESPONSE</th></tr>
+      <tr><td><span class="hl-g">POST</span></td><td><code>/guardian/handshake</code></td><td>Register + receive token</td><td>200 {token, version, instanceId}</td></tr>
+      <tr><td><span class="hl-g">POST</span></td><td><code>/guardian/heartbeat</code></td><td>Refresh token TTL</td><td>200 {ok, ttl}</td></tr>
+      <tr><td><span class="hl-c">GET</span></td><td><code>/guardian/status</code></td><td>Connection state + sessions + nodes</td><td>200 {connected, sessions, nodes}</td></tr>
+      <tr><td><span class="hl-g">POST</span></td><td><code>/guardian/agent-hook</code></td><td>Map agentId → calltoId</td><td>200 {ok, agentId, calltoId}</td></tr>
+      <tr><td><span class="hl-c">GET</span></td><td><code>/guardian/agent-hooks</code></td><td>All agent hooks</td><td>200 {agentId: {calltoId, intent}}</td></tr>
+      <tr><td><span class="hl-g">POST</span></td><td><code>/pulse</code></td><td>IR layer heartbeat pulse</td><td>200 {ok, version, ts}</td></tr>
+      <tr><td><span class="hl-c">GET</span></td><td><code>/pulse</code></td><td>Probe only</td><td>200 {ok, version, ts}</td></tr>
+      <tr><td><span class="hl-g">POST</span></td><td><code>/ingest</code></td><td>IR layer causal event ingest</td><td>202 {ok, ingested}</td></tr>
+      <tr><td><span class="hl-g">POST</span></td><td><code>/userscript/callto</code></td><td>Register callto</td><td>200 {ok}</td></tr>
+      <tr><td><span class="hl-c">GET</span></td><td><code>/userscript/callto</code></td><td>All calltos</td><td>200 {calltos: [...]}</td></tr>
+      <tr><td><span class="hl-g">POST</span></td><td><code>/userscript/callto/:id/exec</code></td><td>Execute callto action</td><td>200 {ok}</td></tr>
+      <tr><td><span class="hl-g">POST</span></td><td><code>/bus/emit</code></td><td>Emit to all SSE subscribers</td><td>200 {ok, emitted}</td></tr>
+      <tr><td><span class="hl-c">GET</span></td><td><code>/events</code></td><td>SSE event stream</td><td>text/event-stream</td></tr>
+      <tr><td><span class="hl-g">POST</span></td><td><code>/v1/messages</code></td><td>AI routing (guardian|ollama|api)</td><td>200 sync / 202 guardian async</td></tr>
+      <tr><td><span class="hl-c">GET</span></td><td><code>/health</code></td><td>Bridge health + version + uptime</td><td>200 {ok, version, ts, uptime, memory}</td></tr>
+      <tr><td><span class="hl-c">GET</span></td><td><code>/log</code></td><td>Recent bridge log entries</td><td>200 [{ts, level, msg}]</td></tr>
+      <tr><td><span class="hl-g">POST</span></td><td><code>/config</code></td><td>Set API keys + model URLs</td><td>200 {ok, configured}</td></tr>
+    </table>
+  </div></div>
+
+  <!-- ================================================================
+       CHAPTER 17 — INTEGRATION GUIDE FOR EXTERNAL PROJECTS
+       ================================================================ -->
+  <h2><span class="ch-num">17</span>INTEGRATION GUIDE — EXTERNAL PROJECTS</h2>
+  <p class="section-sub">BrainOS · Causal Nexus · Eravors · Forge · any system</p>
+
+  <div class="callout rule">
+    <div class="callout-icon">⟁</div>
+    <div class="callout-body">
+      <div class="callout-title">INTEGRATION PATTERN (ALL SYSTEMS)</div>
+      <strong style="color:var(--g)">1. HANDSHAKE</strong> — POST /guardian/handshake → get token<br>
+      <strong style="color:var(--g)">2. PULSE</strong> — POST /pulse every 1.5s → stay visible in mesh<br>
+      <strong style="color:var(--g)">3. SUBSCRIBE</strong> — GET /events → receive all events<br>
+      <strong style="color:var(--g)">4. DISPATCH</strong> — POST /v1/messages {provider:'guardian'} → route through browser AI<br>
+      <strong style="color:var(--g)">5. HOOK</strong> — POST /guardian/agent-hook → wire agentId to calltoId
+    </div>
+  </div>
+
+  <h3>COMPLETE INTEGRATION SNIPPET (copy-paste ready)</h3>
+  <div class="card m"><div class="card-head">JS — works in browser, Node.js, BrainOS, Electron</div><div class="card-body">
+    <pre><code><span class="comment">// Guardian Bridge Client — paste into any project</span>
+const BRIDGE = 'http://127.0.0.1:3747';
+const CLIENT_ID = 'myapp-' + crypto.randomUUID();
+
+<span class="comment">// 1. Handshake</span>
+async function bridgeHandshake() {
+  const r = await fetch(BRIDGE + '/guardian/handshake', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      instanceId:   CLIENT_ID,
+      logicalId:    <span class="hl-y">'myapp'</span>,
+      capabilities: [<span class="hl-y">'read','write'</span>],
+      version:      <span class="hl-y">'1.0.0'</span>
+    })
+  });
+  const d = await r.json();
+  console.log('Bridge v' + d.version + ' · token:', d.token?.slice(0,12) + '...');
+  return d.token;
+}
+
+<span class="comment">// 2. Pulse loop</span>
+function startPulse(token) {
+  return setInterval(async () => {
+    await fetch(BRIDGE + '/pulse', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json',
+                 'X-Guardian-Token': token },
+      body: JSON.stringify({ instanceId: CLIENT_ID, logicalId: 'myapp',
+                             status: 'online', ts: Date.now() })
+    });
+  }, 1500);
+}
+
+<span class="comment">// 3. Subscribe to events</span>
+function subscribeEvents(onEvent) {
+  const evs = new EventSource(BRIDGE + '/events');
+  evs.onmessage = e => { try { onEvent(JSON.parse(e.data)); } catch(_) {} };
+  evs.onerror   = () => { evs.close(); setTimeout(() => subscribeEvents(onEvent), 3000); };
+  return evs;
+}
+
+<span class="comment">// 4. Send a message through Guardian (no API key needed)</span>
+async function sendViaGuardian(agentId, text) {
+  const r = await fetch(BRIDGE + '/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      provider: 'guardian',
+      agentId,                    <span class="comment">// chatgpt|claude|deepseek|gemini</span>
+      messages: [{ role: 'user', content: text }],
+      intent: 'chat'
+    })
+  });
+  if (r.status === 202) {
+    console.log('Dispatched — response arrives via /events guardian.link.event');
+    <span class="comment">// Listen for: { type: 'guardian.link.event', text: '...' }</span>
+  } else {
+    const d = await r.json();
+    throw new Error(d.hint || d.error || 'HTTP ' + r.status);
+  }
+}
+
+<span class="comment">// 5. Bootstrap</span>
+(async () => {
+  const token = await bridgeHandshake();
+  const pulseTimer = startPulse(token);
+
+  subscribeEvents(d => {
+    if (d.type === 'guardian.link.event') {
+      console.log('AI response:', d.text);
+    }
+    if (d.type === 'guardian.callto.captured') {
+      console.log('New callto:', d.selector, 'on', d.url);
+    }
+  });
+
+  await sendViaGuardian('chatgpt', 'Hello from my project!');
+})();</code></pre>
+  </div></div>
+
+  <h3>INSTANCEID FORMATS</h3>
+  <div class="card"><div class="card-body">
+    <table>
+      <tr><th>SYSTEM</th><th>FORMAT</th><th>EXAMPLE</th></tr>
+      <tr><td>Guardian extension</td><td><code>guardian-{uuid}</code></td><td><code>guardian-6f5a028e-4589-43f3-9a61</code></td></tr>
+      <tr><td>NEXUS</td><td><code>nexus-{uuid}</code></td><td><code>nexus-3000b1c2-0669-4d5a-a9b4</code></td></tr>
+      <tr><td>BrainOS</td><td><code>brainos-{uuid}</code></td><td><code>brainos-a1b2c3d4-0669-4d5a-a9b4</code></td></tr>
+      <tr><td>Causal Nexus</td><td><code>causal-{uuid}</code></td><td><code>causal-e9f8a7b6-0669-4d5a-a9b4</code></td></tr>
+      <tr><td>Eravors</td><td><code>eravors-{uuid}</code></td><td><code>eravors-f1e2d3c4-0669-4d5a-a9b4</code></td></tr>
+      <tr><td>Forge</td><td><code>forge-{uuid}</code></td><td><code>forge-b5c6d7e8-0669-4d5a-a9b4</code></td></tr>
+      <tr><td>Custom</td><td><code>{prefix}-{uuid}</code></td><td>Prefix is the display name in mesh</td></tr>
+    </table>
+    <p>The first 8 chars of the UUID segment become the <strong>shortId</strong> displayed on BrainOS canvas nodes (e.g. <code>6f5a028e</code>). Copy it from the right-click menu to share with other systems for cross-reference.</p>
+  </div></div>
+
+  <h3>GUARDIAN ROUTING — HOW IT WORKS</h3>
+  <div class="card"><div class="card-body">
+    <pre><code>Your project               Bridge               Guardian (Firefox)
+    |                          |                        |
+    |-- POST /v1/messages  --> |                        |
+    |   {provider:'guardian'   |                        |
+    |    agentId:'chatgpt'     |                        |
+    |    messages:[...]}       |                        |
+    |                          |-- SSE guardian:ai:request -->|
+    |&lt;-- 202 dispatched -------|                        |
+    |                          |    [Guardian types text into ChatGPT tab]
+    |                          |    [ChatGPT responds]
+    |                          |    [Guardian listener captures response]
+    |                          |&lt;-- POST /ingest guardian.link.event --|
+    |                          |-- SSE guardian.link.event --> all subscribers
+    |&lt;-- SSE guardian.link.event (text: "ChatGPT response text")</code></pre>
+  </div></div>
+
+  <h3>CAUSAL NEXUS INTEGRATION</h3>
+  <div class="card"><div class="card-body">
+    <p>Causal Nexus (the causal event engine) connects to the bridge via the adapter module. The bridge SSE stream maps to URCK kernel ingestion:</p>
+    <pre><code><span class="comment">// In your Causal Nexus adapter</span>
+import { createKernel, createAdapter } from 'causal-nexus';
+
+const kernel  = createKernel();
+const adapter = createAdapter(kernel);
+
+const evs = new EventSource('http://127.0.0.1:3747/events');
+evs.onmessage = e => {
+  const d = JSON.parse(e.data);
+  <span class="comment">// Translate bridge events to URCK ingestion</span>
+  if (d.type.startsWith('guardian.callto')) {
+    kernel.ingest('guardian:callto:captured', d, 'bridge');
+  }
+  if (d.type === 'guardian.link.event') {
+    kernel.ingest('guardian:response:captured',
+      { text: d.text, agentId: d.agentId }, 'bridge');
+  }
+};
+
+<span class="comment">// CQL query: find all captured responses in the last 100 ticks</span>
+<span class="comment">// FIND events WHERE type = 'guardian:response:captured' LIMIT 20</span></code></pre>
+  </div></div>
+
+  <h3>ADDING A NEW ENDPOINT — 6 STEPS</h3>
+  <div class="card"><div class="card-body">
+    <table>
+      <tr><th>STEP</th><th>FILE</th><th>WHAT TO ADD</th></tr>
+      <tr><td>1</td><td><code>bridge/nexus-bridge-server.js</code></td><td>Handler in the routing block (find <code>parts[0]==='guardian'</code>)</td></tr>
+      <tr><td>2</td><td><code>src/ui/nexus-guardian.js</code></td><td>Fetch function + <code>window.myFn = myFn;</code> export</td></tr>
+      <tr><td>3</td><td><code>nexus.html</code></td><td>Diag row in <code>#nx-dp-guardian</code> with <code>guardianDiagRun('my-test')</code></td></tr>
+      <tr><td>4</td><td><code>guardian-docs.html</code></td><td>Add row to endpoint table + request/response snippet</td></tr>
+      <tr><td>5</td><td><code>tests/run-all.js</code></td><td>Test the new endpoint</td></tr>
+      <tr><td>6</td><td><code>CHANGELOG.md</code></td><td>Entry in current version block</td></tr>
+    </table>
+  </div></div>
+
+<div class="footer">
+  <span>GUARDIAN v3.4.0 · Bridge v3.11.0 · NEXUS v0.51.0 · URCK v4.1.0 · IR Resolver v1.0.0 · Firefox MV2</span>
+  <span>bridge :3747 · all endpoints localhost · SSE /events · guardian-{uuid} instanceId format</span>
+</div>
+
+</div>
+</body>
+</html>

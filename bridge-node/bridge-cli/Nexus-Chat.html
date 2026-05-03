@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>NEXUS CHAT — P2P · AI · Collaboration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* NEXUS CHAT — UUID: nexus-chat-module-v1000-0000-000000000001 */
+:root {
+  --bg:#05080f;--bg1:#080d17;--bg2:#0b1120;--bg3:#0e1628;
+  --border:#1a2a40;--bord2:#1e3050;--bord3:#2a4060;
+  --c:#00d4ff;--c2:#0097bb;--c3:#006f8a;
+  --g:#00ff88;--g2:#00bb66;
+  --r:#ff2d55;--r2:#bb2240;
+  --y:#ffcc00;--o:#ff6b35;
+  --m:#cc44ff;--m2:#8822cc;
+  --text:#b8cfe0;--text2:#5a7a96;--text3:#2e4a60;--text4:#1a2e42;
+  --mono:'DM Mono',monospace;--display:'Bebas Neue',sans-serif;
+  --body:'Space Grotesk',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--mono);font-size:11px;
+  display:flex;flex-direction:column;
+  user-select:none;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,.006) 2px,rgba(0,212,255,.006) 4px);
+  animation:scan 16s linear infinite;
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 10% 0%,rgba(0,212,255,.06) 0%,transparent 55%),
+    radial-gradient(ellipse at 90% 100%,rgba(204,68,255,.05) 0%,transparent 50%);
+}
+@keyframes scan{0%{background-position-y:0}100%{background-position-y:80px}}
+#ptcl{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.4;}
+.z2{position:relative;z-index:2;}
+
+/* ── TOP BAR ─────────────────────────────────────────────────────────────── */
+.bar{
+  position:relative;z-index:10;flex-shrink:0;
+  display:flex;align-items:center;gap:10px;
+  padding:0 14px;height:44px;
+  background:var(--bg1);border-bottom:1px solid var(--bord2);
+}
+.bar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--c3),transparent);}
+.logo{font-family:var(--display);font-size:20px;letter-spacing:.25em;color:var(--c);}
+.logo em{color:var(--m);font-style:normal;}
+.bstat{display:flex;flex-direction:column;align-items:center;min-width:36px;}
+.bstat-v{font-size:13px;font-weight:700;font-family:var(--mono);line-height:1;}
+.bstat-l{font-size:6px;letter-spacing:.12em;color:var(--text3);margin-top:1px;}
+.sep{width:1px;height:24px;background:var(--bord2);flex-shrink:0;}
+.hbtn{
+  font-size:8px;letter-spacing:.12em;color:var(--c);
+  border:1px solid var(--c3);padding:4px 10px;border-radius:1px;
+  background:rgba(0,212,255,.06);cursor:pointer;transition:all .2s;
+}
+.hbtn:hover{background:rgba(0,212,255,.14);}
+.hbtn.g{color:var(--g);border-color:var(--g2);background:rgba(0,255,136,.06);}
+.hbtn.g:hover{background:rgba(0,255,136,.14);}
+.hbtn.m{color:var(--m);border-color:var(--m2);background:rgba(204,68,255,.06);}
+.hbtn.m:hover{background:rgba(204,68,255,.14);}
+.hbtn.r{color:var(--r);border-color:var(--r2);background:rgba(255,45,85,.06);}
+
+/* ── CHANNEL LIST ────────────────────────────────────────────────────────── */
+.sidebar{
+  width:200px;flex-shrink:0;
+  background:var(--bg1);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+}
+.sidebar-head{
+  font-family:var(--display);font-size:9px;letter-spacing:.2em;
+  color:var(--text3);padding:10px 12px 6px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ch-list{flex:1;overflow-y:auto;padding:4px;}
+.ch-list::-webkit-scrollbar{width:2px;}
+.ch-list::-webkit-scrollbar-thumb{background:var(--bord2);}
+.ch-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:2px;cursor:pointer;
+  border:1px solid transparent;margin-bottom:1px;transition:all .2s;
+}
+.ch-item:hover{border-color:var(--border);background:var(--bg2);}
+.ch-item.act{border-color:var(--bord2);background:var(--bg2);}
+.ch-dot{width:7px;height:7px;border-radius:50%;background:var(--text4);flex-shrink:0;}
+.ch-dot.online{background:var(--g);box-shadow:0 0 5px var(--g);}
+.ch-dot.ai{background:var(--m);box-shadow:0 0 5px var(--m);}
+.ch-dot.p2p{background:var(--c);box-shadow:0 0 5px var(--c);}
+.ch-name{font-size:9px;letter-spacing:.08em;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ch-badge{font-size:7px;color:var(--y);font-family:var(--mono);}
+.ch-section{font-size:7px;letter-spacing:.15em;color:var(--text4);padding:8px 10px 3px;text-transform:uppercase;}
+.sidebar-actions{padding:8px;display:flex;gap:4px;border-top:1px solid var(--border);}
+.sidebar-actions .hbtn{flex:1;text-align:center;padding:4px;font-size:7px;}
+
+/* ── MAIN AREA ───────────────────────────────────────────────────────────── */
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:2;}
+
+/* Channel header */
+.ch-header{
+  display:flex;align-items:center;gap:10px;
+  padding:0 14px;height:40px;
+  background:var(--bg1);border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.ch-title{font-family:var(--display);font-size:14px;letter-spacing:.15em;color:var(--text);}
+.ch-desc{font-size:8px;color:var(--text3);letter-spacing:.08em;}
+.ch-header-actions{margin-left:auto;display:flex;gap:6px;}
+
+/* Messages */
+.msg-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
+.msg-area::-webkit-scrollbar{width:3px;}
+.msg-area::-webkit-scrollbar-thumb{background:var(--bord2);}
+
+.msg{display:flex;gap:10px;animation:msgIn .2s ease;}
+@keyframes msgIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.msg.self{flex-direction:row-reverse;}
+.msg-avatar{
+  width:28px;height:28px;border-radius:50%;border:1px solid var(--bord2);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:11px;background:var(--bg2);
+}
+.msg-avatar.ai  {border-color:var(--m);background:rgba(204,68,255,.1);color:var(--m);}
+.msg-avatar.self{border-color:var(--c);background:rgba(0,212,255,.1);color:var(--c);}
+.msg-avatar.peer{border-color:var(--g);background:rgba(0,255,136,.1);color:var(--g);}
+.msg-body{display:flex;flex-direction:column;gap:3px;max-width:72%;}
+.msg.self .msg-body{align-items:flex-end;}
+.msg-meta{font-size:7px;letter-spacing:.1em;color:var(--text3);display:flex;gap:6px;}
+.msg.self .msg-meta{flex-direction:row-reverse;}
+.msg-name{color:var(--text2);}
+.msg-time{color:var(--text4);}
+.msg-bubble{
+  background:var(--bg2);border:1px solid var(--border);
+  padding:9px 13px;border-radius:2px;
+  font-family:var(--body);font-size:12px;line-height:1.6;
+  color:var(--text);white-space:pre-wrap;word-break:break-word;
+}
+.msg.self .msg-bubble{background:rgba(0,212,255,.08);border-color:var(--bord2);}
+.msg-bubble.ai{background:rgba(204,68,255,.07);border-color:rgba(204,68,255,.2);}
+.msg-bubble.system{
+  background:rgba(0,212,255,.05);border-color:rgba(0,212,255,.15);
+  font-size:10px;color:var(--text3);font-family:var(--mono);
+  max-width:100%;
+}
+.msg-bubble code{
+  background:var(--bg3);padding:1px 4px;border-radius:1px;
+  font-family:var(--mono);font-size:10px;color:var(--y);
+}
+.msg-bubble pre{
+  background:var(--bg3);padding:8px;border-radius:2px;
+  font-family:var(--mono);font-size:10px;color:var(--text2);
+  overflow-x:auto;margin:6px 0;border:1px solid var(--border);
+}
+.streaming-cursor{border-right:2px solid var(--m);animation:blink .7s step-end infinite;display:inline;}
+@keyframes blink{50%{border-color:transparent}}
+
+/* Typing indicator */
+.typing-indicator{
+  display:flex;gap:3px;padding:8px 12px;
+  align-items:center;font-size:8px;color:var(--text3);
+  letter-spacing:.08em;
+}
+.typing-dot{width:4px;height:4px;border-radius:50%;background:var(--text3);animation:tdot 1.4s ease infinite;}
+.typing-dot:nth-child(2){animation-delay:.2s;}
+.typing-dot:nth-child(3){animation-delay:.4s;}
+@keyframes tdot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+
+/* ── INPUT AREA ──────────────────────────────────────────────────────────── */
+.input-area{
+  padding:10px 14px;background:var(--bg1);
+  border-top:1px solid var(--border);flex-shrink:0;
+}
+.input-command-hint{
+  font-size:7px;color:var(--text4);letter-spacing:.08em;
+  padding:3px 0 5px;display:flex;gap:10px;
+}
+.cmd-hint{color:var(--c3);cursor:pointer;transition:color .2s;}
+.cmd-hint:hover{color:var(--c);}
+.input-row{display:flex;gap:8px;align-items:flex-end;}
+.msg-input{
+  flex:1;background:var(--bg2);border:1px solid var(--bord2);
+  color:var(--text);font-family:var(--body);font-size:13px;
+  padding:9px 12px;border-radius:2px;resize:none;
+  min-height:44px;max-height:120px;line-height:1.5;
+  transition:border-color .2s;
+}
+.msg-input:focus{outline:none;border-color:var(--c);box-shadow:0 0 12px rgba(0,212,255,.1);}
+.msg-input::placeholder{color:var(--text4);}
+.send-btn{
+  padding:9px 16px;background:rgba(0,212,255,.12);color:var(--c);
+  border:1px solid var(--c3);border-radius:1px;cursor:pointer;
+  font-family:var(--display);font-size:10px;letter-spacing:.15em;
+  transition:all .2s;align-self:flex-end;
+}
+.send-btn:hover{background:rgba(0,212,255,.22);}
+.send-btn:disabled{opacity:.3;cursor:default;}
+.input-meta{
+  display:flex;align-items:center;gap:10px;margin-top:6px;
+  font-size:7px;color:var(--text3);letter-spacing:.08em;
+}
+.input-mode{
+  padding:2px 8px;border-radius:8px;font-size:7px;letter-spacing:.1em;
+  border:1px solid var(--border);cursor:pointer;transition:all .2s;
+}
+.input-mode.chat{color:var(--g);border-color:var(--g2);}
+.input-mode.ai{color:var(--m);border-color:var(--m2);}
+.input-mode.cmd{color:var(--y);border-color:var(--y);}
+
+/* ── RIGHT PANEL ─────────────────────────────────────────────────────────── */
+.rpanel{
+  width:260px;flex-shrink:0;
+  background:var(--bg1);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+}
+.rp-tabs{display:flex;border-bottom:1px solid var(--border);}
+.rptab{
+  flex:1;text-align:center;font-size:7px;letter-spacing:.15em;
+  color:var(--text3);padding:8px 4px;cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .2s;
+}
+.rptab:hover{color:var(--text2);}
+.rptab.act{color:var(--c);border-bottom-color:var(--c);}
+.rp-body{flex:1;overflow-y:auto;display:none;}
+.rp-body.act{display:block;}
+.rp-body::-webkit-scrollbar{width:2px;}
+.rp-body::-webkit-scrollbar-thumb{background:var(--bord2);}
+.psec{padding:10px 12px;border-bottom:1px solid var(--border);}
+.plabel{font-size:7px;letter-spacing:.15em;color:var(--text3);margin-bottom:6px;}
+.peer-item{
+  display:flex;align-items:center;gap:8px;
+  padding:5px 0;border-bottom:1px solid rgba(255,255,255,.03);
+}
+.peer-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.peer-name{font-size:9px;color:var(--text);flex:1;}
+.peer-status{font-size:7px;color:var(--text3);}
+.idea-item{
+  padding:7px 8px;border:1px solid var(--border);border-radius:1px;
+  margin-bottom:4px;cursor:pointer;transition:all .2s;
+}
+.idea-item:hover{border-color:var(--bord2);}
+.idea-text{font-size:10px;color:var(--text);line-height:1.5;font-family:var(--body);}
+.idea-meta{font-size:7px;color:var(--text3);margin-top:3px;}
+.file-item{
+  display:flex;align-items:center;gap:8px;padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;
+}
+.file-icon{font-size:14px;flex-shrink:0;}
+.file-name{font-size:9px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.file-size{font-size:7px;color:var(--text3);}
+
+/* ── P2P STATUS ──────────────────────────────────────────────────────────── */
+.p2p-status{
+  display:flex;align-items:center;gap:6px;
+  padding:4px 8px;border-radius:1px;
+  background:var(--bg2);border:1px solid var(--border);
+  font-size:8px;color:var(--text3);
+}
+.p2p-dot{width:6px;height:6px;border-radius:50%;background:var(--text4);}
+.p2p-dot.connected{background:var(--g);box-shadow:0 0 5px var(--g);}
+.p2p-dot.connecting{background:var(--y);animation:pulse .8s ease infinite;}
+@keyframes pulse{50%{opacity:.4}}
+
+/* ── MODALS ──────────────────────────────────────────────────────────────── */
+.overlay{position:fixed;inset:0;background:rgba(5,8,15,.85);z-index:100;display:none;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--bord2);border-radius:2px;width:480px;max-height:80vh;overflow-y:auto;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.8);}
+.modal-title{font-family:var(--display);font-size:16px;letter-spacing:.15em;color:var(--c);margin-bottom:14px;}
+.modal-actions{display:flex;gap:8px;margin-top:14px;justify-content:flex-end;}
+.mfield{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.mlabel{font-size:7px;letter-spacing:.12em;color:var(--text3);}
+.minput{
+  background:var(--bg1);border:1px solid var(--border);color:var(--text);
+  padding:6px 10px;font-family:var(--mono);font-size:10px;border-radius:1px;
+}
+.minput:focus{outline:none;border-color:var(--c);}
+.mcode{
+  background:var(--bg3);border:1px solid var(--border);color:var(--y);
+  padding:10px;font-family:var(--mono);font-size:11px;border-radius:1px;
+  word-break:break-all;cursor:pointer;letter-spacing:.05em;
+}
+
+/* ── TOAST ───────────────────────────────────────────────────────────────── */
+#toasts{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:4px;align-items:center;}
+.t{font-size:9px;letter-spacing:.1em;padding:5px 14px;border-radius:1px;background:var(--bg2);border:1px solid var(--bord2);color:var(--text2);animation:tin .2s ease,tout .3s 2.7s ease forwards;white-space:nowrap;}
+.t.g{border-color:var(--g2);color:var(--g);}
+.t.r{border-color:var(--r2);color:var(--r);}
+.t.m{border-color:var(--m2);color:var(--m);}
+@keyframes tin{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes tout{to{opacity:0}}
+
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bord3);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<canvas id="ptcl"></canvas>
+
+<!-- TOP BAR -->
+<div class="bar">
+  <div class="logo">NEXUS<em>CHAT</em></div>
+  <div class="sep"></div>
+  <div class="bstat"><div class="bstat-v" style="color:var(--g)" id="stat-online">0</div><div class="bstat-l">ONLINE</div></div>
+  <div class="bstat"><div class="bstat-v" style="color:var(--m)" id="stat-ai">0</div><div class="bstat-l">AI SESSIONS</div></div>
+  <div class="bstat"><div class="bstat-v" style="color:var(--c)" id="stat-p2p">0</div><div class="bstat-l">P2P PEERS</div></div>
+  <div class="bstat"><div class="bstat-v" style="color:var(--y)" id="stat-ideas">0</div><div class="bstat-l">IDEAS</div></div>
+  <div class="sep"></div>
+  <div class="p2p-status" id="p2p-status">
+    <div class="p2p-dot" id="p2p-dot"></div>
+    <span id="p2p-label">NOT CONNECTED</span>
+  </div>
+  <div class="sep"></div>
+  <button class="hbtn" onclick="showJoinModal()">⌁ JOIN ROOM</button>
+  <button class="hbtn g" onclick="showCreateModal()">＋ CREATE ROOM</button>
+  <button class="hbtn m" onclick="toggleAIMode()">⬡ AI MODE</button>
+  <div style="margin-left:4px;font-size:8px;color:var(--text3);letter-spacing:.08em" id="bridge-label">bridge:3747</div>
+  <div style="display:flex;align-items:center;gap:5px;padding:3px 8px;border:1px solid var(--border);border-radius:1px;background:var(--bg2)">
+    <div id="ollama-dot" style="width:6px;height:6px;border-radius:50%;background:var(--text4);transition:all .4s;flex-shrink:0"></div>
+    <span id="ollama-transport-label" style="font-size:7px;letter-spacing:.1em;color:var(--text3)">⬡ OLLAMA·PROBE</span>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div style="flex:1;display:flex;overflow:hidden;position:relative;z-index:2">
+
+  <!-- CHANNEL LIST -->
+  <div class="sidebar">
+    <div class="sidebar-head">
+      CHANNELS
+      <button class="hbtn" onclick="showCreateChannel()" style="font-size:7px;padding:2px 6px">＋</button>
+    </div>
+    <div class="ch-list">
+      <div class="ch-section">GENERAL</div>
+      <div id="ch-list-general"></div>
+      <div class="ch-section">AI SESSIONS</div>
+      <div id="ch-list-ai"></div>
+      <div class="ch-section">P2P ROOMS</div>
+      <div id="ch-list-p2p"></div>
+    </div>
+    <div class="sidebar-actions">
+      <button class="hbtn" onclick="downloadCurrentLog()" style="font-size:7px;padding:4px">↓ EXPORT</button>
+      <button class="hbtn m" onclick="showSettings()" style="font-size:7px;padding:4px">⚙</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-area">
+    <div class="ch-header">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div class="ch-title" id="ch-title">GENERAL</div>
+        <div class="ch-desc" id="ch-desc">Local channel · Not encrypted</div>
+      </div>
+      <div class="ch-header-actions">
+        <button class="hbtn" id="capture-btn" onclick="toggleDownloadCapture()">⊙ CAPTURE OFF</button>
+        <button class="hbtn m" onclick="showIdeasPanel()">◈ IDEAS</button>
+        <button class="hbtn" onclick="shareFile()">↑ FILE</button>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="msg-area" id="msg-area">
+      <div class="msg">
+        <div class="msg-avatar">⬢</div>
+        <div class="msg-body">
+          <div class="msg-meta"><span class="msg-name">NEXUS</span><span class="msg-time">now</span></div>
+          <div class="msg-bubble system">
+          NEXUS CHAT — P2P · AI · Collaboration<br>
+            <br>
+            AI backend: <code>Ollama direct</code> — HTTP primary, WebSocket fallback<br>
+            Default endpoint: <code>http://0.0.0.0:11434</code> · Change in ⚙ Settings<br>
+            Start Ollama: <code>ollama serve</code> then <code>ollama pull llama3</code><br>
+            <br>
+            Commands: <code>/ai</code> — AI mode &nbsp;|&nbsp; <code>/join [room]</code> — join room &nbsp;|&nbsp; <code>/create</code> — new room<br>
+            <code>/idea [text]</code> — save idea &nbsp;|&nbsp; <code>/share</code> — share file &nbsp;|&nbsp; <code>/download</code> — capture downloads<br>
+            <code>/clear</code> — clear chat &nbsp;|&nbsp; <code>/export</code> — download log
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TYPING AREA -->
+    <div id="typing-area" style="padding:0 16px 4px;display:none">
+      <div class="typing-indicator">
+        <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+        <span id="typing-label" style="margin-left:4px">AI is writing</span>
+      </div>
+    </div>
+
+    <!-- INPUT -->
+    <div class="input-area">
+      <div class="input-command-hint">
+        <span class="cmd-hint" onclick="insertCmd('/ai ')">/ai [msg]</span>
+        <span class="cmd-hint" onclick="insertCmd('/idea ')">/idea [text]</span>
+        <span class="cmd-hint" onclick="insertCmd('/join ')">/join [room]</span>
+        <span class="cmd-hint" onclick="insertCmd('/share')">/share</span>
+        <span class="cmd-hint" onclick="insertCmd('/export')">/export</span>
+        <span class="cmd-hint" onclick="insertCmd('/cmd ')" style="color:var(--g)">/cmd [type] [sel] [val]</span>
+        <span style="margin-left:auto" id="ai-provider-label"></span>
+      </div>
+      <div class="input-row">
+        <textarea class="msg-input" id="msg-input"
+                  placeholder="Message… or /ai to talk to AI"
+                  rows="1"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">SEND</button>
+      </div>
+      <div class="input-meta">
+        <div class="input-mode chat" id="mode-badge" onclick="toggleAIMode()">CHAT MODE</div>
+        <span id="encrypt-label" style="color:var(--text4)">not encrypted</span>
+        <span style="margin-left:auto;color:var(--text4)" id="char-count"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="rpanel">
+    <div class="rp-tabs">
+      <div class="rptab act" onclick="setRTab('peers',this)">PEERS</div>
+      <div class="rptab" onclick="setRTab('ideas',this)">IDEAS</div>
+      <div class="rptab" onclick="setRTab('files',this)">FILES</div>
+      <div class="rptab" onclick="setRTab('log',this)">LOG</div>
+      <div class="rptab" onclick="setRTab('cmd',this)" style="color:var(--g)">CMD</div>
+    </div>
+
+    <!-- PEERS -->
+    <div class="rp-body act" id="rt-peers">
+      <div class="psec">
+        <div class="plabel">ROOM: <span id="room-id-display" style="color:var(--c)">NONE</span></div>
+        <div id="peer-list"><div style="color:var(--text4);font-size:8px;padding:8px 0">no peers in room</div></div>
+      </div>
+      <div class="psec">
+        <div class="plabel">MY IDENTITY</div>
+        <div style="font-size:9px;color:var(--text2);font-family:var(--mono)" id="my-id-display">—</div>
+      </div>
+      <div class="psec" style="border:none">
+        <div class="plabel">AI PROVIDER</div>
+        <div style="font-size:9px;color:var(--m)" id="ai-provider-display">not connected</div>
+        <div style="font-size:7px;color:var(--text3);margin-top:4px" id="ai-model-display"></div>
+      </div>
+    </div>
+
+    <!-- IDEAS -->
+    <div class="rp-body" id="rt-ideas">
+      <div class="psec" style="display:flex;align-items:center;justify-content:space-between">
+        <div class="plabel">IDEA TRACKER</div>
+        <button onclick="downloadIdeas()" style="font-size:7px;border:1px solid var(--bord2);color:var(--text2);background:transparent;cursor:pointer;padding:2px 6px;font-family:var(--mono)">↓</button>
+      </div>
+      <div style="padding:6px 12px" id="idea-list">
+        <div style="color:var(--text4);font-size:8px;padding:8px 0">no ideas yet<br>type /idea [text] to save one</div>
+      </div>
+    </div>
+
+    <!-- FILES -->
+    <div class="rp-body" id="rt-files">
+      <div class="psec" style="display:flex;align-items:center;justify-content:space-between">
+        <div class="plabel">SHARED FILES</div>
+        <button onclick="shareFile()" style="font-size:7px;border:1px solid var(--bord2);color:var(--text2);background:transparent;cursor:pointer;padding:2px 6px;font-family:var(--mono)">＋</button>
+      </div>
+      <div style="padding:6px 12px" id="file-list">
+        <div style="color:var(--text4);font-size:8px;padding:8px 0">no files shared</div>
+      </div>
+    </div>
+
+    <!-- LOG -->
+    <div class="rp-body" id="rt-log">
+      <div class="psec" style="display:flex;align-items:center;justify-content:space-between">
+        <div class="plabel">CONVERSATION LOG</div>
+        <button onclick="downloadCurrentLog()" style="font-size:7px;border:1px solid var(--bord2);color:var(--text2);background:transparent;cursor:pointer;padding:2px 6px;font-family:var(--mono)">↓</button>
+      </div>
+      <div style="padding:6px 12px;font-size:8px;color:var(--text3);font-family:var(--mono)" id="log-stats"></div>
+      <div style="padding:0 12px 12px" id="conv-list">
+        <div style="color:var(--text4);font-size:8px;padding:8px 0">no conversations saved</div>
+      </div>
+    </div>
+
+    <!-- CMD — Guardian Command Terminal -->
+    <div class="rp-body" id="rt-cmd">
+      <div class="psec" style="display:flex;align-items:center;justify-content:space-between">
+        <div class="plabel">⬡ GUARDIAN CMD BRIDGE</div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <div id="guardian-dot" style="width:6px;height:6px;border-radius:50%;background:var(--text4);flex-shrink:0"></div>
+          <span id="guardian-status-label" style="font-size:7px;color:var(--text3)">NOT CONNECTED</span>
+        </div>
+      </div>
+      <div class="psec" style="padding:6px 12px">
+        <div class="plabel" style="margin-bottom:6px">QUICK ACTIONS</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">
+          <button class="hbtn" onclick="cmdSnapshot()" style="font-size:7px;padding:3px 8px">📋 SNAP</button>
+          <button class="hbtn" onclick="cmdScrollDown()" style="font-size:7px;padding:3px 8px">↓ SCROLL</button>
+          <button class="hbtn" onclick="cmdScrollTop()" style="font-size:7px;padding:3px 8px">↑ TOP</button>
+          <button class="hbtn g" onclick="cmdActivate()" style="font-size:7px;padding:3px 8px">⚡ ACTIVATE</button>
+          <button class="hbtn r" onclick="cmdClearHistory()" style="font-size:7px;padding:3px 8px">✕ CLEAR</button>
+        </div>
+      </div>
+      <div class="psec" style="padding:6px 12px">
+        <div class="plabel" style="margin-bottom:4px">COMMAND BUILDER</div>
+        <select id="cmd-type" class="minput" style="width:100%;margin-bottom:4px;cursor:pointer;font-size:10px" onchange="cmdTypeChanged()">
+          <option value="click">click — click element</option>
+          <option value="type">type — type into input</option>
+          <option value="fill">fill — set value directly</option>
+          <option value="read">read — read element text</option>
+          <option value="navigate">navigate — go to URL</option>
+          <option value="scroll">scroll — scroll page</option>
+          <option value="snapshot">snapshot — page capture</option>
+          <option value="wait">wait — wait for element</option>
+          <option value="exists">exists — check element</option>
+          <option value="eval">eval — run JS expression</option>
+          <option value="keypress">keypress — send key event</option>
+          <option value="focus">focus — focus element</option>
+        </select>
+        <div id="cmd-selector-row" style="margin-bottom:4px">
+          <div style="font-size:7px;color:var(--text3);margin-bottom:2px">CSS SELECTOR</div>
+          <input class="minput" id="cmd-selector" placeholder="#id, .class, button[type=submit]" style="width:100%;font-size:10px"/>
+        </div>
+        <div id="cmd-value-row" style="margin-bottom:4px">
+          <div style="font-size:7px;color:var(--text3);margin-bottom:2px" id="cmd-value-label">VALUE / TEXT / URL</div>
+          <input class="minput" id="cmd-value" placeholder="value, text to type, or URL" style="width:100%;font-size:10px"/>
+        </div>
+        <button class="hbtn g" onclick="sendCmd()" style="width:100%;margin-top:2px;text-align:center">⬡ EXECUTE</button>
+      </div>
+      <div class="psec" style="padding:6px 12px">
+        <div class="plabel" style="margin-bottom:4px">MACRO (JSON array)</div>
+        <textarea id="cmd-macro" class="minput" rows="4"
+          placeholder='[{"type":"navigate","url":"https://example.com"},{"type":"snapshot"}]'
+          style="width:100%;font-size:9px;resize:vertical;font-family:var(--mono)"></textarea>
+        <button class="hbtn m" onclick="runMacro()" style="width:100%;margin-top:4px;text-align:center">▶ RUN MACRO</button>
+      </div>
+      <div class="psec" style="padding:6px 12px;border:none">
+        <div class="plabel">RESULTS</div>
+        <div id="cmd-log" style="font-size:9px;font-family:var(--mono);color:var(--text2);max-height:220px;overflow-y:auto;margin-top:4px">
+          <div style="color:var(--text4)">no commands run yet</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="join-modal">
+  <div class="modal">
+    <div class="modal-title">JOIN ROOM</div>
+    <div class="mfield"><div class="mlabel">ROOM CODE (5–12 chars)</div>
+      <input class="minput" id="join-room-id" placeholder="NEXUS-ABCDE" maxlength="20"/></div>
+    <div class="mfield"><div class="mlabel">YOUR NAME</div>
+      <input class="minput" id="join-name" placeholder="Anonymous"/></div>
+    <div class="mfield"><div class="mlabel">ENCRYPTION PASSPHRASE (optional — share with peers)</div>
+      <input class="minput" id="join-pass" type="password" placeholder="leave blank for unencrypted"/></div>
+    <div class="modal-actions">
+      <button class="hbtn" onclick="closeModal('join-modal')">CANCEL</button>
+      <button class="hbtn g" onclick="joinRoom()">JOIN ROOM</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="create-modal">
+  <div class="modal">
+    <div class="modal-title">CREATE ROOM</div>
+    <div class="mfield"><div class="mlabel">YOUR NAME</div>
+      <input class="minput" id="create-name" placeholder="Anonymous"/></div>
+    <div class="mfield"><div class="mlabel">ENCRYPTION PASSPHRASE (optional)</div>
+      <input class="minput" id="create-pass" type="password" placeholder="leave blank for unencrypted"/></div>
+    <div style="font-size:8px;color:var(--text3);margin-top:8px">A room code will be generated. Share it with peers.</div>
+    <div class="modal-actions">
+      <button class="hbtn" onclick="closeModal('create-modal')">CANCEL</button>
+      <button class="hbtn g" onclick="createRoom()">CREATE ROOM</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="room-created-modal">
+  <div class="modal">
+    <div class="modal-title">ROOM CREATED</div>
+    <div class="mfield"><div class="mlabel">ROOM CODE — share this with peers</div>
+      <div class="mcode" id="room-code-display" onclick="copyRoomCode()">—</div>
+    </div>
+    <div style="font-size:8px;color:var(--text3)">Click the code to copy. Peers use /join [code] or the JOIN ROOM button.</div>
+    <div class="modal-actions">
+      <button class="hbtn g" onclick="closeModal('room-created-modal')">START CHATTING</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="settings-modal">
+  <div class="modal">
+    <div class="modal-title">SETTINGS</div>
+    <div style="font-size:8px;color:var(--text3);margin-bottom:12px;line-height:1.7;border:1px solid var(--bord2);padding:8px;background:rgba(0,212,255,.03)">
+      ⚠ CORS required — start Ollama with:<br>
+      <span style="color:var(--y);font-family:var(--mono)">OLLAMA_ORIGINS=* ollama serve</span>
+    </div>
+    <div class="mfield"><div class="mlabel">OLLAMA URL</div>
+      <input class="minput" id="cfg-ollama" placeholder="http://localhost:11434" style="width:100%"/></div>
+    <div class="mfield"><div class="mlabel">MODEL</div>
+      <div style="display:flex;gap:6px">
+        <select class="minput" id="model-select" style="flex:1;display:none;cursor:pointer"></select>
+        <input class="minput" id="cfg-model" placeholder="llama3" style="flex:1"/>
+      </div>
+      <div style="font-size:7px;color:var(--text3);margin-top:3px" id="ai-model-hint">pull a model: ollama pull llama3</div>
+    </div>
+    <div class="mfield"><div class="mlabel">YOUR DISPLAY NAME</div>
+      <input class="minput" id="cfg-name" placeholder="Anonymous"/></div>
+    <div style="border-top:1px solid var(--border);margin:10px 0;padding-top:10px">
+      <div class="mlabel" style="margin-bottom:4px">BRIDGE URL (optional — P2P signalling only)</div>
+      <input class="minput" id="cfg-bridge" placeholder="http://127.0.0.1:3747" style="width:100%"/>
+    </div>
+    <div class="modal-actions">
+      <button class="hbtn" onclick="testOllama()">⟳ TEST CONNECTION</button>
+      <button class="hbtn" onclick="closeModal('settings-modal')">CANCEL</button>
+      <button class="hbtn g" onclick="saveSettings()">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<input type="file" id="file-input" style="display:none" multiple onchange="handleFileSelect(event)"/>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════════════════════
+// NEXUS CHAT — P2P · AI · Collaboration
+// UUID: nexus-chat-module-v1000-0000-000000000001
+//
+// Features:
+//   - WebRTC P2P encrypted rooms (AES-GCM 256-bit via WebCrypto)
+//   - Bridge signalling relay (/webrtc/offer, /webrtc/answer)
+//   - /ai command: connects to bridge AI (local-first via pulse)
+//   - /idea command: saves to idea tracker + bridge ConversationStore
+//   - /export: downloads full conversation log
+//   - /share: P2P file transfer (DataChannel binary)
+//   - Download capture: intercepts and logs link clicks
+//   - SSE streaming AI output
+//   - Conversation persistence via bridge /ai/conversations
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── State ─────────────────────────────────────────────────────────────────
+const C = {
+  bridgeUrl:   localStorage.getItem('nc_bridge')  || 'http://127.0.0.1:3747',
+  ollamaUrl:   localStorage.getItem('nc_ollama')  || 'http://localhost:11434',
+  name:        localStorage.getItem('nc_name')    || 'Anonymous',
+  provider:    localStorage.getItem('nc_prov')    || 'ollama',
+  model:       localStorage.getItem('nc_model')   || 'llama3',
+  aiMode:      false,
+  aiStreaming:  false,
+  ollamaTransport: 'none',   // 'http' | 'ws' | 'none'
+  ollamaWs:    null,         // live WebSocket handle (fallback)
+  roomId:      null,
+  roomPass:    null,
+  cryptoKey:   null,     // WebCrypto AES-GCM key derived from passphrase
+  peers:       new Map(), // peerId → { name, pc, dc, status }
+  myPeerId:    null,
+  messages:    [],        // [{role,sender,content,ts,encrypted}]
+  ideas:       JSON.parse(localStorage.getItem('nc_ideas') || '[]'),
+  files:       [],
+  convId:      null,      // bridge conversation ID
+  capturing:   false,
+  pollTimer:   null,
+  bridgeConnected: false,
+  activeChannel: 'general',
+  channels:    [
+    { id: 'general',  name: 'GENERAL',  type: 'general', desc: 'Local channel' },
+  ],
+};
+
+// ── Particles ──────────────────────────────────────────────────────────────
+(function() {
+  const cv = document.getElementById('ptcl');
+  const ctx = cv.getContext('2d');
+  const COLORS = ['#00d4ff','#cc44ff','#00ff88','#ff6b35','#ffcc00'];
+  const resize = () => { cv.width = innerWidth; cv.height = innerHeight; };
+  resize(); addEventListener('resize', resize);
+  const pts = Array.from({length:45},()=>({
+    x:Math.random()*innerWidth, y:Math.random()*innerHeight,
+    vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3,
+    r:Math.random()*1.2+.3, color:COLORS[Math.floor(Math.random()*COLORS.length)],
+    a:Math.random()*.4+.1, p:Math.random()*Math.PI*2,
+  }));
+  function draw() {
+    ctx.clearRect(0,0,cv.width,cv.height);
+    for (const p of pts) {
+      p.x+=p.vx; p.y+=p.vy; p.p+=.016;
+      if(p.x<0)p.x=cv.width; if(p.x>cv.width)p.x=0;
+      if(p.y<0)p.y=cv.height; if(p.y>cv.height)p.y=0;
+      ctx.globalAlpha=p.a*(.65+.35*Math.sin(p.p));
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color; ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+      if(d<65){ctx.globalAlpha=(1-d/65)*.1;ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=pts[i].color;ctx.lineWidth=.5;ctx.stroke();}
+    }
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── Utils ──────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const ts = () => new Date().toLocaleTimeString('en-GB',{hour12:false});
+function uid(n=8){return Math.random().toString(36).slice(2,2+n).toUpperCase();}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtSize(b){if(b<1024)return b+'B';if(b<1048576)return (b/1024).toFixed(1)+'KB';return (b/1048576).toFixed(1)+'MB';}
+function toast(msg,type=''){
+  const el=document.createElement('div');
+  el.className='t '+(type||''); el.textContent=msg;
+  $('toasts').appendChild(el); setTimeout(()=>el.remove(),3200);
+}
+
+// ── WebCrypto — AES-GCM encryption ────────────────────────────────────────
+async function deriveKey(passphrase) {
+  const enc  = new TextEncoder();
+  const raw  = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveBits','deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt:enc.encode('nexus-chat-v1'), iterations:100000, hash:'SHA-256' },
+    raw, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']
+  );
+}
+async function encrypt(key, text) {
+  const iv  = crypto.getRandomValues(new Uint8Array(12));
+  const enc = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, key, new TextEncoder().encode(text));
+  const buf = new Uint8Array(12 + enc.byteLength);
+  buf.set(iv); buf.set(new Uint8Array(enc), 12);
+  return btoa(String.fromCharCode(...buf));
+}
+async function decrypt(key, b64) {
+  const buf  = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  const iv   = buf.slice(0, 12);
+  const data = buf.slice(12);
+  const dec  = await crypto.subtle.decrypt({ name:'AES-GCM', iv }, key, data);
+  return new TextDecoder().decode(dec);
+}
+
+// ── Bridge ─────────────────────────────────────────────────────────────────
+async function bfetch(path, opts={}) {
+  const r = await fetch(C.bridgeUrl + path, {
+    headers:{'Content-Type':'application/json'},
+    signal: AbortSignal.timeout(8000), ...opts,
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+async function bpost(path,body){ return bfetch(path,{method:'POST',body:JSON.stringify(body)}); }
+
+async function connectBridge() {
+  try {
+    const h = await bfetch('/health');
+    C.bridgeConnected = true;
+    $('bridge-label').textContent = 'bridge v' + (h.version || '?');
+    $('bridge-label').style.color = 'var(--g)';
+    // Probe AI providers via bridge pulse (informational only)
+    try {
+      const pd = await bfetch('/ai/pulse');
+      const online = (pd.providers || []).filter(p => p.status === 'online');
+      if (online.length && C.ollamaTransport === 'none') {
+        $('ai-provider-display').textContent = online[0].provider + ' (via bridge)';
+      }
+    } catch {}
+  } catch {
+    C.bridgeConnected = false;
+    $('bridge-label').style.color = 'var(--r)';
+    $('bridge-label').textContent = 'bridge offline';
+  }
+}
+
+// ── WebRTC P2P ─────────────────────────────────────────────────────────────
+function rtcConfig() {
+  return {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+    ]
+  };
+}
+
+async function createRoom() {
+  const name   = $('create-name').value.trim() || 'Anonymous';
+  const pass   = $('create-pass').value;
+  C.name = name; localStorage.setItem('nc_name', name);
+  C.roomId   = uid(6);
+  C.roomPass = pass || null;
+  if (pass) C.cryptoKey = await deriveKey(pass);
+  C.myPeerId = uid(8);
+  $('my-id-display').textContent = C.myPeerId;
+  closeModal('create-modal');
+  $('room-code-display').textContent = C.roomId;
+  showModal('room-created-modal');
+  $('room-id-display').textContent = C.roomId;
+  $('encrypt-label').textContent = pass ? '🔒 AES-256-GCM' : 'not encrypted';
+  updateChannels();
+  sysMsg(`Room created: ${C.roomId}${pass ? ' (encrypted)' : ' (unencrypted)'}. Waiting for peers…`);
+  toast('Room created: ' + C.roomId, 'g');
+  // Start polling for inbound offers
+  startPeerPoll();
+}
+
+async function joinRoom() {
+  const roomId = $('join-room-id').value.trim().toUpperCase();
+  const name   = $('join-name').value.trim() || 'Anonymous';
+  const pass   = $('join-pass').value;
+  if (!roomId) { toast('Enter a room code', 'r'); return; }
+  C.name = name; localStorage.setItem('nc_name', name);
+  C.roomId   = roomId;
+  C.roomPass = pass || null;
+  if (pass) C.cryptoKey = await deriveKey(pass);
+  C.myPeerId = uid(8);
+  $('my-id-display').textContent = C.myPeerId;
+  closeModal('join-modal');
+  $('room-id-display').textContent = roomId;
+  $('encrypt-label').textContent = pass ? '🔒 AES-256-GCM' : 'not encrypted';
+  updateChannels();
+  sysMsg(`Joining room ${roomId}…`);
+  toast('Joining ' + roomId);
+  await initiateP2P(roomId);
+  startPeerPoll();
+}
+
+async function initiateP2P(roomId) {
+  if (!C.bridgeConnected) { sysMsg('Bridge not connected — P2P requires bridge for signalling'); return; }
+  const pc = new RTCPeerConnection(rtcConfig());
+  const dc = pc.createDataChannel('nexus-chat', { ordered: true });
+  const peerId = 'host-' + roomId;
+  C.peers.set(peerId, { name: 'Room', pc, dc, status: 'connecting' });
+
+  dc.onopen  = () => onPeerConnected(peerId);
+  dc.onclose = () => onPeerDisconnected(peerId);
+  dc.onmessage = e => onPeerMessage(peerId, e.data);
+
+  pc.onicecandidate = async e => {
+    if (e.candidate === null) {
+      // ICE gathering done — send offer
+      try {
+        await bpost('/webrtc/offer', { roomId, offer: pc.localDescription, from: C.myPeerId });
+        // Poll for answer
+        setTimeout(() => pollForAnswer(pc, roomId), 2000);
+      } catch { sysMsg('Signalling failed — bridge may be offline'); }
+    }
+  };
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  $('p2p-dot').className = 'p2p-dot connecting';
+  $('p2p-label').textContent = 'CONNECTING…';
+}
+
+async function pollForAnswer(pc, roomId) {
+  try {
+    const d = await bfetch('/webrtc/answer?peerId=' + encodeURIComponent(roomId));
+    if (d.ok && d.offer) {
+      await pc.setRemoteDescription(d.offer);
+    }
+  } catch {}
+}
+
+function startPeerPoll() {
+  if (C.pollTimer) clearInterval(C.pollTimer);
+  C.pollTimer = setInterval(async () => {
+    if (!C.bridgeConnected || !C.roomId) return;
+    // Check for new inbound offers
+    try {
+      const d = await bfetch('/webrtc/peers');
+      const activePeers = d.peers || [];
+      $('stat-p2p').textContent = C.peers.size;
+    } catch {}
+    // Heartbeat presence via broadcast channel
+    try {
+      await bpost('/broadcast/' + C.roomId, {
+        type: 'PRESENCE', from: C.myPeerId, name: C.name, ts: Date.now()
+      });
+    } catch {}
+  }, 10000);
+}
+
+function onPeerConnected(peerId) {
+  const peer = C.peers.get(peerId);
+  if (peer) peer.status = 'connected';
+  $('p2p-dot').className = 'p2p-dot connected';
+  $('p2p-label').textContent = 'CONNECTED · ' + C.roomId;
+  updatePeerList();
+  $('stat-p2p').textContent = C.peers.size;
+  sysMsg('Peer connected: ' + (peer?.name || peerId));
+  toast('Peer connected', 'g');
+}
+
+function onPeerDisconnected(peerId) {
+  const peer = C.peers.get(peerId);
+  C.peers.delete(peerId);
+  updatePeerList();
+  $('stat-p2p').textContent = C.peers.size;
+  sysMsg('Peer disconnected: ' + (peer?.name || peerId));
+}
+
+async function onPeerMessage(peerId, raw) {
+  let data;
+  try { data = JSON.parse(raw); } catch { return; }
+
+  if (data.type === 'CHAT') {
+    let content = data.content;
+    // Decrypt if we have a key
+    if (C.cryptoKey && data.encrypted) {
+      try { content = await decrypt(C.cryptoKey, data.content); } catch { content = '[decrypt failed]'; }
+    }
+    const peer = C.peers.get(peerId);
+    addMessage('peer', peer?.name || 'Peer', content);
+  } else if (data.type === 'FILE_OFFER') {
+    // Peer wants to send a file
+    addMessage('system', 'SYSTEM', `${data.from} wants to share: ${data.name} (${fmtSize(data.size)})`);
+  } else if (data.type === 'FILE_DATA') {
+    receiveFile(data);
+  }
+}
+
+async function sendToPeers(content) {
+  if (!C.peers.size) return false;
+  let toSend = content;
+  if (C.cryptoKey) toSend = await encrypt(C.cryptoKey, content).catch(() => content);
+  const msg = JSON.stringify({ type:'CHAT', content: toSend, encrypted:!!C.cryptoKey, from:C.myPeerId, name:C.name });
+  let sent = 0;
+  C.peers.forEach(peer => {
+    if (peer.dc?.readyState === 'open') { peer.dc.send(msg); sent++; }
+  });
+  return sent > 0;
+}
+
+// ── AI Mode — Ollama direct (same pattern as Open WebUI) ──────────────────
+// Ollama exposes a standard REST API at localhost:11434.
+// REQUIRED: set OLLAMA_ORIGINS=* before starting ollama serve
+//   Mac/Linux:  OLLAMA_ORIGINS=* ollama serve
+//   Windows:    set OLLAMA_ORIGINS=* && ollama serve
+// ──────────────────────────────────────────────────────────────────────────
+let AI_MESSAGES = [];
+let ollamaModels = [];
+
+// Fetch model list and update status pill
+async function probeOllama() {
+  setOllamaStatus('probing');
+  try {
+    const r = await fetch(C.ollamaUrl + '/api/tags', {
+      signal: AbortSignal.timeout(4000)
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    ollamaModels = (d.models || []).map(m => m.name);
+    setOllamaStatus('online');
+    // Auto-pick first available model if current setting is blank / gone
+    if (ollamaModels.length && (!C.model || !ollamaModels.includes(C.model))) {
+      C.model = ollamaModels[0];
+      localStorage.setItem('nc_model', C.model);
+    }
+    // Populate model selector dropdown if it exists
+    populateModelDropdown();
+    return true;
+  } catch (e) {
+    setOllamaStatus('offline', e.message);
+    return false;
+  }
+}
+
+function setOllamaStatus(state, detail) {
+  const dot   = $('ollama-dot');
+  const label = $('ollama-transport-label');
+  const disp  = $('ai-provider-display');
+  const modelDisp = $('ai-model-display');
+  if (state === 'online') {
+    dot.style.background  = 'var(--g)';
+    dot.style.boxShadow   = '0 0 6px var(--g)';
+    label.textContent     = '⬡ OLLAMA·LIVE';
+    label.style.color     = 'var(--g)';
+    disp.textContent      = 'ollama · ' + C.ollamaUrl;
+    if (modelDisp) modelDisp.textContent = ollamaModels.slice(0,4).join('  ·  ');
+    $('stat-ai').textContent = '1';
+  } else if (state === 'probing') {
+    dot.style.background  = 'var(--y)';
+    dot.style.boxShadow   = '0 0 5px var(--y)';
+    label.textContent     = '⬡ OLLAMA·PROBE';
+    label.style.color     = 'var(--y)';
+    disp.textContent      = 'probing…';
+    $('stat-ai').textContent = '0';
+  } else {
+    dot.style.background  = 'var(--r)';
+    dot.style.boxShadow   = 'none';
+    label.textContent     = '⬡ OLLAMA·OFFLINE';
+    label.style.color     = 'var(--r)';
+    disp.textContent      = 'offline — ' + (detail || 'check OLLAMA_ORIGINS=*');
+    $('stat-ai').textContent = '0';
+  }
+}
+
+function populateModelDropdown() {
+  const sel = $('model-select');
+  if (!sel || !ollamaModels.length) return;
+  sel.innerHTML = ollamaModels.map(m =>
+    `<option value="${m}" ${m === C.model ? 'selected' : ''}>${m}</option>`
+  ).join('');
+  sel.style.display = '';
+}
+
+// ── Main runAI — direct fetch to Ollama /api/chat (NDJSON streaming) ───────
+async function runAI(userText) {
+  if (C.aiStreaming) return;
+
+  // Ensure Ollama is reachable before committing
+  if (!ollamaModels.length) {
+    const ok = await probeOllama();
+    if (!ok) {
+      addMessage('system','SYSTEM',
+        '⚠ Ollama unreachable at ' + C.ollamaUrl + '\n\n' +
+        'Fix:\n' +
+        '  1. Run:  OLLAMA_ORIGINS=* ollama serve\n' +
+        '  2. Pull: ollama pull ' + (C.model || 'llama3') + '\n' +
+        '  3. Open ⚙ Settings to change the URL if needed.'
+      );
+      return;
+    }
+  }
+
+  AI_MESSAGES.push({ role: 'user', content: userText });
+
+  C.aiStreaming = true;
+  $('send-btn').disabled = true;
+  $('typing-area').style.display = '';
+  $('typing-label').textContent = 'Ollama is thinking…';
+
+  const msgArea = $('msg-area');
+  const bubble  = document.createElement('div');
+  bubble.className = 'msg';
+  bubble.innerHTML = `
+    <div class="msg-avatar ai">⬡</div>
+    <div class="msg-body">
+      <div class="msg-meta">
+        <span class="msg-name" style="color:var(--m)">AI · ${C.model || 'ollama'}</span>
+        <span class="msg-time">${ts()}</span>
+      </div>
+      <div class="msg-bubble ai"><span id="ai-stream-text"></span><span class="streaming-cursor"> </span></div>
+    </div>`;
+  msgArea.appendChild(bubble);
+  msgArea.scrollTop = msgArea.scrollHeight;
+  const streamEl = bubble.querySelector('#ai-stream-text');
+  let fullText = '';
+
+  try {
+    const r = await fetch(C.ollamaUrl + '/api/chat', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model:    C.model || 'llama3',
+        messages: AI_MESSAGES.slice(-20),
+        stream:   true,
+      }),
+      signal: AbortSignal.timeout(180000),
+    });
+
+    if (!r.ok) {
+      const errText = await r.text().catch(() => r.status);
+      throw new Error('Ollama returned ' + r.status + ': ' + errText);
+    }
+
+    $('typing-label').textContent = 'Ollama is writing…';
+    const reader = r.body.getReader();
+    const dec    = new TextDecoder();
+
+    // Ollama streams NDJSON — one JSON object per line
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop(); // keep incomplete tail
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const d = JSON.parse(line);
+          const token = d.message?.content ?? '';
+          if (token) {
+            fullText += token;
+            streamEl.textContent = fullText;
+            msgArea.scrollTop = msgArea.scrollHeight;
+          }
+        } catch {}
+      }
+    }
+    // Flush remaining buffer
+    if (buf.trim()) {
+      try { const d = JSON.parse(buf); fullText += d.message?.content ?? ''; } catch {}
+    }
+
+  } catch (e) {
+    fullText = '⚠ ' + e.message;
+    if (e.name === 'TypeError' && e.message.includes('fetch')) {
+      fullText += '\n\nCORS issue — restart Ollama with:\n  OLLAMA_ORIGINS=* ollama serve';
+    }
+    streamEl.textContent = fullText;
+    setOllamaStatus('offline', e.message);
+  }
+
+  bubble.querySelector('.streaming-cursor')?.remove();
+  AI_MESSAGES.push({ role: 'assistant', content: fullText });
+  C.messages.push({ role:'assistant', sender:'AI', content: fullText, ts: Date.now() });
+
+  C.aiStreaming = false;
+  $('send-btn').disabled = false;
+  $('typing-area').style.display = 'none';
+  updateLogStats();
+}
+
+// ── Commands ───────────────────────────────────────────────────────────────
+async function handleCommand(text) {
+  const parts = text.slice(1).split(' ');
+  const cmd   = parts[0].toLowerCase();
+
+  if (cmd === 'ai' || cmd === 'ai') {
+    const msg = parts.slice(1).join(' ');
+    if (!C.aiMode) {
+      C.aiMode = true;
+      updateModeBadge();
+      sysMsg('AI mode enabled — messages sent to AI. Type /chat to return to chat mode.');
+    }
+    if (msg) { addMessage('user', C.name, msg); await runAI(msg); }
+    return true;
+  }
+  if (cmd === 'chat') {
+    C.aiMode = false; updateModeBadge();
+    sysMsg('Chat mode enabled.');
+    return true;
+  }
+  if (cmd === 'idea') {
+    const idea = parts.slice(1).join(' ');
+    if (!idea) { toast('Usage: /idea [text]', 'r'); return true; }
+    saveIdea(idea); return true;
+  }
+  if (cmd === 'join') {
+    const roomId = parts[1]?.toUpperCase();
+    if (!roomId) { toast('Usage: /join [room-code]', 'r'); return true; }
+    $('join-room-id').value = roomId;
+    showModal('join-modal'); return true;
+  }
+  if (cmd === 'create') { showModal('create-modal'); return true; }
+  if (cmd === 'clear')  { $('msg-area').innerHTML = ''; C.messages = []; return true; }
+  if (cmd === 'export') { downloadCurrentLog(); return true; }
+  if (cmd === 'share')  { shareFile(); return true; }
+  if (cmd === 'download') { toggleDownloadCapture(); return true; }
+  if (cmd === 'help') {
+    sysMsg('/ai [msg] — AI mode\n/chat — chat mode\n/idea [text] — save idea\n/join [code] — join room\n/create — create room\n/share — share file\n/export — download log\n/download — capture downloads\n/clear — clear messages');
+    return true;
+  }
+  return false;
+}
+
+// ── Message flow ───────────────────────────────────────────────────────────
+async function sendMessage() {
+  const input = $('msg-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  input.value = ''; autoResize();
+
+  // Command?
+  if (text.startsWith('/')) {
+    const handled = await handleCommand(text);
+    if (handled) return;
+    sysMsg('Unknown command: ' + text + '. Type /help for commands.');
+    return;
+  }
+
+  if (C.aiMode) {
+    addMessage('user', C.name, text);
+    await runAI(text);
+    return;
+  }
+
+  // Regular chat message
+  addMessage('user', C.name, text);
+  C.messages.push({ role:'user', sender:C.name, content:text, ts:Date.now() });
+  // Send to P2P peers
+  if (C.peers.size > 0) await sendToPeers(text);
+  // Persist to bridge
+  if (C.convId) {
+    try { await bpost(`/ai/conversations/${C.convId}/message`, { role:'user', content:text }); } catch {}
+  }
+  updateLogStats();
+}
+
+function addMessage(type, sender, content) {
+  const area = $('msg-area');
+  const isSelf = sender === C.name && type !== 'peer';
+  const div  = document.createElement('div');
+  div.className = 'msg' + (isSelf ? ' self' : '');
+  const avatarClass = type === 'ai' ? 'ai' : isSelf ? 'self' : type === 'peer' ? 'peer' : '';
+  const avatarIcon  = type === 'ai' ? '⬡' : isSelf ? '◈' : type === 'peer' ? '○' : '⬢';
+  const bubbleClass = type === 'ai' ? ' ai' : type === 'system' ? ' system' : '';
+  div.innerHTML = `
+    <div class="msg-avatar ${avatarClass}">${avatarIcon}</div>
+    <div class="msg-body">
+      <div class="msg-meta">
+        <span class="msg-name" style="${type==='ai'?'color:var(--m)':isSelf?'color:var(--c)':type==='peer'?'color:var(--g)':''}">${esc(sender)}</span>
+        <span class="msg-time">${ts()}</span>
+      </div>
+      <div class="msg-bubble${bubbleClass}">${fmtContent(content)}</div>
+    </div>`;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function sysMsg(text) {
+  const area = $('msg-area');
+  const div  = document.createElement('div');
+  div.className = 'msg';
+  div.innerHTML = `<div class="msg-avatar">⬢</div><div class="msg-body"><div class="msg-meta"><span class="msg-name">NEXUS</span><span class="msg-time">${ts()}</span></div><div class="msg-bubble system">${esc(text)}</div></div>`;
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function fmtContent(text) {
+  // Code blocks
+  let out = esc(text);
+  out = out.replace(/```([\s\S]*?)```/g, '<pre>$1</pre>');
+  out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+  return out;
+}
+
+// ── Ideas ──────────────────────────────────────────────────────────────────
+function saveIdea(text) {
+  const idea = { id: Date.now().toString(36), text, ts: Date.now() };
+  C.ideas.push(idea);
+  localStorage.setItem('nc_ideas', JSON.stringify(C.ideas));
+  $('stat-ideas').textContent = C.ideas.length;
+  renderIdeas();
+  sysMsg('Idea saved: ' + text);
+  toast('Idea tracked', 'g');
+  // Persist to bridge
+  if (C.bridgeConnected && C.convId) {
+    bpost(`/ai/conversations/${C.convId}/message`, { role:'user', content:'[IDEA] ' + text, meta:{type:'idea'} }).catch(()=>{});
+  }
+}
+
+function renderIdeas() {
+  const el = $('idea-list');
+  if (!C.ideas.length) {
+    el.innerHTML = '<div style="color:var(--text4);font-size:8px;padding:8px 0">no ideas yet<br>type /idea [text]</div>';
+    return;
+  }
+  el.innerHTML = [...C.ideas].reverse().map(i => `
+    <div class="idea-item">
+      <div class="idea-text">${esc(i.text)}</div>
+      <div class="idea-meta">${new Date(i.ts).toLocaleTimeString()}</div>
+    </div>`).join('');
+}
+
+function downloadIdeas() {
+  const text = C.ideas.map((i,n) => `${n+1}. [${new Date(i.ts).toLocaleString()}]\n${i.text}`).join('\n\n');
+  const blob = new Blob(['NEXUS CHAT — IDEA LOG\n' + new Date().toLocaleString() + '\n\n' + text], {type:'text/plain'});
+  const url  = URL.createObjectURL(blob);
+  Object.assign(document.createElement('a'),{href:url,download:'nexus-ideas-'+Date.now()+'.txt'}).click();
+  URL.revokeObjectURL(url);
+  toast('Ideas exported', 'g');
+}
+
+// ── Files ──────────────────────────────────────────────────────────────────
+function shareFile() { $('file-input').click(); }
+
+function handleFileSelect(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const data = ev.target.result;
+      C.files.push({ name:file.name, size:file.size, data, ts:Date.now() });
+      renderFiles();
+      // Send to peers
+      C.peers.forEach(peer => {
+        if (peer.dc?.readyState === 'open') {
+          peer.dc.send(JSON.stringify({ type:'FILE_DATA', name:file.name, size:file.size, data, from:C.name }));
+        }
+      });
+      sysMsg(`Shared file: ${file.name} (${fmtSize(file.size)})`);
+      toast('File shared: ' + file.name, 'g');
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+}
+
+function receiveFile(data) {
+  C.files.push({ name:data.name, size:data.size, data:data.data, ts:Date.now(), from:data.from });
+  renderFiles();
+  sysMsg(`Received file from ${data.from}: ${data.name} (${fmtSize(data.size)})`);
+  toast('File received: ' + data.name, 'g');
+}
+
+function renderFiles() {
+  const el = $('file-list');
+  if (!C.files.length) {
+    el.innerHTML = '<div style="color:var(--text4);font-size:8px;padding:8px 0">no files shared</div>';
+    return;
+  }
+  el.innerHTML = C.files.map((f,i) => `
+    <div class="file-item" onclick="downloadFile(${i})">
+      <div class="file-icon">${f.name.match(/\.(jpg|png|gif|webp)$/i)?'🖼':f.name.match(/\.(pdf)$/i)?'📄':'📎'}</div>
+      <div class="file-name">${esc(f.name)}</div>
+      <div class="file-size">${fmtSize(f.size)}</div>
+    </div>`).join('');
+}
+
+function downloadFile(i) {
+  const f = C.files[i];
+  if (!f) return;
+  const a = Object.assign(document.createElement('a'), { href:f.data, download:f.name });
+  a.click();
+  toast('Downloading: ' + f.name);
+}
+
+// ── Download capture ───────────────────────────────────────────────────────
+function toggleDownloadCapture() {
+  C.capturing = !C.capturing;
+  const btn = $('capture-btn');
+  btn.textContent = C.capturing ? '⊙ CAPTURE ON' : '⊙ CAPTURE OFF';
+  btn.style.color = C.capturing ? 'var(--g)' : '';
+  btn.style.borderColor = C.capturing ? 'var(--g2)' : '';
+  if (C.capturing) {
+    sysMsg('Download capture enabled — link clicks and downloads will be logged to ideas');
+    document.addEventListener('click', captureClickHandler);
+  } else {
+    sysMsg('Download capture disabled');
+    document.removeEventListener('click', captureClickHandler);
+  }
+  toast('Capture ' + (C.capturing ? 'ON' : 'OFF'), C.capturing ? 'g' : '');
+}
+
+function captureClickHandler(e) {
+  const a = e.target.closest('a[href]');
+  if (!a) return;
+  const href = a.href;
+  if (href.startsWith('blob:') || a.download) {
+    saveIdea('[DOWNLOAD CAPTURED] ' + (a.download || href));
+  }
+}
+
+// ── Log & export ───────────────────────────────────────────────────────────
+function updateLogStats() {
+  const el = $('log-stats');
+  if (el) el.textContent = `${C.messages.length} messages · ${C.ideas.length} ideas · ${C.files.length} files`;
+}
+
+function downloadCurrentLog() {
+  const all = C.messages.map(m => `[${new Date(m.ts).toLocaleString()}] ${m.sender}: ${m.content}`).join('\n');
+  const header = `NEXUS CHAT LOG\n${new Date().toLocaleString()}\nRoom: ${C.roomId || 'local'}\n\n${'═'.repeat(60)}\n\n`;
+  const blob = new Blob([header + all], {type:'text/plain'});
+  const url  = URL.createObjectURL(blob);
+  Object.assign(document.createElement('a'),{href:url,download:'nexus-chat-'+Date.now()+'.txt'}).click();
+  URL.revokeObjectURL(url);
+  toast('Log exported', 'g');
+}
+
+// ── UI helpers ─────────────────────────────────────────────────────────────
+function toggleAIMode() {
+  C.aiMode = !C.aiMode;
+  updateModeBadge();
+  sysMsg(C.aiMode ? 'AI mode ON — messages go to AI. Type /chat to return.' : 'Chat mode — messages go to peers.');
+}
+
+function updateModeBadge() {
+  const badge = $('mode-badge');
+  badge.textContent = C.aiMode ? 'AI MODE' : 'CHAT MODE';
+  badge.className = 'input-mode ' + (C.aiMode ? 'ai' : 'chat');
+  $('msg-input').placeholder = C.aiMode ? '/ai [message to AI]' : 'Message… or /ai to talk to AI';
+  $('ai-provider-label').textContent = C.aiMode ? '⬡ ' + (C.provider || 'auto') : '';
+}
+
+function updatePeerList() {
+  const el = $('peer-list');
+  if (!C.peers.size) {
+    el.innerHTML = '<div style="color:var(--text4);font-size:8px;padding:8px 0">no peers in room</div>';
+    return;
+  }
+  el.innerHTML = [...C.peers.entries()].map(([id,p]) => `
+    <div class="peer-item">
+      <div class="peer-dot" style="background:${p.status==='connected'?'var(--g)':'var(--y)'}"></div>
+      <div class="peer-name">${esc(p.name || id.slice(0,10))}</div>
+      <div class="peer-status">${p.status}</div>
+    </div>`).join('');
+}
+
+function updateChannels() {
+  const genEl = $('ch-list-general');
+  genEl.innerHTML = `<div class="ch-item act"><div class="ch-dot online"></div><div class="ch-name">GENERAL</div></div>`;
+  if (C.roomId) {
+    const p2pEl = $('ch-list-p2p');
+    p2pEl.innerHTML = `<div class="ch-item act"><div class="ch-dot p2p"></div><div class="ch-name">${C.roomId}</div></div>`;
+  }
+  if (C.aiMode || C.convId) {
+    const aiEl = $('ch-list-ai');
+    aiEl.innerHTML = `<div class="ch-item"><div class="ch-dot ai"></div><div class="ch-name">AI SESSION</div></div>`;
+  }
+}
+
+function setRTab(tab, el) {
+  document.querySelectorAll('.rptab').forEach(t => t.classList.remove('act'));
+  document.querySelectorAll('.rp-body').forEach(b => b.classList.remove('act'));
+  el?.classList.add('act');
+  const body = $('rt-' + tab);
+  if (body) body.classList.add('act');
+}
+
+function showJoinModal()   { showModal('join-modal'); }
+function showCreateModal() { showModal('create-modal'); }
+function showSettings() {
+  $('cfg-bridge').value = C.bridgeUrl;
+  $('cfg-ollama').value = C.ollamaUrl;
+  $('cfg-name').value   = C.name;
+  $('cfg-model').value  = C.model;
+  populateModelDropdown();
+  showModal('settings-modal');
+}
+function showModal(id)     { $(id)?.classList.add('show'); }
+function closeModal(id)    { $(id)?.classList.remove('show'); }
+function showIdeasPanel()  { setRTab('ideas', document.querySelector('.rptab:nth-child(2)')); }
+
+function saveSettings() {
+  const newUrl = $('cfg-ollama')?.value.trim();
+  if (newUrl && newUrl !== C.ollamaUrl) {
+    C.ollamaUrl  = newUrl;
+    ollamaModels = [];
+    localStorage.setItem('nc_ollama', C.ollamaUrl);
+  }
+  C.bridgeUrl = $('cfg-bridge')?.value.trim() || C.bridgeUrl;
+  C.name      = $('cfg-name')?.value.trim()   || C.name;
+  const selVal = $('model-select')?.value;
+  C.model     = (selVal && selVal !== '') ? selVal : ($('cfg-model')?.value.trim() || C.model);
+  localStorage.setItem('nc_bridge', C.bridgeUrl);
+  localStorage.setItem('nc_name',   C.name);
+  localStorage.setItem('nc_model',  C.model);
+  closeModal('settings-modal');
+  probeOllama();
+  connectBridge();
+  toast('Settings saved', 'g');
+}
+
+async function testOllama() {
+  const url = $('cfg-ollama')?.value.trim() || C.ollamaUrl;
+  toast('Testing ' + url + '…');
+  try {
+    const r = await fetch(url + '/api/tags', { signal: AbortSignal.timeout(5000) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    const models = (d.models || []).map(m => m.name);
+    if (models.length) {
+      toast('✓ Connected · ' + models.length + ' model(s): ' + models.slice(0,3).join(', '), 'g');
+      ollamaModels = models;
+      populateModelDropdown();
+      const sel = $('model-select');
+      if (sel) sel.style.display = '';
+    } else {
+      toast('✓ Ollama running — no models yet. Run: ollama pull llama3', '');
+    }
+  } catch (e) {
+    toast('✗ ' + e.message + ' — set OLLAMA_ORIGINS=* and restart', 'r');
+  }
+}
+
+function copyRoomCode() {
+  const code = $('room-code-display')?.textContent || '';
+  navigator.clipboard?.writeText(code).then(() => toast('Room code copied', 'g'));
+}
+
+function insertCmd(cmd) {
+  const inp = $('msg-input');
+  inp.value = cmd; inp.focus();
+  inp.setSelectionRange(cmd.length, cmd.length);
+}
+
+function autoResize() {
+  const inp = $('msg-input');
+  inp.style.height = 'auto';
+  inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
+}
+
+function showCreateChannel() { toast('Channels coming in next build'); }
+
+// ── Keyboard ───────────────────────────────────────────────────────────────
+$('msg-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+$('msg-input').addEventListener('input', () => {
+  autoResize();
+  $('char-count').textContent = $('msg-input').value.length ? $('msg-input').value.length + ' chars' : '';
+});
+
+// Close modals on overlay click
+document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('show'); }));
+
+// ── Bridge heartbeat — 10s (matches bridge HB model) ──────────────────────
+setInterval(() => connectBridge().catch(() => {}), 10000);
+
+// ── Guardian CMD Bridge ────────────────────────────────────────────────────
+// Connects Nexus Chat to Guardian extension via the shared bridge at :3747
+// Commands flow: Nexus Chat → POST /nexus/cmd → bridge → Guardian background.js
+//                → browser.tabs.sendMessage → nexus-cmd.js (content script) → DOM
+// Results flow:  nexus-cmd.js → POST /nexus/cmd/result → bridge → SSE/poll → here
+
+const CMD = {
+  bridgeUrl:    C.bridgeUrl || 'http://127.0.0.1:3747',
+  connected:    false,
+  history:      [],
+  pollInterval: null,
+};
+
+async function cmdFetch(path, method = 'GET', body = null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(CMD.bridgeUrl + path, { ...opts, signal: AbortSignal.timeout(10000) });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+
+async function probeGuardian() {
+  try {
+    const r = await cmdFetch('/nexus/cmd/status');
+    CMD.connected = true;
+    $('guardian-dot').style.background   = 'var(--g)';
+    $('guardian-dot').style.boxShadow    = '0 0 5px var(--g)';
+    $('guardian-status-label').textContent = 'GUARDIAN LIVE';
+    $('guardian-status-label').style.color = 'var(--g)';
+    return true;
+  } catch {
+    CMD.connected = false;
+    $('guardian-dot').style.background   = 'var(--r)';
+    $('guardian-dot').style.boxShadow    = 'none';
+    $('guardian-status-label').textContent = 'BRIDGE OFFLINE';
+    $('guardian-status-label').style.color = 'var(--r)';
+    return false;
+  }
+}
+
+// ── Log a result to the CMD panel ──────────────────────────────────────────
+
+function cmdLog(type, text, data) {
+  const log = $('cmd-log');
+  if (!log) return;
+  const el  = document.createElement('div');
+  const col = type === 'ok' ? 'var(--g)' : type === 'error' ? 'var(--r)' : type === 'info' ? 'var(--c)' : 'var(--y)';
+  const ts  = new Date().toLocaleTimeString('en-GB', { hour12: false });
+  el.innerHTML = `<span style="color:var(--text4)">${ts}</span> <span style="color:${col}">${esc(text)}</span>` +
+    (data ? `<div style="color:var(--text3);margin-left:8px;margin-top:2px;white-space:pre-wrap">${esc(typeof data === 'string' ? data : JSON.stringify(data, null, 2)).slice(0, 600)}</div>` : '');
+  el.style.borderBottom = '1px solid var(--border)';
+  el.style.paddingBottom = '4px';
+  el.style.marginBottom = '4px';
+  // Remove placeholder
+  const placeholder = log.querySelector('div[style*="text4"]');
+  if (placeholder && placeholder.textContent === 'no commands run yet') placeholder.remove();
+  log.insertBefore(el, log.firstChild);
+  // Keep max 40 entries
+  while (log.children.length > 40) log.removeChild(log.lastChild);
+  // Also post as system message in chat
+  sysMsg(`[CMD ${type.toUpperCase()}] ${text}${data ? '\n' + JSON.stringify(data).slice(0, 200) : ''}`);
+}
+
+// ── Core dispatch ─────────────────────────────────────────────────────────
+
+async function dispatchCmd(cmd) {
+  if (!CMD.connected) {
+    const ok = await probeGuardian();
+    if (!ok) { cmdLog('error', 'Bridge offline — start nexus bridge server'); return null; }
+  }
+  cmd.id = cmd.id || 'nc-' + Math.random().toString(36).slice(2, 8);
+  cmdLog('info', `→ ${cmd.type}${cmd.selector ? ' · ' + cmd.selector : ''}${cmd.url ? ' · ' + cmd.url : ''}`);
+  try {
+    const r = await cmdFetch('/nexus/cmd', 'POST', cmd);
+    if (r.ok) {
+      cmdLog('ok', `✓ ${cmd.type} done`, r.result);
+    } else {
+      cmdLog('error', `✗ ${cmd.type}: ${r.error || 'failed'}`);
+    }
+    return r;
+  } catch (e) {
+    cmdLog('error', `✗ fetch error: ${e.message}`);
+    return null;
+  }
+}
+
+// ── UI helpers ─────────────────────────────────────────────────────────────
+
+function cmdTypeChanged() {
+  const type = $('cmd-type')?.value;
+  const selRow = $('cmd-selector-row');
+  const valRow = $('cmd-value-row');
+  const valLabel = $('cmd-value-label');
+  const noSel = ['navigate','snapshot'];
+  const noVal = ['snapshot','exists','focus','read','scroll','click','wait'];
+  if (selRow) selRow.style.display = noSel.includes(type) ? 'none' : '';
+  if (valRow) valRow.style.display = noVal.includes(type) ? 'none' : '';
+  const labels = {
+    type: 'TEXT TO TYPE', fill: 'VALUE TO SET', navigate: 'URL', eval: 'JS EXPRESSION',
+    keypress: 'KEY (e.g. Enter)', select: 'OPTION VALUE',
+  };
+  if (valLabel) valLabel.textContent = labels[type] || 'VALUE / TEXT';
+}
+
+async function sendCmd() {
+  const type     = $('cmd-type')?.value;
+  const selector = $('cmd-selector')?.value.trim();
+  const value    = $('cmd-value')?.value.trim();
+  if (!type) return;
+  const cmd = { type };
+  if (selector) cmd.selector = selector;
+  if (value)    { if (type === 'navigate') cmd.url = value; else cmd.value = value; }
+  await dispatchCmd(cmd);
+}
+
+async function runMacro() {
+  const raw = $('cmd-macro')?.value.trim();
+  if (!raw) { toast('Enter a JSON macro array', 'r'); return; }
+  let cmds;
+  try { cmds = JSON.parse(raw); } catch (e) { cmdLog('error', 'JSON parse error: ' + e.message); return; }
+  if (!Array.isArray(cmds)) { cmdLog('error', 'Macro must be a JSON array'); return; }
+  cmdLog('info', `▶ Running macro: ${cmds.length} commands`);
+  try {
+    const r = await cmdFetch('/nexus/cmd/batch', 'POST', { cmds, sequential: true });
+    cmdLog(r.ok ? 'ok' : 'error', `Macro done · ${r.results?.length || 0} results`, r.results);
+  } catch (e) {
+    cmdLog('error', 'Macro error: ' + e.message);
+  }
+}
+
+async function cmdSnapshot() {
+  await dispatchCmd({ type: 'snapshot' });
+}
+
+async function cmdScrollDown() {
+  await dispatchCmd({ type: 'scroll', y: window.innerHeight * 0.8 });
+}
+
+async function cmdScrollTop() {
+  await dispatchCmd({ type: 'scroll', y: 0 });
+}
+
+async function cmdActivate() {
+  CMD.bridgeUrl = C.bridgeUrl || 'http://127.0.0.1:3747';
+  const ok = await probeGuardian();
+  if (ok) {
+    // Activate Guardian's CMD polling via BroadcastChannel
+    const bc = new BroadcastChannel('guardian-nexus-cmd');
+    bc.postMessage({ type: 'NEXUS_CMD_ACTIVATE' });
+    setTimeout(() => bc.close(), 2000);
+    toast('Guardian CMD bridge activated', 'g');
+    cmdLog('ok', '⚡ Bridge activated — Guardian is listening');
+    // Start polling for results
+    if (!CMD.pollInterval) {
+      CMD.pollInterval = setInterval(async () => {
+        try {
+          const r = await cmdFetch('/nexus/cmd/status');
+          if (r.last?.length) {
+            // New results since last poll would show up here
+          }
+        } catch { clearInterval(CMD.pollInterval); CMD.pollInterval = null; }
+      }, 2000);
+    }
+  } else {
+    cmdLog('error', 'Bridge offline — start: node nexus-bridge-server.js');
+  }
+}
+
+async function cmdClearHistory() {
+  try {
+    await cmdFetch('/nexus/cmd/history', 'DELETE');
+    const log = $('cmd-log');
+    if (log) log.innerHTML = '<div style="color:var(--text4)">no commands run yet</div>';
+    toast('CMD history cleared');
+  } catch { toast('Clear failed — bridge offline', 'r'); }
+}
+
+// ── /ai integration — parse /cmd commands from chat ───────────────────────
+// Type "/cmd click #submit-btn" in the chat input to execute directly
+
+const _origHandleCommand = handleCommand;
+// Override handleCommand to intercept /cmd
+async function handleCommand(text) {
+  if (text.startsWith('/cmd ') || text === '/cmd') {
+    const rest = text.slice(5).trim();
+    if (!rest) {
+      sysMsg('Usage: /cmd <type> [selector] [value]\nExamples:\n  /cmd click #submit\n  /cmd type #search hello world\n  /cmd navigate https://example.com\n  /cmd snapshot\n  /cmd eval document.title');
+      return true;
+    }
+    // Parse: first word = type, second = selector (if starts with #/.[ or is tag), rest = value
+    const parts = rest.split(' ');
+    const type  = parts[0];
+    let selector = null, value = null;
+    if (parts.length > 1) {
+      const second = parts[1];
+      if (type === 'navigate' || type === 'eval') {
+        value = parts.slice(1).join(' ');
+      } else if (second.match(/^[#.\[a-z]/i)) {
+        selector = second;
+        value    = parts.slice(2).join(' ') || null;
+      } else {
+        value = parts.slice(1).join(' ');
+      }
+    }
+    const cmd = { type };
+    if (selector) cmd.selector = selector;
+    if (value)    { if (type === 'navigate') cmd.url = value; else cmd.value = value; }
+    setRTab('cmd', document.querySelector('.rptab:nth-child(5)'));
+    await dispatchCmd(cmd);
+    return true;
+  }
+  return _origHandleCommand(text);
+}
+
+// Probe Guardian on load and whenever bridge connects
+probeGuardian();
+setInterval(() => { if (!CMD.connected) probeGuardian(); }, 15000);
+renderIdeas();
+renderFiles();
+updateModeBadge();
+updateChannels();
+updateLogStats();
+connectBridge();
+probeOllama();
+// Re-probe every 30s until connected
+setInterval(() => { if (!ollamaModels.length) probeOllama(); }, 30000);
+</script>
+</body>
+</html>

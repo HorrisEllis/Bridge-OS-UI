@@ -1,0 +1,47 @@
+{
+  "name": "causal-nexus",
+  "version": "5.0.1",
+  "description": "Real-time causal event engine \u2014 ring buffer, gate system, delta analytics, CQL query, persistence, AI self-modification",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./identity": "./src/identity/index.js",
+    "./time": "./src/time/index.js",
+    "./causality": "./src/causality/index.js",
+    "./kernel": "./src/kernel/index.js",
+    "./adapter": "./src/adapter/index.js",
+    "./projection": "./src/projection/index.js",
+    "./lazy": "./src/lazy/index.js",
+    "./delta": "./src/delta/index.js",
+    "./compress": "./src/compress/index.js",
+    "./forge": "./src/forge/index.js",
+    "./loader": "./src/loader/index.js",
+    "./persist": "./src/persist/index.js",
+    "./query": "./src/query/index.js",
+    "./version-gate": "./src/version-gate/index.js",
+    "./adapter-sandbox": "./src/adapter-sandbox/index.js",
+    "./context": "./src/context/index.js",
+    "./clip": "./src/clip/index.js",
+    "./sigma": "./src/sigma/index.js",
+    "./observer": "./src/observer/index.js",
+    "./enforcement": "./src/enforcement/index.js"
+  },
+  "main": "./src/index.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node test/run-all.js",
+    "test:unit": "node test/run-all.js --unit",
+    "test:cross": "node test/run-all.js --cross",
+    "test:stress": "node test/run-all.js --stress"
+  },
+  "keywords": [
+    "causal",
+    "event-sourcing",
+    "event-stream",
+    "kernel",
+    "constraint-field"
+  ],
+  "license": "MIT"
+}

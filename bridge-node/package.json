@@ -1,0 +1,45 @@
+{
+  "name": "bridge-v2",
+  "version": "4.1.0",
+  "description": "Bridge OS v4.1.0 \u2014 Sovereign Node. SISO + Causal + Trust + Mesh + DHT + IPFS + Onion + BLE (WinRT native, no deps) + Peripheral mode + DDNS + Mobile/Pi.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node bridge-cli/nexus-cli.js",
+    "test": "node bridge-core/tests/test-core-deep.js && node bridge-data/tests/test-data-deep.js && node bridge-cfr/tests/test-cfr-deep.js && node bridge-appid/tests/test-appid-deep.js && node bridge-dht/tests/test-dht-deep.js && node bridge-contracts/tests/test-contracts-deep.js && node bridge-sngate/tests/test-sngate-deep.js && node bridge-IME/tests/test-IME-deep.js && node bridge-heartbeat/tests/test-heartbeat-deep.js && node bridge-identity/tests/test-identity-deep.js && node bridge-onion/tests/test-onion-deep.js && node bridge-steg/tests/test-steg-deep.js && node bridge-shaper/tests/test-shaper-deep.js && node bridge-health/tests/test-health-deep.js && node bridge-ipfs/tests/test-ipfs-deep.js && node bridge-transport/tests/test-transport-deep.js && node bridge-mobile/tests/test-mobile-deep.js",
+    "cli": "node bridge-cli/nexus-cli.js",
+    "cli:scan": "node bridge-cli/nexus-cli.js --scan"
+  },
+  "keywords": [
+    "p2p",
+    "mesh",
+    "siso",
+    "dht",
+    "causal",
+    "sovereign-node",
+    "brainos",
+    "onion-routing",
+    "steganography",
+    "traffic-shaping",
+    "ipfs",
+    "bluetooth",
+    "ble",
+    "mobile",
+    "raspberry-pi",
+    "content-addressed"
+  ],
+  "author": {
+    "name": "James Brooks",
+    "url": "https://rheon.world",
+    "email": "james@rheon.world"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "fs-extra": "^11.0.0"
+  },
+  "copyright": "Copyright (c) 2024-2026 James Brooks (Erosmancer). All rights reserved.",
+  "homepage": "https://rheon.world",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HorrisEllis/Bridge-v2"
+  }
+}

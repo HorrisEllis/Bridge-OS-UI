@@ -1,0 +1,208 @@
+{
+  "manifest_version": 2,
+  "name": "Guardian",
+  "version": "3.4.0",
+  "description": "Causal-Nexus bridge interface — IR Layer, RouteSpec engine, Pulse mesh, element picker, listener mode, cross-device pipeline.",
+  "author": "Guardian",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "guardian@bridge.local",
+      "strict_min_version": "109.0"
+    }
+  },
+
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "cookies",
+    "history",
+    "bookmarks",
+    "notifications",
+    "webRequest",
+    "clipboardWrite",
+    "<all_urls>"
+  ],
+
+  "background": {
+    "scripts": ["urck.js", "ir-layer.js", "background.js"],
+    "persistent": true
+  },
+
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "Guardian",
+    "default_icon": {
+      "16": "icons/guardian-16.png",
+      "32": "icons/guardian-32.png",
+      "48": "icons/guardian-48.png"
+    }
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "urck.js",
+        "modules/base-module.js",
+        "modules/instagram.js",
+        "modules/threads.js",
+        "modules/chatgpt.js",
+        "modules/claude.js",
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+
+  "icons": {
+    "16":  "icons/guardian-16.png",
+    "32":  "icons/guardian-32.png",
+    "48":  "icons/guardian-48.png",
+    "128": "icons/guardian-128.png"
+  },
+
+  "content_security_policy": "script-src 'self'; object-src 'self'"
+}
+{
+  "chatgpt": {
+    "id": "chatgpt",
+    "name": "ChatGPT",
+    "url": "https://chatgpt.com",
+    "version": "4.0.0",
+    "inputSelector": "#prompt-textarea",
+    "inputAction": "type",
+    "submitSelector": "[data-testid='send-button']",
+    "outputSelector": "[data-message-author-role='assistant'] .markdown",
+    "outputTrigger": "mutation",
+    "streamComplete": "[data-is-streaming='false']",
+    "conversationSelector": "[data-testid='conversation-turn']",
+    "capabilities": ["chat", "code", "ideas", "research"],
+    "nexusUrl": "nexus://chatgpt"
+  },
+  "claude": {
+    "id": "claude",
+    "name": "Claude",
+    "url": "https://claude.ai/new",
+    "version": "4.0.0",
+    "inputSelector": ".ProseMirror[contenteditable='true']",
+    "inputAction": "fill",
+    "submitSelector": "button[aria-label='Send Message']",
+    "outputSelector": "[data-is-streaming]",
+    "outputTrigger": "mutation",
+    "streamComplete": ".font-claude-message",
+    "conversationSelector": ".font-claude-message",
+    "capabilities": ["chat", "code", "ideas", "research", "loop"],
+    "nexusUrl": "nexus://claude"
+  },
+  "gemini": {
+    "id": "gemini",
+    "name": "Gemini",
+    "url": "https://gemini.google.com/app",
+    "version": "4.0.0",
+    "inputSelector": ".ql-editor",
+    "inputAction": "fill",
+    "submitSelector": "button.send-button",
+    "outputSelector": ".response-container-content",
+    "outputTrigger": "mutation",
+    "streamComplete": "model-response",
+    "conversationSelector": "model-response",
+    "capabilities": ["chat", "code", "ideas"],
+    "nexusUrl": "nexus://gemini"
+  },
+  "ollama": {
+    "id": "ollama",
+    "name": "Ollama",
+    "url": "http://localhost:11434",
+    "version": "4.0.0",
+    "apiMode": true,
+    "apiEndpoint": "/api/chat",
+    "defaultModel": "llama3",
+    "inputSelector": null,
+    "outputSelector": null,
+    "capabilities": ["chat", "code", "loop"],
+    "nexusUrl": "nexus://ollama"
+  }
+}
+// content.js — Guardian v2.0.0
+// Fixed: popup auto-close after ADD TO INDEX
+// New: Listener mode, background tab support, ESC killswitch, failure toasts, link routing
+
+(function () {
+  if (window.__guardianContent) return;
+  window.__guardianContent = true;
+
+  const HOST = window.location.hostname;
+
+  // ── Inject styles ────────────────────────────────────────────────────────
+  const STYLE = document.createElement('style');
+  STYLE.textContent = `
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Rajdhani:wght@600;700&display=swap');
+
+    #__g-mask {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0);
+      z-index: 2147483640; pointer-events: none;
+      transition: background 0.2s ease;
+    }
+    #__g-mask.on { background: rgba(0,0,0,0.6); }
+
+    #__g-sel {
+      position: fixed; z-index: 2147483641; pointer-events: none;
+      border: 2px solid #00ffa3; border-radius: 3px;
+      box-shadow: 0 0 0 9999px rgba(0,0,0,0.58), 0 0 0 3px rgba(0,255,163,0.25),
+                  0 0 18px rgba(0,255,163,0.4), inset 0 0 0 1px rgba(0,255,163,0.12);
+      display: none;
+      transition: top 0.04s, left 0.04s, width 0.04s, height 0.04s;
+    }
+    #__g-sel.listener-mode {
+      border-color: #cc44ff;
+      box-shadow: 0 0 0 9999px rgba(0,0,0,0.58), 0 0 0 3px rgba(204,68,255,0.25),
+                  0 0 18px rgba(204,68,255,0.4), inset 0 0 0 1px rgba(204,68,255,0.12);
+    }
+    #__g-sel::before, #__g-sel::after, #__g-sel-c::before, #__g-sel-c::after {
+      content: ''; position: absolute; width: 9px; height: 9px;
+      border-color: #00ffa3; border-style: solid;
+    }
+    #__g-sel.listener-mode::before, #__g-sel.listener-mode::after,
+    #__g-sel.listener-mode ~ * ::before, #__g-sel.listener-mode ~ * ::after {
+      border-color: #cc44ff;
+    }
+    #__g-sel::before  { top: -2px; left: -2px;   border-width: 2px 0 0 2px; }
+    #__g-sel::after   { top: -2px; right: -2px;  border-width: 2px 2px 0 0; }
+    #__g-sel-c { position: absolute; inset: 0; pointer-events: none; }
+    #__g-sel-c::before { bottom: -2px; left: -2px;  border-width: 0 0 2px 2px; }
+    #__g-sel-c::after  { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
+
+    #__g-sel-scan {
+      position: absolute; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(0,255,163,0.7) 50%, transparent 100%);
+      animation: g-scan 1.4s ease-in-out infinite; pointer-events: none;
+    }
+    #__g-sel.listener-mode #__g-sel-scan {
+      background: linear-gradient(90deg, transparent 0%, rgba(204,68,255,0.7) 50%, transparent 100%);
+    }
+    @keyframes g-scan { 0% { top: 0%; opacity: 0; } 5% { opacity: 1; } 95% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+    #__g-overlay {
+      position: fixed; inset: 0; z-index: 2147483642;
+      pointer-events: none; cursor: crosshair;
+    }
+    #__g-overlay.picking { pointer-events: none; cursor: crosshair; }
+
+    #__g-tip {
+      position: fixed; z-index: 2147483647;
+      background: #080c10; border: 1px solid rgba(0,255,163,0.5);
+      border-left: 2px solid #00ffa3; border-radius: 2px;
+      padding: 5px 10px; font: 500 11px/1.4 'IBM Plex Mono', monospace;
+      pointer-events: none; max-width: 280px; white-space: nowrap; display: none;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.8), 0 0 8px rgba(0,255,163,0.15);
+    }
+    #__g-tip.listener-mode { border-color: rgba(204,68,255,0.5); border-left-color: #cc44ff; }
+    #__g-tip-tag { font-family: 'Rajdhani', sans-serif; font-size: 9px; letter-spacing: 0.12em; color: rgba(0,255,163,0.5); margin-bottom: 2px; }
+    #__g-tip.listener-mode #__g-tip-tag { color: rgba(204,68,255,0.6); }
+    #__g-tip-sel { color: #00ffa3; font-size: 11px; }
+    #__g-tip.listener-mode #__g-tip-sel { color: #cc44ff; }
+    #__g-tip-dims { font-size: 9px; color: rgba(0,255,163,0.4); margin-top: 1px; }

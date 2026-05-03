@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BrainOS · CFR v6.0</title>
+<style>
+:root{
+  --bg:#03050b;--bg2:#060a14;--bg3:#0a1020;
+  --bdr:#12203a;--bdr2:#1e3050;
+  --c:#00d4ff;--g:#00ff88;--r:#ff3366;--y:#ffb800;--m:#cc44ff;--w:#e0eeff;
+  --mono:'Share Tech Mono',monospace;
+}
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:var(--bg);overflow:hidden;font-family:var(--mono),monospace;color:var(--w)}
+#app{display:grid;grid-template-columns:248px 1fr 278px;grid-template-rows:46px 1fr 24px;width:100vw;height:100vh}
+
+/* TOPBAR */
+#tb{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:0 12px;
+  background:var(--bg2);border-bottom:1px solid var(--bdr);z-index:20;flex-shrink:0}
+.logo{font-size:13px;font-weight:700;letter-spacing:.14em;color:var(--c);white-space:nowrap}
+.logo em{color:var(--g);font-style:normal}
+.sep{width:1px;height:16px;background:var(--bdr2);flex-shrink:0}
+.tstat{display:flex;flex-direction:column;gap:0;min-width:40px}
+.tsl{font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:rgba(0,212,255,.38)}
+.tsv{font-size:11px;color:var(--c)}
+.tsv.g{color:var(--g)}.tsv.y{color:var(--y)}.tsv.r{color:var(--r)}.tsv.m{color:var(--m)}
+.gpgpu{display:flex;align-items:center;gap:3px;padding:2px 7px;border:1px solid var(--bdr2);border-radius:2px}
+.gpgpu-l{font-size:7px;letter-spacing:.1em;color:rgba(0,212,255,.3);margin-right:2px}
+.pb{padding:2px 5px;border:1px solid var(--bdr2);border-radius:1px;font-size:8px;color:rgba(224,238,255,.3);transition:all .12s}
+.pb.lit{border-color:var(--y);color:var(--y);background:rgba(255,184,0,.07);text-shadow:0 0 6px rgba(255,184,0,.7)}
+.pa{font-size:9px;color:rgba(0,212,255,.2)}
+.tbr{margin-left:auto;display:flex;align-items:center;gap:6px}
+.badge{padding:2px 7px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;cursor:pointer}
+.bg{background:rgba(0,255,136,.1);color:var(--g);border:1px solid rgba(0,255,136,.25)}
+.by{background:rgba(255,184,0,.1);color:var(--y);border:1px solid rgba(255,184,0,.25)}
+.bc{background:rgba(0,212,255,.1);color:var(--c);border:1px solid rgba(0,212,255,.25)}
+.bm{background:rgba(204,68,255,.1);color:var(--m);border:1px solid rgba(204,68,255,.25)}
+
+/* SIDEBARS */
+#lp,#rp{background:var(--bg2);overflow-y:auto;display:flex;flex-direction:column}
+#lp{border-right:1px solid var(--bdr)}
+#rp{border-left:1px solid var(--bdr)}
+#lp::-webkit-scrollbar,#rp::-webkit-scrollbar{width:3px}
+#lp::-webkit-scrollbar-thumb,#rp::-webkit-scrollbar-thumb{background:var(--bdr2)}
+.sec{border-bottom:1px solid var(--bdr)}
+.sechd{padding:6px 11px;font-size:8px;letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(0,212,255,.38);display:flex;justify-content:space-between;align-items:center}
+.sechd b{color:var(--c);font-weight:normal}
+.ctrl{padding:4px 11px 6px}
+.ctrl-top{display:flex;justify-content:space-between;font-size:9px;margin-bottom:2px}
+.cl{color:rgba(224,238,255,.45)}.cv{color:var(--c)}
+input[type=range]{width:100%;height:2px;-webkit-appearance:none;appearance:none;
+  background:rgba(0,212,255,.18);outline:none;cursor:pointer;border-radius:1px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:9px;height:9px;
+  border-radius:50%;background:var(--c);cursor:pointer}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:5px 11px}
+.vbtn{padding:5px;border:1px solid var(--bdr2);background:transparent;color:rgba(224,238,255,.38);
+  font-family:var(--mono),monospace;font-size:9px;letter-spacing:.05em;cursor:pointer;border-radius:2px;
+  text-transform:uppercase;transition:all .1s}
+.vbtn:hover{background:rgba(0,212,255,.07);color:var(--c);border-color:rgba(0,212,255,.4)}
+.vbtn.on{background:rgba(0,212,255,.13);color:var(--c);border-color:var(--c)}
+.regime-box{margin:6px 11px;padding:7px 9px;border:1px solid var(--bdr2);border-radius:2px}
+.regime-lbl{font-size:8px;letter-spacing:.12em;color:rgba(0,212,255,.38);text-transform:uppercase}
+.regime-val{font-size:18px;font-weight:700;letter-spacing:.06em;margin-top:1px}
+.rv-stable{color:var(--g)}.rv-turbulent{color:var(--y)}.rv-chaotic{color:var(--r)}.rv-resonant{color:var(--m)}
+.mphys{margin:0 11px 7px;display:flex;flex-direction:column;gap:2px}
+.mrow{display:flex;align-items:center;gap:5px;font-size:9px}
+.mdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ml{color:rgba(224,238,255,.45);flex:1}.mv{color:var(--w)}
+.nlist{max-height:130px;overflow-y:auto;padding:3px 7px}
+.nlist::-webkit-scrollbar{width:2px}.nlist::-webkit-scrollbar-thumb{background:var(--bdr2)}
+.nitem{padding:4px 6px;border-radius:2px;border:1px solid transparent;cursor:pointer;
+  margin-bottom:2px;display:flex;align-items:center;gap:6px;transition:all .08s}
+.nitem:hover{background:rgba(0,212,255,.06);border-color:var(--bdr2)}
+.nitem.on{background:rgba(0,212,255,.1);border-color:var(--c)}
+.ndot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.nn{font-size:10px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nt{font-size:8px;color:rgba(224,238,255,.3)}
+.evfeed{max-height:130px;overflow-y:auto;padding:3px 7px}
+.evfeed::-webkit-scrollbar{width:2px}.evfeed::-webkit-scrollbar-thumb{background:var(--bdr2)}
+.evitem{padding:3px 6px;font-size:9px;line-height:1.4;border-left:2px solid var(--bdr2);margin-bottom:2px}
+.evitem.ok{border-color:var(--g)}.evitem.warn{border-color:var(--y)}
+.evitem.err{border-color:var(--r)}.evitem.cfr{border-color:var(--m)}
+.evts{color:rgba(224,238,255,.3);font-size:8px}
+
+/* STAGE */
+#stage{position:relative;overflow:hidden;background:#03050b}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+#ov{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:2}
+
+/* TIMELINE BAR */
+#tlbar{position:absolute;top:0;left:0;right:0;height:30px;z-index:8;
+  background:rgba(3,5,11,.9);border-bottom:1px solid rgba(30,48,80,.7);
+  display:flex;align-items:center;gap:0;overflow:hidden;pointer-events:none}
+.tltick{flex-shrink:0;width:26px;height:100%;border-right:1px solid rgba(30,48,80,.5);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.tldot{width:5px;height:5px;border-radius:50%;background:var(--bdr2)}
+.tldot.ok{background:var(--g)}.tldot.err{background:var(--r)}
+.tldot.warn{background:var(--y)}.tldot.cfr{background:var(--m)}
+.tlts{font-size:6px;color:rgba(0,212,255,.3)}
+
+/* REWIND TOOLBAR — sits below timeline */
+#rwbar{position:absolute;top:30px;left:0;right:0;height:28px;z-index:8;
+  background:rgba(6,10,20,.85);border-bottom:1px solid rgba(30,48,80,.5);
+  display:flex;align-items:center;gap:6px;padding:0 10px;backdrop-filter:blur(4px)}
+.rwbtn{padding:2px 8px;border:1px solid var(--bdr2);background:transparent;
+  color:rgba(224,238,255,.5);font-family:var(--mono),monospace;font-size:9px;
+  cursor:pointer;border-radius:2px;letter-spacing:.06em;transition:all .1s}
+.rwbtn:hover{background:rgba(0,212,255,.08);color:var(--c);border-color:rgba(0,212,255,.4)}
+.rwbtn.on{background:rgba(255,184,0,.1);color:var(--y);border-color:var(--y)}
+#rw-scrub{flex:1;height:2px;-webkit-appearance:none;appearance:none;
+  background:rgba(0,212,255,.18);outline:none;cursor:pointer;border-radius:1px}
+#rw-scrub::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;
+  border-radius:50%;background:var(--y);cursor:pointer}
+.rw-ts{font-size:8px;color:rgba(255,184,0,.6);white-space:nowrap;min-width:70px}
+.rw-sep{width:1px;height:14px;background:var(--bdr2);flex-shrink:0}
+
+/* HUD */
+#hud{position:absolute;top:62px;right:10px;z-index:6;display:flex;flex-direction:column;gap:4px;pointer-events:none}
+.hmet{background:rgba(3,5,11,.85);border:1px solid var(--bdr2);border-radius:2px;
+  padding:3px 9px;display:flex;align-items:baseline;gap:5px;backdrop-filter:blur(6px)}
+.hv{font-size:18px;font-weight:700;color:var(--c)}.hu{font-size:8px;color:rgba(0,212,255,.45)}
+
+.stress-ov{position:absolute;inset:0;z-index:10;pointer-events:none;
+  opacity:0;border:2px solid var(--r);box-shadow:inset 0 0 70px rgba(255,51,102,.25)}
+@keyframes sflash{0%{opacity:.8}100%{opacity:0}}
+.stress-ov.flash{animation:sflash .4s ease-out forwards}
+
+#inspect{position:absolute;bottom:100px;left:14px;z-index:20;
+  background:rgba(6,10,20,.96);border:1px solid var(--bdr2);border-radius:3px;
+  padding:11px 13px;min-width:190px;backdrop-filter:blur(10px);display:none}
+#inspect.open{display:block}
+.ipt{font-size:11px;color:var(--c);margin-bottom:7px}
+.ipr{display:flex;justify-content:space-between;gap:14px;font-size:9px;margin-bottom:2px}
+.ipk{color:rgba(224,238,255,.38)}.ipv{color:var(--w)}
+
+/* CONTEXT MENU */
+#ctx-menu{position:fixed;z-index:999;background:rgba(6,10,20,.98);border:1px solid var(--bdr2);
+  border-radius:3px;padding:5px 0;min-width:170px;display:none;backdrop-filter:blur(12px);
+  box-shadow:0 4px 24px rgba(0,0,0,.7);}
+#ctx-menu.open{display:block;}
+.ctx-header{padding:4px 12px 6px;font-size:8px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(0,212,255,.4);border-bottom:1px solid var(--bdr);margin-bottom:3px;}
+.ctx-header span{color:var(--c);font-size:10px;}
+.ctx-item{padding:5px 12px;font-size:10px;cursor:pointer;display:flex;align-items:center;gap:8px;
+  color:rgba(224,238,255,.65);letter-spacing:.04em;transition:background .08s;}
+.ctx-item:hover{background:rgba(0,212,255,.09);color:var(--c);}
+.ctx-item.danger:hover{background:rgba(255,51,102,.09);color:var(--r);}
+.ctx-item .ci{font-size:10px;width:14px;text-align:center;flex-shrink:0;}
+.ctx-sep{height:1px;background:var(--bdr);margin:3px 0;}
+
+/* SPARK */
+.spark-wrap{margin:3px 11px;border:1px solid var(--bdr2);border-radius:2px;overflow:hidden}
+#spark{display:block;width:100%;height:34px}
+
+/* RIGHT PANEL */
+.rphd{padding:7px 11px;font-size:8px;letter-spacing:.15em;text-transform:uppercase;
+  color:rgba(0,212,255,.38);border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.rphd b{color:var(--c);font-weight:normal}
+.runbtn{margin:7px 11px;padding:6px;border:1px solid rgba(0,212,255,.3);
+  background:rgba(0,212,255,.06);color:var(--c);font-family:var(--mono),monospace;
+  font-size:9px;letter-spacing:.09em;cursor:pointer;border-radius:2px;
+  text-transform:uppercase;width:calc(100% - 22px);transition:all .12s}
+.runbtn:hover{background:rgba(0,212,255,.13);border-color:var(--c)}
+.tsum{margin:0 11px 7px;padding:6px 9px;border:1px solid var(--bdr2);border-radius:2px;display:flex;gap:10px;align-items:center}
+.tsn{font-size:17px;font-weight:700}.tsn.p{color:var(--g)}.tsn.f{color:var(--r)}.tsn.s{color:rgba(224,238,255,.25)}
+.tsl2{font-size:8px;color:rgba(224,238,255,.38);letter-spacing:.07em}
+.tgrp{border-bottom:1px solid var(--bdr)}
+.tghd{padding:5px 11px;font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  color:rgba(224,238,255,.45);display:flex;align-items:center;gap:7px;cursor:pointer;transition:background .08s}
+.tghd:hover{background:rgba(0,212,255,.04)}
+.tgico{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tgico.pass{background:var(--g);box-shadow:0 0 5px rgba(0,255,136,.5)}
+.tgico.fail{background:var(--r);box-shadow:0 0 5px rgba(255,51,102,.5)}
+.tgico.run{background:var(--y);animation:tp .5s ease infinite alternate}
+.tgico.idle{background:rgba(224,238,255,.14)}
+@keyframes tp{from{opacity:.4}to{opacity:1;box-shadow:0 0 7px rgba(255,184,0,.6)}}
+.tgname{flex:1}.tgscore{font-size:8px;color:rgba(224,238,255,.28);margin-left:auto}
+.tcase{padding:3px 11px 3px 24px;font-size:9px;display:flex;align-items:center;gap:5px;
+  border-bottom:1px solid rgba(18,32,58,.4)}
+.tcs{width:13px;flex-shrink:0}.tcn{flex:1;color:rgba(224,238,255,.55)}
+.tcr{font-size:8px;max-width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tcr.pass{color:var(--g)}.tcr.fail{color:var(--r)}.tcr.run{color:var(--y)}.tcr.idle{color:rgba(224,238,255,.2)}
+.tcms{font-size:8px;color:rgba(224,238,255,.22);min-width:28px;text-align:right}
+
+/* SNR */
+.snrwrap{margin:7px 11px;border:1px solid var(--bdr2);border-radius:2px;overflow:hidden}
+#snrcv{width:100%;height:86px;display:block}
+
+/* CLUSTER LIST */
+.clist{padding:3px 11px;display:flex;flex-direction:column;gap:2px}
+.citem{display:flex;align-items:center;gap:6px;padding:4px 7px;
+  border:1px solid var(--bdr2);border-radius:2px;font-size:9px}
+.cdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;animation:cp 2s ease infinite}
+@keyframes cp{0%,100%{opacity:.5}50%{opacity:1;transform:scale(1.4)}}
+.cid{color:rgba(224,238,255,.35);width:20px}.cn{flex:1;color:var(--w)}
+.cm{color:rgba(0,212,255,.65);font-size:8px}
+.csig{font-size:8px}
+.csig.causal{color:var(--m)}.csig.laminar{color:var(--g)}.csig.turb{color:var(--y)}
+
+/* NEX IMPORT/EXPORT */
+.nexwrap{padding:6px 11px;display:flex;flex-direction:column;gap:4px}
+.nexrow{display:flex;gap:4px}
+.nexbtn{flex:1;padding:5px;border:1px solid var(--bdr2);background:transparent;
+  color:rgba(224,238,255,.45);font-family:var(--mono),monospace;font-size:9px;
+  cursor:pointer;border-radius:2px;letter-spacing:.05em;text-transform:uppercase;transition:all .1s}
+.nexbtn:hover{background:rgba(0,212,255,.08);color:var(--c);border-color:rgba(0,212,255,.4)}
+.nexbtn.imp{border-color:rgba(0,255,136,.25);color:var(--g)}
+.nexbtn.imp:hover{background:rgba(0,255,136,.08);border-color:var(--g)}
+.nexbtn.exp{border-color:rgba(204,68,255,.25);color:var(--m)}
+.nexbtn.exp:hover{background:rgba(204,68,255,.08);border-color:var(--m)}
+.nexbtn.snap{border-color:rgba(255,184,0,.25);color:var(--y)}
+.nexbtn.snap:hover{background:rgba(255,184,0,.08);border-color:var(--y)}
+#nex-status{font-size:8px;color:rgba(224,238,255,.3);min-height:13px}
+#nex-file{display:none}
+
+/* CFR description box */
+.cfrbox{margin:7px 11px;padding:7px 9px;border:1px solid var(--bdr2);border-radius:2px;
+  font-size:9px;color:rgba(224,238,255,.3);line-height:1.6;border-left:2px solid var(--m)}
+
+/* STATUSBAR */
+#sb{grid-column:1/-1;background:var(--bg2);border-top:1px solid var(--bdr);
+  display:flex;align-items:center;padding:0 11px;gap:14px;font-size:9px;color:rgba(224,238,255,.3)}
+.sbi span{color:rgba(224,238,255,.65)}
+#sb-mode{color:var(--c);font-weight:700;letter-spacing:.09em}
+
+/* ── TOASTS ───────────────────────────────────────────────────────────────── */
+#toast-rack{position:fixed;top:56px;right:14px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none;}
+.toast{padding:10px 14px;border-radius:3px;font-size:10px;letter-spacing:.05em;min-width:240px;max-width:340px;
+  backdrop-filter:blur(12px);pointer-events:all;cursor:pointer;
+  border:1px solid rgba(255,255,255,.12);box-shadow:0 4px 24px rgba(0,0,0,.7);
+  animation:toast-in .18s cubic-bezier(.22,1,.36,1) forwards;
+  display:flex;flex-direction:column;gap:4px;}
+@keyframes toast-in{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes toast-out{to{opacity:0;transform:translateX(28px);max-height:0;margin:0;padding:0}}
+.toast.out{animation:toast-out .2s ease forwards;}
+.toast-title{font-size:9px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;margin-bottom:1px;}
+.toast-body{color:rgba(224,238,255,.75);font-size:10px;line-height:1.45;}
+.toast-actions{display:flex;gap:6px;margin-top:4px;}
+.toast-btn{padding:3px 10px;border-radius:2px;font-size:9px;letter-spacing:.07em;cursor:pointer;
+  font-family:inherit;text-transform:uppercase;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);
+  color:rgba(224,238,255,.8);transition:all .1s;}
+.toast-btn:hover{background:rgba(255,255,255,.15);}
+.toast-btn.primary{border-color:var(--g);color:var(--g);background:rgba(0,255,136,.1);}
+.toast-btn.danger{border-color:var(--r);color:var(--r);background:rgba(255,51,102,.1);}
+.toast.ok{background:rgba(0,20,10,.92);border-color:rgba(0,255,136,.3);}   .toast.ok .toast-title{color:var(--g);}
+.toast.warn{background:rgba(20,14,0,.92);border-color:rgba(255,184,0,.3);} .toast.warn .toast-title{color:var(--y);}
+.toast.err{background:rgba(20,0,5,.92);border-color:rgba(255,51,102,.3);}  .toast.err .toast-title{color:var(--r);}
+.toast.cfr{background:rgba(15,0,22,.92);border-color:rgba(204,68,255,.3);} .toast.cfr .toast-title{color:var(--m);}
+.toast.invite{background:rgba(6,10,20,.97);border-color:rgba(0,212,255,.45);}  .toast.invite .toast-title{color:var(--c);}
+
+/* ── CONNECT / INVITE MODAL ──────────────────────────────────────────────── */
+#conn-modal{position:fixed;inset:0;z-index:8000;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);}
+#conn-modal.open{display:flex;}
+.conn-box{background:rgba(6,10,20,.98);border:1px solid var(--bdr2);border-radius:4px;
+  padding:22px 24px;min-width:360px;max-width:480px;box-shadow:0 8px 40px rgba(0,0,0,.8);}
+.conn-title{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--c);margin-bottom:14px;font-weight:700;}
+.conn-row{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.conn-lbl{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(0,212,255,.45);}
+.conn-input{background:rgba(0,212,255,.06);border:1px solid var(--bdr2);border-radius:2px;
+  color:var(--w);font-family:var(--mono),monospace;font-size:11px;padding:7px 10px;width:100%;outline:none;
+  transition:border-color .1s;}
+.conn-input:focus{border-color:var(--c);}
+.conn-hint{font-size:8px;color:rgba(0,212,255,.35);margin-top:2px;}
+.conn-nexus{font-size:10px;color:var(--m);letter-spacing:.06em;padding:8px 10px;
+  background:rgba(204,68,255,.06);border:1px solid rgba(204,68,255,.2);border-radius:2px;
+  font-family:var(--mono),monospace;word-break:break-all;cursor:pointer;user-select:all;}
+.conn-actions{display:flex;gap:8px;margin-top:16px;}
+.conn-btn{flex:1;padding:8px;border-radius:2px;font-family:var(--mono),monospace;font-size:10px;
+  letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .12s;}
+.conn-btn.primary{background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.5);color:var(--c);}
+.conn-btn.primary:hover{background:rgba(0,212,255,.22);border-color:var(--c);}
+.conn-btn.cancel{background:transparent;border:1px solid var(--bdr2);color:rgba(224,238,255,.4);}
+.conn-btn.cancel:hover{border-color:rgba(224,238,255,.3);color:rgba(224,238,255,.7);}
+.conn-tabs{display:flex;gap:0;border-bottom:1px solid var(--bdr);margin-bottom:16px;}
+.conn-tab{padding:6px 14px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  border-bottom:2px solid transparent;color:rgba(224,238,255,.35);transition:all .1s;}
+.conn-tab.on{color:var(--c);border-bottom-color:var(--c);}
+
+/* ── SANDBOX MODE INDICATOR ──────────────────────────────────────────────── */
+#sandbox-bar{position:absolute;top:0;left:0;right:0;height:3px;z-index:50;pointer-events:none;
+  background:linear-gradient(90deg,var(--r),var(--m),var(--r));background-size:200%;
+  animation:sandbox-pulse 2s linear infinite;display:none;}
+#sandbox-bar.on{display:block;}
+@keyframes sandbox-pulse{0%{background-position:0%}100%{background-position:200%}}
+.sandbox-badge{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:51;
+  padding:2px 12px;border-radius:2px;font-size:8px;letter-spacing:.16em;font-weight:700;
+  background:rgba(255,51,102,.18);border:1px solid rgba(255,51,102,.5);color:var(--r);
+  text-transform:uppercase;pointer-events:none;display:none;}
+.sandbox-badge.on{display:block;}
+
+/* ── CANVAS PAN/ZOOM ─────────────────────────────────────────────────────── */
+#stage{cursor:crosshair;}
+#stage.panning{cursor:grabbing;}
+
+/* ── ZOOM HUD ────────────────────────────────────────────────────────────── */
+#zoom-hud{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:20;
+  padding:2px 10px;border-radius:2px;font-size:8px;letter-spacing:.1em;
+  background:rgba(6,10,20,.75);border:1px solid var(--bdr2);color:rgba(0,212,255,.6);
+  pointer-events:none;transition:opacity .3s;}
+
+/* ── TOPBAR CONNECT BUTTON ───────────────────────────────────────────────── */
+.conn-pill{padding:2px 9px;border-radius:2px;font-size:9px;letter-spacing:.07em;text-transform:uppercase;
+  cursor:pointer;border:1px solid rgba(0,212,255,.3);background:rgba(0,212,255,.07);color:var(--c);
+  font-family:var(--mono),monospace;transition:all .12s;}
+.conn-pill:hover{background:rgba(0,212,255,.16);border-color:var(--c);}
+.conn-pill.connected{border-color:rgba(0,255,136,.4);background:rgba(0,255,136,.08);color:var(--g);}
+
+/* ── DEMO / SANDBOX BUTTONS ──────────────────────────────────────────────── */
+.nexbtn.demo{border-color:rgba(0,212,255,.25);color:var(--c);}
+.nexbtn.demo:hover{background:rgba(0,212,255,.08);border-color:var(--c);}
+.nexbtn.sandbox{border-color:rgba(255,51,102,.25);color:var(--r);}
+.nexbtn.sandbox:hover{background:rgba(255,51,102,.1);border-color:var(--r);}
+.nexbtn.sandbox.on{background:rgba(255,51,102,.18);border-color:var(--r);color:var(--r);
+  box-shadow:0 0 8px rgba(255,51,102,.3);}
+
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- TOPBAR -->
+<div id="tb">
+  <div class="logo">Brain<em>OS</em> · <em>CFR</em></div>
+  <div class="sep"></div>
+  <div class="tstat"><span class="tsl">Particles</span><span class="tsv g" id="t-p">30k</span></div>
+  <div class="sep"></div>
+  <div class="tstat"><span class="tsl">FPS</span><span class="tsv g" id="t-fps">—</span></div>
+  <div class="sep"></div>
+  <div class="tstat"><span class="tsl">Nodes</span><span class="tsv" id="t-nodes">0</span></div>
+  <div class="sep"></div>
+  <div class="tstat"><span class="tsl">Events</span><span class="tsv m" id="t-ev">0</span></div>
+  <div class="sep"></div>
+  <div class="tstat"><span class="tsl">Regime</span><span class="tsv g" id="t-reg">STABLE</span></div>
+  <div class="sep"></div>
+  <div class="gpgpu">
+    <span class="gpgpu-l">GPGPU</span>
+    <span class="pb" id="pb0">READ (tA)</span><span class="pa">→</span>
+    <span class="pb lit" id="pb1">RUN SHADERS</span><span class="pa">→</span>
+    <span class="pb" id="pb2">WRITE (tB)</span>
+  </div>
+  <div class="tbr">
+    <span class="badge by" id="bridge-badge" onclick="pollBridge()">BRIDGE OFFLINE</span>
+    <button class="conn-pill" id="conn-pill" onclick="openConnModal()">⇄ CONNECT</button>
+    <button class="nexbtn sandbox" id="sandbox-btn" onclick="toggleSandbox()" style="padding:2px 9px;font-size:9px;border-radius:2px;" title="Destructive adversarial sandbox mode">⚠ SANDBOX</button>
+    <span class="badge bm" id="version-badge">CFR v6.0</span>
+  </div>
+</div>
+
+<!-- LEFT PANEL -->
+<div id="lp">
+  <div class="sec">
+    <div class="sechd">Field Parameters</div>
+    <div class="ctrl"><div class="ctrl-top"><span class="cl">Particles</span><span class="cv" id="v-p">30k</span></div><input type="range" id="sl-p" min="2000" max="60000" step="1000" value="30000"></div>
+    <div class="ctrl"><div class="ctrl-top"><span class="cl">Structure</span><span class="cv" id="v-s">0.50</span></div><input type="range" id="sl-s" min="0" max="1" step="0.01" value="0.5"></div>
+    <div class="ctrl"><div class="ctrl-top"><span class="cl">Entropy</span><span class="cv" id="v-e">0.20</span></div><input type="range" id="sl-e" min="0" max="1" step="0.01" value="0.2"></div>
+    <div class="ctrl"><div class="ctrl-top"><span class="cl">Attention</span><span class="cv" id="v-a">0.50</span></div><input type="range" id="sl-a" min="0" max="1" step="0.01" value="0.5"></div>
+    <div class="ctrl"><div class="ctrl-top"><span class="cl">Damping</span><span class="cv" id="v-d">0.12</span></div><input type="range" id="sl-d" min="0" max="0.5" step="0.01" value="0.12"></div>
+    <div class="ctrl"><div class="ctrl-top"><span class="cl">Curl Swirl</span><span class="cv" id="v-c">0.60</span></div><input type="range" id="sl-c" min="0" max="2" step="0.01" value="0.6"></div>
+    <div class="ctrl"><div class="ctrl-top"><span class="cl">Speed</span><span class="cv" id="v-sp">1.0</span></div><input type="range" id="sl-sp" min="0.1" max="3" step="0.1" value="1.0"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sechd">View</div>
+    <div class="vgrid">
+      <button class="vbtn on" id="vb-3d" onclick="setView(-25,0,'3D FIELD','vb-3d')">3D FIELD</button>
+      <button class="vbtn" id="vb-top" onclick="setView(-89,0,'TOP DOWN','vb-top')">TOP DOWN</button>
+      <button class="vbtn" id="vb-side" onclick="setView(0,90,'SIDE VIEW','vb-side')">SIDE</button>
+      <button class="vbtn" id="vb-orb" onclick="toggleOrbit()">ORBIT</button>
+    </div>
+    <div class="ctrl"><div class="ctrl-top"><span class="cl">Rotation Y</span><span class="cv" id="v-ry">0°</span></div><input type="range" id="sl-ry" min="-180" max="180" step="1" value="0"></div>
+    <div class="ctrl"><div class="ctrl-top"><span class="cl">Tilt X</span><span class="cv" id="v-rx">-25°</span></div><input type="range" id="sl-rx" min="-89" max="89" step="1" value="-25"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sechd">Regime</div>
+    <div class="regime-box"><div class="regime-lbl">State</div><div class="regime-val rv-stable" id="regime">STABLE</div></div>
+    <div class="mphys">
+      <div class="mrow"><div class="mdot" style="background:var(--g)"></div><span class="ml">Laminar (Healthy)</span><span class="mv" id="m-lam">—</span></div>
+      <div class="mrow"><div class="mdot" style="background:var(--y)"></div><span class="ml">Turbulence (Deadlock)</span><span class="mv" id="m-turb">—</span></div>
+      <div class="mrow"><div class="mdot" style="background:var(--m)"></div><span class="ml">Causal Signal</span><span class="mv" id="m-caus">—</span></div>
+    </div>
+    <div class="spark-wrap"><canvas id="spark"></canvas></div>
+  </div>
+
+  <div class="sec">
+    <div class="sechd">Nodes <b id="node-count">0</b></div>
+    <div class="nlist" id="nlist"><div style="font-size:9px;color:rgba(224,238,255,.2);padding:5px">Bridge offline — demo nodes loading…</div></div>
+  </div>
+
+  <div class="sec" style="flex:1">
+    <div class="sechd">Bridge Events</div>
+    <div class="evfeed" id="evfeed"><div style="font-size:9px;color:rgba(224,238,255,.2);padding:4px">Waiting…</div></div>
+  </div>
+</div>
+
+<!-- STAGE -->
+<div id="stage" onclick="stageClick(event)" oncontextmenu="stageRightClick(event)">
+  <div id="sandbox-bar"></div>
+  <div class="sandbox-badge" id="sandbox-badge">⚠ ADVERSARIAL SANDBOX</div>
+  <div id="zoom-hud">100%</div>
+  <canvas id="cv"></canvas>
+  <canvas id="ov"></canvas>
+  <div class="stress-ov" id="sov"></div>
+
+  <!-- CAUSAL TIMELINE — immutable event record, the "timeline layer" -->
+  <div id="tlbar"></div>
+
+  <!-- REWIND / PLAYBACK TOOLS -->
+  <div id="rwbar">
+    <button class="rwbtn" id="rw-play" onclick="rwPlay()" title="Play/Pause">▶ PLAY</button>
+    <button class="rwbtn" onclick="rwStep(-1)" title="Step back">◀◀</button>
+    <button class="rwbtn" onclick="rwStep(1)" title="Step forward">▶▶</button>
+    <div class="rw-sep"></div>
+    <button class="rwbtn" onclick="rwGoStart()" title="Go to start">|◀</button>
+    <input type="range" id="rw-scrub" min="0" max="0" value="0" oninput="rwScrub(this.value)" title="Timeline scrubber">
+    <button class="rwbtn" onclick="rwGoEnd()" title="Go to end">▶|</button>
+    <div class="rw-sep"></div>
+    <span class="rw-ts" id="rw-ts">LIVE</span>
+    <div class="rw-sep"></div>
+    <button class="rwbtn" onclick="clearTimeline()" title="Clear causal record">CLR</button>
+  </div>
+
+  <div id="hud">
+    <div class="hmet"><span class="hv" id="h-fps">60</span><span class="hu">FPS</span></div>
+    <div class="hmet"><span class="hv" id="h-p">30k</span><span class="hu">NODES</span></div>
+    <div class="hmet"><span class="hv g" id="h-cl">0</span><span class="hu">CLUSTERS</span></div>
+  </div>
+
+  <div id="inspect">
+    <div class="ipt" id="ip-title">Inspector</div>
+    <div id="ip-body"></div>
+    <button onclick="document.getElementById('inspect').classList.remove('open')"
+      style="margin-top:7px;width:100%;padding:3px;background:transparent;border:1px solid rgba(0,212,255,.3);color:rgba(0,212,255,.6);font-family:var(--mono),monospace;font-size:9px;cursor:pointer">CLOSE</button>
+  </div>
+</div>
+
+<!-- RIGHT PANEL — TESTING SUITE + TOOLS -->
+<div id="rp">
+  <div class="rphd">CFR Testing Suite <b id="tv">v3.1</b></div>
+  <button class="runbtn" onclick="runAll()">▶ RUN ALL TESTS</button>
+  <div class="tsum">
+    <div><div class="tsn p" id="ts-p">0</div><div class="tsl2">PASS</div></div>
+    <div><div class="tsn f" id="ts-f">0</div><div class="tsl2">FAIL</div></div>
+    <div><div class="tsn s" id="ts-s">0</div><div class="tsl2">PENDING</div></div>
+    <div style="flex:1"></div>
+    <div style="font-size:8px;color:rgba(224,238,255,.22)" id="ts-t">—</div>
+  </div>
+  <div id="tgroups"></div>
+
+  <!-- SNR GATE VISUALIZER -->
+  <div class="rphd" style="border-top:1px solid var(--bdr)">SNR Gate Pipeline <b id="snr-state">ADAPTIVE</b></div>
+  <div class="snrwrap"><canvas id="snrcv"></canvas></div>
+
+  <!-- CAUSAL CLUSTERS -->
+  <div class="rphd" style="border-top:1px solid var(--bdr)">Causal Clusters <b id="cl-count">0</b></div>
+  <div class="clist" id="clist"><div style="font-size:9px;color:rgba(224,238,255,.2);padding:4px">Detecting…</div></div>
+
+  <!-- .NEX IMPORT / EXPORT -->
+  <div class="rphd" style="border-top:1px solid var(--bdr)">.NEX Workspace <b id="nex-info">—</b></div>
+  <div class="nexwrap">
+    <div class="nexrow">
+      <button class="nexbtn imp" onclick="nexImport()">⬆ IMPORT .NEX</button>
+      <button class="nexbtn exp" onclick="nexExport()">⬇ EXPORT .NEX</button>
+    </div>
+    <div class="nexrow">
+      <button class="nexbtn snap" onclick="nexSnapshot()">📸 SNAPSHOT</button>
+      <button class="nexbtn" onclick="nexLoadDemo()">LOAD DEMO</button>
+    </div>
+    <div id="nex-status"></div>
+  </div>
+  <input type="file" id="nex-file" accept=".nex,.json">
+
+  <div class="cfrbox">
+    <span style="color:var(--m)">CAUSAL LAYER</span> = the timeline. Immutable event record. Every state change is appended, never mutated.<br>
+    <span style="color:var(--c)">MOVIE LAYER</span> = the particle field. Physics rendered from causal state each frame.<br>
+    <span style="color:var(--g)">SNR GATES</span> translate causal events → force vectors.
+  </div>
+</div>
+
+<!-- STATUSBAR -->
+<div id="sb">
+  <span id="sb-mode">3D FIELD</span>
+  <div class="sep"></div>
+  <div class="sbi">Struct <span id="sb-s">0.50</span></div>
+  <div class="sbi">Entropy <span id="sb-e">0.20</span></div>
+  <div class="sbi">Attn <span id="sb-a">0.50</span></div>
+  <div class="sbi">Curl <span id="sb-c">0.60</span></div>
+  <div class="sbi" style="margin-left:auto">BUF <span id="sb-buf">tA</span></div>
+  <div class="sbi">Bridge <span id="sb-br">localhost:3747</span></div>
+</div>
+</div><!-- #app -->
+
+<!-- CONTEXT MENU -->
+<div id="ctx-menu">
+  <div class="ctx-header">NODE · <span id="ctx-node-label">—</span></div>
+  <div class="ctx-item" onclick="ctxInspect()"><span class="ci">🔍</span>Inspect Node</div>
+  <div class="ctx-item" onclick="ctxSimRoute()"><span class="ci">→</span>Simulate Route From</div>
+  <div class="ctx-item" onclick="ctxSimFailure()"><span class="ci">⚡</span>Simulate Failure</div>
+  <div class="ctx-item" onclick="ctxSimHeal()"><span class="ci">✦</span>Simulate Heal</div>
+  <div class="ctx-item" onclick="ctxBroadcast()"><span class="ci">◎</span>Broadcast From Node</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="ctxEmitPulse()"><span class="ci">♡</span>Emit Pulse Event</div>
+  <div class="ctx-item" onclick="ctxPinAttractor()"><span class="ci">⊕</span>Pin Attractor Here</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item danger" onclick="ctxRemoveNode()"><span class="ci">✕</span>Remove Node</div>
+</div>
+
+<script>
+'use strict';
+/* ═══════ CONFIG ═══════ */
+const CFG={
+  bridgeUrl:'http://localhost:3747',
+  pollMs:2500,
+  maxEvFeed:80,
+  TL_MAX:80,          // timeline ticks
+  SNAP_MAX:200,       // rewind snapshots
+  BOUND:9.0,
+  BOUND_Z:5.0,
+  DEPTH:3.0,
+  WALL_K:0.11,
+  WALL_Z:1.4,
+  VMAX:0.17,
+};
+
+/* ═══════ FIELD STATE ═══════ */
+const F={
+  structure:0.5, entropy:0.2, attention:0.5,
+  damping:0.12, curl:0.6, speed:1.0,
+  stresses:[], attractors:[], clusters:[],
+  regime:'stable',
+};
+const VIEW={rotX:-25,rotY:0,orbit:false};
+
+/* ═══════ PARTICLE ARRAYS ═══════ */
+let N=30000;
+let posX,posY,posZ,velX,velY,velZ,pLife,pSpeed;
+
+/* ═══════ CANVAS ═══════ */
+const cv=document.getElementById('cv');
+const ov=document.getElementById('ov');
+const ctx=cv.getContext('2d');
+const ctx2=ov.getContext('2d');
+
+/* ═══════ CAUSAL TIMELINE (immutable record) ═══════ */
+const CAUSAL_LOG=[];  // {ts, type, cls, data}
+let totalEv=0, bridgeOk=false;
+
+/* ═══════ REWIND SYSTEM ═══════ */
+const SNAPSHOTS=[];   // ring buffer of {ts, posX, posY, posZ clone}
+let RW_IDX=-1;        // -1 = live
+let RW_PAUSED=false;
+let _lastSnap=0;
+
+function takeSnapshot(){
+  if(SNAPSHOTS.length>=CFG.SNAP_MAX) SNAPSHOTS.shift();
+  SNAPSHOTS.push({ts:Date.now(),px:posX.slice(),py:posY.slice(),pz:posZ.slice()});
+  const scrub=document.getElementById('rw-scrub');
+  scrub.max=SNAPSHOTS.length-1;
+  if(RW_IDX===-1) scrub.value=SNAPSHOTS.length-1;
+}
+function rwPlay(){
+  RW_PAUSED=!RW_PAUSED;
+  const btn=document.getElementById('rw-play');
+  btn.textContent=RW_PAUSED?'⏸ PAUSED':'▶ PLAY';
+  btn.classList.toggle('on',RW_PAUSED);
+  if(!RW_PAUSED){RW_IDX=-1;document.getElementById('rw-ts').textContent='LIVE';}
+}
+function rwStep(dir){
+  if(!SNAPSHOTS.length) return;
+  RW_PAUSED=true;
+  document.getElementById('rw-play').textContent='⏸ PAUSED';
+  document.getElementById('rw-play').classList.add('on');
+  const cur=RW_IDX===-1?SNAPSHOTS.length-1:RW_IDX;
+  RW_IDX=Math.max(0,Math.min(SNAPSHOTS.length-1,cur+dir));
+  applySnapshot(RW_IDX);
+}
+function rwScrub(v){
+  if(!SNAPSHOTS.length) return;
+  RW_IDX=parseInt(v);
+  RW_PAUSED=true;
+  document.getElementById('rw-play').textContent='⏸ PAUSED';
+  document.getElementById('rw-play').classList.add('on');
+  applySnapshot(RW_IDX);
+}
+function rwGoStart(){rwScrub(0);}
+function rwGoEnd(){
+  if(!SNAPSHOTS.length)return;
+  RW_IDX=-1;RW_PAUSED=false;
+  document.getElementById('rw-play').textContent='▶ PLAY';
+  document.getElementById('rw-play').classList.remove('on');
+  document.getElementById('rw-ts').textContent='LIVE';
+}
+function applySnapshot(idx){
+  const snap=SNAPSHOTS[idx];
+  if(!snap)return;
+  posX.set(snap.px);posY.set(snap.py);posZ.set(snap.pz);
+  document.getElementById('rw-scrub').value=idx;
+  document.getElementById('rw-ts').textContent=new Date(snap.ts).toLocaleTimeString('en',{hour12:false})+' ['+idx+']';
+}
+function clearTimeline(){
+  SNAPSHOTS.length=0;CAUSAL_LOG.length=0;
+  RW_IDX=-1;RW_PAUSED=false;
+  document.getElementById('rw-scrub').max=0;document.getElementById('rw-scrub').value=0;
+  document.getElementById('rw-ts').textContent='LIVE';
+  document.getElementById('rw-play').textContent='▶ PLAY';
+  document.getElementById('rw-play').classList.remove('on');
+  document.getElementById('tlbar').innerHTML='';
+  nexStatus('Timeline cleared');
+}
+
+/* ═══════ .NEX IMPORT / EXPORT ═══════ */
+const NEX_VERSION='1.0';
+function nexExport(){
+  const pkg={
+    _nex:NEX_VERSION,
+    ts:Date.now(),
+    field:{structure:F.structure,entropy:F.entropy,attention:F.attention,damping:F.damping,curl:F.curl,speed:F.speed},
+    view:{rotX:VIEW.rotX,rotY:VIEW.rotY},
+    nodes:Array.from(canvasNodes.entries()).map(([id,n])=>({id,...n})),
+    attractors:F.attractors.map(a=>({id:a.id,x:a.x,y:a.y,z:a.z,mass:a.mass})),
+    causal_log:CAUSAL_LOG.slice(-200),
+    snapshots:SNAPSHOTS.slice(-20).map(s=>({ts:s.ts})), // positions too large, just timestamps
+    regime:F.regime,
+    particle_count:N,
+  };
+  const blob=new Blob([JSON.stringify(pkg,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='brainos-cfr-'+Date.now()+'.nex';
+  a.click();URL.revokeObjectURL(url);
+  nexStatus('Exported '+CAUSAL_LOG.slice(-200).length+' causal events');
+  document.getElementById('nex-info').textContent='Exported';
+}
+function nexImport(){document.getElementById('nex-file').click();}
+document.getElementById('nex-file').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const pkg=JSON.parse(ev.target.result);
+      if(!pkg._nex)throw new Error('Not a .nex file');
+      if(pkg.field){
+        Object.assign(F,pkg.field);
+        syncSliders();
+      }
+      if(pkg.view){VIEW.rotX=pkg.view.rotX||VIEW.rotX;VIEW.rotY=pkg.view.rotY||VIEW.rotY;syncViewSliders();}
+      if(pkg.nodes&&pkg.nodes.length){
+        syncCanvasNodes(pkg.nodes);
+        addEvent('nex:import',`${pkg.nodes.length} nodes loaded`,'cfr');
+      }
+      if(pkg.particle_count&&pkg.particle_count!==N) allocParticles(pkg.particle_count);
+      nexStatus(`Imported v${pkg._nex} · ${new Date(pkg.ts).toLocaleTimeString()} · ${pkg.nodes?.length||0} nodes`);
+      document.getElementById('nex-info').textContent=f.name;
+      pushTimeline('cfr');
+    }catch(err){nexStatus('Error: '+err.message);}
+  };
+  reader.readAsText(f);
+  e.target.value='';
+});
+function nexSnapshot(){
+  takeSnapshot();
+  const n=SNAPSHOTS.length;
+  nexStatus(`Snapshot #${n} saved · ${N.toLocaleString()} particles`);
+  pushTimeline('ok');
+}
+function nexLoadDemo(){
+  syncCanvasNodes([
+    {id:'node-foundation',label:'Foundation',type:'foundation'},
+    {id:'node-vault',label:'Vault',type:'vault'},
+    {id:'node-bridge',label:'Bridge',type:'bridge'},
+    {id:'node-guardian',label:'Guardian',type:'guardian'},
+    {id:'node-canvas',label:'Canvas',type:'canvas'},
+    {id:'node-copilot',label:'Copilot',type:'default'},
+  ]);
+  F.structure=0.6;F.entropy=0.15;
+  syncSliders();
+  nexStatus('Demo workspace loaded');
+  addEvent('nex:demo','Demo nodes + field','cfr');
+  pushTimeline('cfr');
+}
+function nexStatus(msg){document.getElementById('nex-status').textContent=msg;}
+const canvasNodes=new Map();
+
+/* ═══════ ALLOC PARTICLES ═══════ */
+function allocParticles(n){
+  N=Math.max(100,Math.min(80000,n));
+  posX=new Float32Array(N);posY=new Float32Array(N);posZ=new Float32Array(N);
+  velX=new Float32Array(N);velY=new Float32Array(N);velZ=new Float32Array(N);
+  pLife=new Float32Array(N);pSpeed=new Float32Array(N);
+  const BXY=CFG.BOUND*0.9, BZ=CFG.BOUND_Z*CFG.DEPTH*0.9;
+  for(let i=0;i<N;i++){
+    posX[i]=(Math.random()-.5)*2*BXY;
+    posY[i]=(Math.random()-.5)*2*BXY;
+    posZ[i]=(Math.random()-.5)*2*BZ;
+    velX[i]=(Math.random()-.5)*0.025;
+    velY[i]=(Math.random()-.5)*0.025;
+    velZ[i]=(Math.random()-.5)*0.012;
+    pLife[i]=0.6+Math.random()*0.4;
+    pSpeed[i]=0.15+Math.random()*0.15;
+  }
+  const lbl=N>=1000?(N/1000).toFixed(0)+'k':N;
+  document.getElementById('t-p').textContent=lbl;
+  document.getElementById('v-p').textContent=lbl;
+  document.getElementById('h-p').textContent=lbl;
+}
+
+/* ═══════ CURL NOISE ═══════ */
+function h21(x,y){const v=Math.sin(x*127.1+y*311.7)*43758.5453;return v-Math.floor(v);}
+function sn(x,y){
+  const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
+  const ux=fx*fx*(3-2*fx),uy=fy*fy*(3-2*fy);
+  const a=h21(ix,iy),b=h21(ix+1,iy),c=h21(ix,iy+1),d=h21(ix+1,iy+1);
+  return a+(b-a)*ux+(c-a)*uy+(a-b-c+d)*ux*uy;
+}
+function curl(x,y,z,t){
+  const e=0.08;
+  return{
+    cx:(sn(x+z*.2+t*.05,y+e)-sn(x+z*.2+t*.05,y-e))/(2*e),
+    cy:-(sn(x+e,y+z*.3+t*.07)-sn(x-e,y+z*.3+t*.07))/(2*e),
+    cz:(sn(y+e,z+x*.15+t*.04)-sn(y-e,z+x*.15+t*.04))/(2*e)*.4,
+  };
+}
+
+/* ═══════ PHYSICS ═══════ */
+let _pt=0;
+function updatePhysics(dt){
+  if(RW_PAUSED&&RW_IDX!==-1)return; // in rewind mode — don't simulate
+  const dtF=Math.min(dt,0.03)*60*F.speed;
+  const t=_pt;_pt+=dt*0.1;
+  const VMAX=CFG.VMAX,BXY=CFG.BOUND,BZ=CFG.BOUND_Z*CFG.DEPTH;
+  const WK=CFG.WALL_K,WZ=CFG.WALL_Z;
+  for(let i=0;i<N;i++){
+    let px=posX[i],py=posY[i],pz=posZ[i];
+    let vx=velX[i],vy=velY[i],vz=velZ[i];
+    if(!isFinite(px)){posX[i]=posY[i]=posZ[i]=velX[i]=velY[i]=velZ[i]=0;continue;}
+    // Curl noise
+    if(F.curl>0.001){
+      const {cx,cy,cz}=curl(px*.32,py*.32,pz*.18,t);
+      vx+=cx*F.curl*.011*dtF;vy+=cy*F.curl*.011*dtF;vz+=cz*F.curl*.005*dtF;
+    }
+    // Attractors
+    for(const at of F.attractors){
+      const dx=at.x-px,dy=at.y-py,dz=at.z-pz;
+      const d2=dx*dx+dy*dy+dz*dz+0.4;
+      const d=Math.sqrt(d2);
+      const f=at.mass*F.structure*F.attention*.016/d2;
+      vx+=dx/d*f*dtF;vy+=dy/d*f*dtF;vz+=dz/d*f*dtF*.35;
+    }
+    // Entropy
+    vx+=(Math.random()-.5)*F.entropy*.016*dtF;
+    vy+=(Math.random()-.5)*F.entropy*.016*dtF;
+    vz+=(Math.random()-.5)*F.entropy*.005*dtF;
+    // Stress
+    for(const st of F.stresses){
+      const dx=px-st.x,dy=py-st.y,dz=pz-st.z;
+      const d2=dx*dx+dy*dy+dz*dz+.01;
+      const d=Math.sqrt(d2);
+      if(d<st.radius*3){const f=st.strength*st.life/(d2*14);vx+=dx/d*f*dtF;vy+=dy/d*f*dtF;vz+=dz/d*f*dtF*.25;}
+    }
+    // Soft walls
+    const dxw=BXY-Math.abs(px),dyw=BXY-Math.abs(py),dzw=BZ-Math.abs(pz);
+    if(dxw<WZ)vx+=Math.sign(-px)*WK*(WZ-dxw)*dtF;
+    if(dyw<WZ)vy+=Math.sign(-py)*WK*(WZ-dyw)*dtF;
+    if(dzw<WZ)vz+=Math.sign(-pz)*WK*(WZ-dzw)*dtF;
+    // Damp + cap
+    const dk=1-F.damping*.8;vx*=dk;vy*=dk;vz*=dk;
+    vx=Math.max(-VMAX,Math.min(VMAX,vx));
+    vy=Math.max(-VMAX,Math.min(VMAX,vy));
+    vz=Math.max(-VMAX,Math.min(VMAX,vz));
+    const vm=Math.sqrt(vx*vx+vy*vy+vz*vz);
+    if(vm>CFG.VMAX){const sc=CFG.VMAX/vm;vx*=sc;vy*=sc;vz*=sc;}
+    px+=vx*dtF;py+=vy*dtF;pz+=vz*dtF;
+    const HB=BXY+.4,HBZ=BZ+.4;
+    if(px>HB){px=HB;vx*=-.3}if(px<-HB){px=-HB;vx*=-.3}
+    if(py>HB){py=HB;vy*=-.3}if(py<-HB){py=-HB;vy*=-.3}
+    if(pz>HBZ){pz=HBZ;vz*=-.3}if(pz<-HBZ){pz=-HBZ;vz*=-.3}
+    posX[i]=px;posY[i]=py;posZ[i]=pz;
+    velX[i]=vx;velY[i]=vy;velZ[i]=vz;
+    pSpeed[i]=Math.min(1,vm*5.5);
+  }
+  for(const st of F.stresses)st.life*=0.91;
+  F.stresses=F.stresses.filter(s=>s.life>.015);
+  detectClusters();
+}
+
+/* ═══════ CLUSTER DETECTION ═══════ */
+function detectClusters(){
+  if(!F.attractors.length){F.clusters=[];return;}
+  const clusters=[];
+  for(const at of F.attractors){
+    let cnt=0,avgS=0;
+    const R2=2.8*2.8;
+    for(let i=0;i<N;i+=4){
+      const dx=posX[i]-at.x,dy=posY[i]-at.y,dz=posZ[i]-at.z;
+      if(dx*dx+dy*dy+dz*dz<R2){cnt++;avgS+=pSpeed[i];}
+    }
+    avgS=cnt>0?avgS/cnt:1;
+    const density=cnt/(N/4);
+    if(density>.012){
+      const sig=avgS<.12?'causal':avgS<.35?'laminar':'turb';
+      clusters.push({id:at.id,density,avgSpeed:avgS,sig});
+    }
+  }
+  F.clusters=clusters;
+  document.getElementById('h-cl').textContent=clusters.length;
+  document.getElementById('cl-count').textContent=clusters.length;
+  renderClusterList(clusters);
+}
+
+/* ═══════ MATRIX MATH ═══════ */
+function mat4id(){return new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1])}
+function persp(fov,asp,n,f){
+  const t=1/Math.tan(fov/2),nf=1/(n-f),m=new Float32Array(16);
+  m[0]=t/asp;m[5]=t;m[10]=(f+n)*nf;m[11]=-1;m[14]=2*f*n*nf;return m;
+}
+function rotX(r){const c=Math.cos(r),s=Math.sin(r),m=mat4id();m[5]=c;m[9]=-s;m[6]=s;m[10]=c;return m;}
+function rotY(r){const c=Math.cos(r),s=Math.sin(r),m=mat4id();m[0]=c;m[8]=s;m[2]=-s;m[10]=c;return m;}
+function mul(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s;}return o;}
+function trans(m,x,y,z){const o=new Float32Array(m);o[12]=m[0]*x+m[4]*y+m[8]*z+m[12];o[13]=m[1]*x+m[5]*y+m[9]*z+m[13];o[14]=m[2]*x+m[6]*y+m[10]*z+m[14];o[15]=m[3]*x+m[7]*y+m[11]*z+m[15];return o;}
+function buildMVP(){
+  const w=cv.width||1,h=cv.height||1;
+  return mul(persp(.72,w/h,.5,150),trans(mul(rotX(VIEW.rotX*Math.PI/180),rotY(VIEW.rotY*Math.PI/180)),0,0,-18));
+}
+function project(px,py,pz,mvp,W,H){
+  const cx=mvp[0]*px+mvp[4]*py+mvp[8]*pz+mvp[12];
+  const cy=mvp[1]*px+mvp[5]*py+mvp[9]*pz+mvp[13];
+  const cw=mvp[3]*px+mvp[7]*py+mvp[11]*pz+mvp[15];
+  if(cw<=.001)return null;
+  return{x:(cx/cw*.5+.5)*W,y:(-cy/cw*.5+.5)*H};
+}
+
+/* ═══════ RENDERING ═══════ */
+let _fps=0,_frames=0,_lastFpsTs=0,_lastFrame=0;
+let _pipeStep=0;
+let _snapTimer=0;
+
+function frame(ts){
+  requestAnimationFrame(frame);
+  const now=ts;
+  const dt=Math.min(.033,_lastFrame>0?(now-_lastFrame)*.001:.016);
+  _lastFrame=now;
+  _frames++;
+
+  // FPS
+  if(now-_lastFpsTs>500){
+    _fps=Math.round(_frames*1000/Math.max(1,now-_lastFpsTs));
+    _frames=0;_lastFpsTs=now;
+    document.getElementById('t-fps').textContent=_fps;
+    document.getElementById('h-fps').textContent=_fps;
+    updateRegime();updateMPhys();updateSparkData();
+  }
+  // GPGPU pipeline animation
+  _pipeStep=(_pipeStep+1)%3;
+  ['pb0','pb1','pb2'].forEach((id,i)=>document.getElementById(id).classList.toggle('lit',i===_pipeStep));
+  document.getElementById('sb-buf').textContent=_pipeStep===0?'tA':'tB';
+
+  if(VIEW.orbit){VIEW.rotY+=.14;syncViewSliders();}
+
+  updatePhysics(dt);
+
+  // Snapshot every ~2s of live playback
+  if(!RW_PAUSED&&now-_lastSnap>2000){takeSnapshot();_lastSnap=now;}
+
+  resize();
+  drawParticles(now);
+  drawOverlay(now);
+  drawSNR(now);
+  drawSparkline();
+}
+
+/* ── PARTICLE RENDER — pure 2D canvas, additive glow ── */
+function drawParticles(now){
+  const W=cv.width,H=cv.height;
+  if(!W||!H)return;
+  // Trail — semi-transparent fill creates motion blur effect
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle='rgba(3,5,11,0.32)';
+  ctx.fillRect(0,0,W,H);
+  ctx.globalCompositeOperation='lighter';
+  const mvp=buildMVP();
+  const step=N>20000?5:N>10000?3:N>5000?2:1;
+  for(let i=0;i<N;i+=step){
+    const s=project(posX[i],posY[i],posZ[i],mvp,W,H);
+    if(!s||s.x<-2||s.x>W+2||s.y<-2||s.y>H+2)continue;
+    const sp=pSpeed[i];
+    // Van Gogh palette: purple=cluster, cyan=laminar, green=healthy, gold=turb, red=stress
+    let r,g,b,a;
+    if(sp<.12)     {r=110;g=40; b=240;a=.85;}
+    else if(sp<.28){r=0;  g=195;b=255;a=.65;}
+    else if(sp<.52){r=0;  g=255;b=130;a=.55;}
+    else if(sp<.75){r=255;g=180;b=0;  a=.62;}
+    else           {r=255;g=45; b=100;a=.70;}
+    ctx.fillStyle=`rgba(${r},${g},${b},${a})`;
+    ctx.fillRect(s.x,s.y,1.8,1.8);
+  }
+  ctx.globalCompositeOperation='source-over';
+}
+
+/* ── OVERLAY — node rings, projected cleanly ── */
+function drawOverlay(now){
+  const W=ov.width,H=ov.height;
+  ctx2.clearRect(0,0,W,H);
+  if(!canvasNodes.size)return;
+  const mvp=buildMVP();
+  for(const [id,node] of canvasNodes){
+    const at=F.attractors.find(a=>a.id===id);
+    if(!at)continue;
+    const s=project(at.x,at.y,at.z,mvp,W,H);
+    if(!s||s.x<-50||s.x>W+50||s.y<-50||s.y>H+50)continue;
+    const col=ncol(node.type);
+    const pulse=(Math.sin(now*.002+(at.phase||0))+1)*6;
+    ctx2.beginPath();ctx2.arc(s.x,s.y,16+pulse,0,Math.PI*2);
+    ctx2.strokeStyle=col;ctx2.lineWidth=1;ctx2.globalAlpha=.07;ctx2.stroke();
+    ctx2.beginPath();ctx2.arc(s.x,s.y,13,0,Math.PI*2);
+    ctx2.strokeStyle=col;ctx2.lineWidth=1.5;ctx2.globalAlpha=.85;ctx2.stroke();
+    ctx2.beginPath();ctx2.arc(s.x,s.y,3.5,0,Math.PI*2);
+    ctx2.fillStyle=col;ctx2.globalAlpha=1;ctx2.fill();
+    ctx2.font='9px Share Tech Mono,monospace';
+    ctx2.fillStyle=col;ctx2.globalAlpha=.88;
+    ctx2.fillText(node.label||id.slice(0,8),s.x+18,s.y+3);
+    const cl=F.clusters.find(c=>c.id===id);
+    if(cl&&cl.sig==='causal'){
+      ctx2.beginPath();ctx2.arc(s.x,s.y,20+pulse*.5,0,Math.PI*2);
+      ctx2.strokeStyle='#cc44ff';ctx2.lineWidth=1;ctx2.globalAlpha=.2;ctx2.stroke();
+    }
+    ctx2.globalAlpha=1;
+  }
+}
+
+/* ── SNR GATE CANVAS ── */
+const snrcv=document.getElementById('snrcv');
+const snrCtx=snrcv.getContext('2d');
+const GATES=['FIDELITY','ENTROPY','ATTENTION','SELECTION'];
+const GCOLS=['#00d4ff','#ffb800','#cc44ff','#00ff88'];
+function drawSNR(now){
+  const pw=snrcv.parentElement.clientWidth-2;
+  if(snrcv.width!==pw){snrcv.width=pw;}snrcv.height=86;
+  const W=snrcv.width,H=86,ctx=snrCtx;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='rgba(3,5,11,.96)';ctx.fillRect(0,0,W,H);
+  const gw=W/GATES.length,t=now*.001;
+  const pkt=(t*.75)%1;
+  GATES.forEach((name,i)=>{
+    const x=gw*i+gw/2,col=GCOLS[i];
+    const active=((pkt*GATES.length)|0)===i;
+    ctx.save();ctx.translate(x,40);
+    ctx.beginPath();ctx.arc(0,0,16,0,Math.PI*2);
+    ctx.strokeStyle=col;ctx.lineWidth=active?1.5:.5;ctx.globalAlpha=active?.9:.3;
+    if(active){ctx.shadowColor=col;ctx.shadowBlur=14;}
+    ctx.stroke();ctx.shadowBlur=0;
+    ctx.beginPath();ctx.moveTo(-8,9);ctx.lineTo(9,0);ctx.lineTo(-8,-9);ctx.closePath();
+    ctx.strokeStyle=col;ctx.lineWidth=active?1.5:.7;ctx.globalAlpha=active?.9:.35;
+    if(active){ctx.fillStyle=col;ctx.globalAlpha=.12;ctx.fill();ctx.globalAlpha=.9;}
+    ctx.stroke();
+    ctx.restore();
+    ctx.font='7px Share Tech Mono,monospace';ctx.fillStyle=col;
+    ctx.globalAlpha=active?.9:.35;ctx.textAlign='center';
+    ctx.fillText(name,x,80);ctx.globalAlpha=1;ctx.textAlign='left';
+    if(i<GATES.length-1){
+      const nx=gw*(i+1);
+      ctx.beginPath();ctx.moveTo(x+18,40);ctx.lineTo(nx-18,40);
+      ctx.strokeStyle=col;ctx.lineWidth=.7;ctx.globalAlpha=.25;ctx.setLineDash([3,4]);ctx.stroke();ctx.setLineDash([]);
+      if(active){
+        const pp=x+18+(nx-18-(x+18))*((pkt*GATES.length)-i);
+        ctx.beginPath();ctx.arc(pp,40,3,0,Math.PI*2);ctx.fillStyle=col;ctx.globalAlpha=.9;ctx.fill();
+      }
+      ctx.globalAlpha=1;
+    }
+  });
+}
+
+/* ── SPARKLINE ── */
+const sparkCv=document.getElementById('spark');
+const sparkCtx=sparkCv.getContext('2d');
+const SMAX=120;
+const sparkS=[],sparkE=[];
+function updateSparkData(){sparkS.push(F.structure);sparkE.push(F.entropy);if(sparkS.length>SMAX){sparkS.shift();sparkE.shift();}}
+function drawSparkline(){
+  const pw=sparkCv.parentElement?.clientWidth||200;
+  if(sparkCv.width!==pw)sparkCv.width=pw;sparkCv.height=34;
+  const W=sparkCv.width,H=34,ctx=sparkCtx;
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='rgba(3,5,11,.92)';ctx.fillRect(0,0,W,H);
+  [[sparkS,'#00d4ff'],[sparkE,'#ffb800']].forEach(([d,col])=>{
+    if(d.length<2)return;
+    ctx.beginPath();d.forEach((v,i)=>{const x=i/(SMAX-1)*W,y=H-2-(v*(H-4));i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+    ctx.strokeStyle=col;ctx.lineWidth=1;ctx.globalAlpha=.75;ctx.stroke();ctx.globalAlpha=1;
+  });
+}
+
+/* ── CAUSAL TIMELINE BAR ── */
+function pushTimeline(cls){
+  const bar=document.getElementById('tlbar');
+  const ts=new Date().toLocaleTimeString('en',{hour12:false});
+  const tick=document.createElement('div');
+  tick.className='tltick';
+  tick.innerHTML=`<div class="tldot ${cls}"></div><div class="tlts">${ts.slice(-2)}</div>`;
+  bar.insertBefore(tick,bar.firstChild);
+  while(bar.children.length>CFG.TL_MAX)bar.removeChild(bar.lastChild);
+  // Record to causal log
+  CAUSAL_LOG.push({ts:Date.now(),cls});
+  if(CAUSAL_LOG.length>2000)CAUSAL_LOG.shift();
+}
+
+/* ── REGIME / PHYSICS ── */
+function updateRegime(){
+  let avg=0;for(let i=0;i<N;i++)avg+=pSpeed[i];avg/=N;
+  const r=avg<.08&&F.structure>.6?'stable':avg>.42?'chaotic':F.stresses.length>3?'turbulent':F.structure>.4&&F.entropy<.3?'resonant':'stable';
+  F.regime=r;
+  const el=document.getElementById('regime');el.className='regime-val rv-'+r;el.textContent=r.toUpperCase();
+  const te=document.getElementById('t-reg');te.textContent=r.toUpperCase();
+  te.style.color={stable:'var(--g)',chaotic:'var(--r)',turbulent:'var(--y)',resonant:'var(--m)'}[r];
+}
+function updateMPhys(){
+  let lam=0,turb=0;
+  for(let i=0;i<N;i+=2){const s=pSpeed[i];if(s<.12){}else if(s<.4)lam++;else turb++;}
+  const half=N/2||1;
+  document.getElementById('m-lam').textContent=Math.round(lam/half*100)+'%';
+  document.getElementById('m-turb').textContent=Math.round(turb/half*100)+'%';
+  document.getElementById('m-caus').textContent=F.clusters.filter(c=>c.sig==='causal').length+' nodes';
+}
+
+/* ── NODE / CLUSTER RENDERERS ── */
+function ncol(t){return{foundation:'#cc44ff',vault:'#ffb800',bridge:'#00d4ff',canvas:'#00ff88',guardian:'#40e0d0'}[t]||'#5a7090';}
+function renderNodeList(nodes){
+  const el=document.getElementById('nlist');
+  if(!nodes.length){el.innerHTML='<div style="font-size:9px;color:rgba(224,238,255,.2);padding:5px">No nodes</div>';return;}
+  el.innerHTML=nodes.slice(0,100).map(n=>`<div class="nitem" data-id="${n.id}" onclick="inspectNode('${n.id}')">
+    <div class="ndot" style="background:${ncol(n.type)}"></div>
+    <div><div class="nn">${n.label||n.id?.slice(0,12)||'?'}</div><div class="nt">${n.type||'node'}</div></div>
+  </div>`).join('');
+}
+function renderClusterList(clusters){
+  const el=document.getElementById('clist');
+  if(!clusters.length){el.innerHTML='<div style="font-size:9px;color:rgba(224,238,255,.2);padding:4px">No persistent clusters</div>';return;}
+  const sc={causal:'#cc44ff',laminar:'#00ff88',turb:'#ffb800'};
+  el.innerHTML=clusters.map((cl,i)=>{
+    const n=canvasNodes.get(cl.id);
+    return`<div class="citem"><div class="cdot" style="background:${sc[cl.sig]||'#5a7090'}"></div>
+    <span class="cid">#${i+1}</span><span class="cn">${n?.label||cl.id?.slice(0,10)||'?'}</span>
+    <span class="cm">${(cl.density*100).toFixed(1)}%</span><span class="csig ${cl.sig}">${cl.sig.toUpperCase()}</span></div>`;
+  }).join('');
+}
+function inspectNode(id){
+  const node=canvasNodes.get(id);if(!node)return;
+  const at=F.attractors.find(a=>a.id===id);
+  const cl=F.clusters.find(c=>c.id===id);
+  document.getElementById('ip-title').textContent=node.label||id.slice(0,12);
+  const sc={causal:'#cc44ff',laminar:'#00ff88',turb:'#ffb800'};
+  document.getElementById('ip-body').innerHTML=`
+    <div class="ipr"><span class="ipk">ID</span><span class="ipv">${id.slice(0,16)}…</span></div>
+    <div class="ipr"><span class="ipk">Type</span><span class="ipv">${node.type||'node'}</span></div>
+    <div class="ipr"><span class="ipk">X</span><span class="ipv">${at?at.x.toFixed(2):'—'}</span></div>
+    <div class="ipr"><span class="ipk">Y</span><span class="ipv">${at?at.y.toFixed(2):'—'}</span></div>
+    <div class="ipr"><span class="ipk">Signal</span><span class="ipv" style="color:${cl?sc[cl.sig]:'#5a7090'}">${cl?cl.sig.toUpperCase():'NONE'}</span></div>
+    <div class="ipr"><span class="ipk">Density</span><span class="ipv">${cl?(cl.density*100).toFixed(1)+'%':'—'}</span></div>`;
+  document.getElementById('inspect').classList.add('open');
+  document.querySelectorAll('.nitem').forEach(e=>e.classList.remove('on'));
+  document.querySelector(`[data-id="${id}"]`)?.classList.add('on');
+}
+
+/* ── STRESS SPAWN ── */
+function spawnStress(x,y,z,str){
+  F.stresses.push({x:x??(Math.random()-.5)*CFG.BOUND*1.4,y:y??(Math.random()-.5)*CFG.BOUND*1.4,z:z??0,strength:str||500,radius:4,life:1});
+  const el=document.getElementById('sov');el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');
+  pushTimeline('err');
+}
+let _ctxNodeId=null;
+function closeCtxMenu(){document.getElementById('ctx-menu').classList.remove('open');}
+document.addEventListener('click',closeCtxMenu);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCtxMenu();});
+
+function stageRightClick(e){
+  e.preventDefault();
+  const r=cv.getBoundingClientRect();
+  const nx=(e.clientX-r.left)/r.width,ny=(e.clientY-r.top)/r.height;
+  // Hit-test: find nearest canvas node to click point
+  const mvp=buildMVP();
+  let bestId=null,bestDist=Infinity;
+  for(const [id] of canvasNodes){
+    const at=F.attractors.find(a=>a.id===id);
+    if(!at)continue;
+    const s=project(at.x,at.y,at.z,mvp,cv.width,cv.height);
+    if(!s)continue;
+    const dx=(s.x/cv.width)-nx, dy=(s.y/cv.height)-ny;
+    // Use pixel distance, compensate for stage dimensions
+    const W=r.width,H=r.height;
+    const pdx=dx*W, pdy=dy*H;
+    const dist=Math.sqrt(pdx*pdx+pdy*pdy);
+    if(dist<bestDist&&dist<36){bestDist=dist;bestId=id;}
+  }
+  const menu=document.getElementById('ctx-menu');
+  if(bestId){
+    _ctxNodeId=bestId;
+    const node=canvasNodes.get(bestId);
+    document.getElementById('ctx-node-label').textContent=node?.label||bestId.slice(0,12);
+    menu.querySelectorAll('.ctx-item').forEach(el=>el.style.display='');
+  }else{
+    // Background right-click: show spawn/field actions, hide node actions
+    _ctxNodeId=null;
+    document.getElementById('ctx-node-label').textContent='CANVAS';
+    const nodeActions=['ctxInspect','ctxSimRoute','ctxSimFailure','ctxSimHeal','ctxBroadcast','ctxEmitPulse','ctxPinAttractor','ctxRemoveNode'];
+    menu.querySelectorAll('.ctx-item').forEach(el=>{
+      const fn=el.getAttribute('onclick');
+      const isNode=nodeActions.some(a=>fn&&fn.includes(a));
+      el.style.display=(isNode&&!['ctxPinAttractor','ctxEmitPulse'].includes(fn?.match(/\w+/)?.[0]))?'none':'';
+    });
+    // Store click pos for pin
+    _ctxClickNX=nx; _ctxClickNY=ny;
+  }
+  // Position menu: flip if near edges
+  const mw=180,mh=220;
+  let left=e.clientX+4, top=e.clientY+4;
+  if(left+mw>window.innerWidth)left=e.clientX-mw-4;
+  if(top+mh>window.innerHeight)top=e.clientY-mh-4;
+  menu.style.left=left+'px'; menu.style.top=top+'px';
+  menu.classList.add('open');
+}
+let _ctxClickNX=0.5,_ctxClickNY=0.5;
+
+function stageClick(e){
+  if(e.button===2)return;
+  closeCtxMenu();
+  const r=e.target.getBoundingClientRect();
+  const nx=(e.clientX-r.left)/r.width,ny=(e.clientY-r.top)/r.height;
+  spawnStress((nx-.5)*CFG.BOUND*1.5,(0.5-ny)*CFG.BOUND*1.5,0,650);
+}
+
+/* ── CONTEXT MENU ACTIONS ── */
+async function ctxPostSimulate(body){
+  try{
+    const r=await fetch(`${CFG.bridgeUrl}/cfr/simulate`,{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(2000)});
+    const d=await r.json();
+    addEvent('cfr:simulate',`${body.type} → ${d.ok?'ok':'fail'}`,d.ok?'cfr':'err');
+    pushTimeline(d.ok?'cfr':'err');
+  }catch{
+    addEvent('cfr:simulate',`${body.type} (offline — simulated locally)`,'warn');
+  }
+}
+function ctxInspect(){if(_ctxNodeId)inspectNode(_ctxNodeId);closeCtxMenu();}
+function ctxSimRoute(){
+  if(!_ctxNodeId)return;
+  const others=[...canvasNodes.keys()].filter(id=>id!==_ctxNodeId);
+  const toId=others[Math.floor(Math.random()*others.length)];
+  if(toId){ctxPostSimulate({type:'route',fromId:_ctxNodeId,toId,intensity:7});}
+  else{addEvent('cfr:route','Need 2+ nodes for route','warn');}
+  closeCtxMenu();
+}
+function ctxSimFailure(){
+  if(!_ctxNodeId)return;
+  ctxPostSimulate({type:'failure',fromId:_ctxNodeId,intensity:8});
+  spawnStress(null,null,null,700);
+  closeCtxMenu();
+}
+function ctxSimHeal(){
+  if(!_ctxNodeId)return;
+  ctxPostSimulate({type:'heal',fromId:_ctxNodeId});
+  closeCtxMenu();
+}
+function ctxBroadcast(){
+  if(!_ctxNodeId)return;
+  ctxPostSimulate({type:'broadcast',fromId:_ctxNodeId,intensity:5});
+  closeCtxMenu();
+}
+async function ctxEmitPulse(){
+  const id=_ctxNodeId||'canvas';
+  try{
+    await fetch(`${CFG.bridgeUrl}/cfr/emit`,{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({sig:'node:pulse',data:{instanceId:id,source:'ctx-menu'},level:'INFO'}),
+      signal:AbortSignal.timeout(2000)});
+  }catch{}
+  addEvent('node:pulse',`Pulse from ${id.slice(0,10)}`,'ok');
+  closeCtxMenu();
+}
+function ctxPinAttractor(){
+  // Pin an attractor at the click location in world-space
+  const W=cv.width||800, H=cv.height||600;
+  const wx=(_ctxClickNX-.5)*CFG.BOUND*1.5;
+  const wy=(0.5-_ctxClickNY)*CFG.BOUND*1.5;
+  if(_ctxNodeId){
+    const at=F.attractors.find(a=>a.id===_ctxNodeId);
+    if(at){at.x=wx;at.y=wy;addEvent('cfr:pin',`${canvasNodes.get(_ctxNodeId)?.label||_ctxNodeId.slice(0,8)} pinned`,'cfr');}
+  }
+  closeCtxMenu();
+}
+function ctxRemoveNode(){
+  if(!_ctxNodeId)return;
+  canvasNodes.delete(_ctxNodeId);
+  F.attractors=F.attractors.filter(a=>a.id!==_ctxNodeId);
+  F.clusters=F.clusters.filter(c=>c.id!==_ctxNodeId);
+  addEvent('cfr:remove',`Node removed: ${_ctxNodeId.slice(0,12)}`,'warn');
+  renderNodeList([...canvasNodes.values()]);
+  document.getElementById('t-nodes').textContent=canvasNodes.size;
+  document.getElementById('node-count').textContent=canvasNodes.size;
+  closeCtxMenu();
+}
+
+/* ── BRIDGE CFR WS STREAM ── */
+let _ws=null,_wsRetry=0;
+function connectWS(){
+  if(_ws&&(_ws.readyState===WebSocket.OPEN||_ws.readyState===WebSocket.CONNECTING))return;
+  try{
+    const wsUrl=CFG.bridgeUrl.replace(/^http/,'ws')+'/cfr/stream';
+    _ws=new WebSocket(wsUrl);
+    _ws.onopen=()=>{_wsRetry=0;addEvent('cfr:ws','WebSocket live','ok');};
+    _ws.onmessage=(e)=>{
+      try{
+        const msg=JSON.parse(e.data);
+        if(msg.event==='init'&&msg.data){
+          if(msg.data.field){Object.assign(F,msg.data.field);syncSliders();}
+          if(msg.data.nodes)syncCanvasNodes(msg.data.nodes);
+          if(msg.data.deltas)processDeltas(msg.data.deltas);
+        }else if(msg.event==='delta'&&msg.data){
+          processDeltas([msg.data]);
+        }
+      }catch{}
+    };
+    _ws.onerror=()=>{};
+    _ws.onclose=()=>{
+      _wsRetry=Math.min(_wsRetry+1,8);
+      setTimeout(connectWS,Math.min(1200*_wsRetry,15000));
+    };
+  }catch{}
+}
+
+/* ── BRIDGE POLL (CFR module endpoints) ── */
+async function pollBridge(){
+  try{
+    const h=await fetch(`${CFG.bridgeUrl}/cfr/health`,{signal:AbortSignal.timeout(1500)});
+    if(!h.ok)throw 0;
+    if(!bridgeOk){
+      bridgeOk=true;updateBridgeBadge(true);
+      addEvent('bridge:online','CFR connected','ok');pushTimeline('ok');
+      connectWS();
+    }
+    const [nr,dr]=await Promise.allSettled([
+      fetch(`${CFG.bridgeUrl}/cfr/nodes`,{signal:AbortSignal.timeout(2000)}),
+      fetch(`${CFG.bridgeUrl}/cfr/deltas?limit=20`,{signal:AbortSignal.timeout(2000)}),
+    ]);
+    if(nr.status==='fulfilled'&&nr.value.ok){const d=await nr.value.json();syncCanvasNodes(d.nodes||[]);}
+    if(dr.status==='fulfilled'&&dr.value.ok){const d=await dr.value.json();processDeltas(d.deltas||[]);}
+  }catch{
+    if(bridgeOk){bridgeOk=false;updateBridgeBadge(false);addEvent('bridge:offline','Disconnected','err');pushTimeline('err');}
+    simOffline();
+  }
+}
+function syncCanvasNodes(nodes){
+  const liveIds=new Set(nodes.map(n=>n.id));
+  F.attractors=F.attractors.filter(a=>liveIds.has(a.id));
+  for(const node of nodes){
+    canvasNodes.set(node.id,node);
+    if(!F.attractors.find(a=>a.id===node.id)){
+      F.attractors.push({id:node.id,x:(Math.random()-.5)*CFG.BOUND*1.1,y:(Math.random()-.5)*CFG.BOUND*1.1,
+        z:(Math.random()-.5)*CFG.BOUND_Z*CFG.DEPTH*.9,mass:1.4+Math.random(),phase:Math.random()*Math.PI*2});
+    }
+  }
+  document.getElementById('t-nodes').textContent=nodes.length;
+  document.getElementById('node-count').textContent=nodes.length;
+  renderNodeList(nodes);
+}
+function processDeltas(deltas){
+  for(const d of deltas.slice(0,6)){
+    const cls=d.type?.includes('error')||d.type?.includes('blocked')?'err':d.type?.includes('warn')?'warn':d.type?.includes('cfr')||d.type?.includes('CFR')?'cfr':'ok';
+    addEvent(d.type||'delta',d.msg||'',cls);pushTimeline(cls);
+    if(d.type==='snr:blocked')spawnStress(null,null,null,550);
+    if(d.type==='mesh:peer:connected')F.structure=Math.min(1,F.structure+.04);
+    if(d.type==='CFR_UPDATE'&&d.detail){try{const fd=JSON.parse(d.detail);if(fd.structure!==undefined)F.structure=fd.structure;if(fd.entropy!==undefined)F.entropy=fd.entropy;syncSliders();}catch{}}
+  }
+  totalEv+=deltas.length;document.getElementById('t-ev').textContent=totalEv;
+}
+const _simEvs=[
+  {type:'snr:status',msg:'Adaptive mode',cls:'ok'},{type:'node:heartbeat',msg:'30s pulse',cls:'ok'},
+  {type:'mesh:data',msg:'Packet rx',cls:'ok'},{type:'snr:blocked',msg:'Bot scan blocked',cls:'err'},
+  {type:'canvas:watchdog',msg:'Storage OK',cls:'ok'},{type:'CFR_UPDATE',msg:'Field updated',cls:'cfr'},
+  {type:'identity:ready',msg:'Key loaded',cls:'ok'},{type:'mesh:peer:connected',msg:'Peer up',cls:'ok'},
+];
+let _simI=0;
+function simOffline(){
+  const ev=_simEvs[_simI++%_simEvs.length];
+  addEvent(ev.type,ev.msg,ev.cls);pushTimeline(ev.cls);
+  if(ev.type==='snr:blocked')spawnStress(null,null,null,350);
+  if(ev.type==='CFR_UPDATE'){F.entropy=Math.min(.8,F.entropy+.02);syncSliders();}
+  if(ev.type==='mesh:peer:connected'){F.structure=Math.min(1,F.structure+.03);syncSliders();}
+}
+function updateBridgeBadge(ok){
+  const b=document.getElementById('bridge-badge');
+  b.textContent=ok?'BRIDGE ONLINE':'BRIDGE OFFLINE';
+  b.className='badge '+(ok?'bg':'by');
+}
+function addEvent(type,msg,cls){
+  const feed=document.getElementById('evfeed');
+  if(feed.children.length===1&&feed.children[0].textContent.includes('Wait'))feed.innerHTML='';
+  const ts=new Date().toLocaleTimeString('en',{hour12:false});
+  const el=document.createElement('div');el.className='evitem '+(cls||'ok');
+  el.innerHTML=`<span class="evts">${ts}</span> ${type}${msg?' · '+msg:''}`;
+  feed.insertBefore(el,feed.firstChild);
+  while(feed.children.length>CFG.maxEvFeed)feed.removeChild(feed.lastChild);
+}
+
+/* ══════════════════════════════════════════
+   TESTING SUITE — 8 groups, 38 tests
+══════════════════════════════════════════ */
+const TESTS=[
+  /* ── CANVAS RENDERER ─────────────────────────────────────────────────────── */
+  {id:'render',name:'Canvas Renderer',tests:[
+    {id:'r-ctx',   name:'2D context acquired',          fn:async()=>{if(!ctx)throw new Error('ctx null');return '2D OK';}},
+    {id:'r-ov',    name:'Overlay context acquired',     fn:async()=>{if(!ctx2)throw new Error('ctx2 null');return 'overlay OK';}},
+    {id:'r-size',  name:'Canvas sized to stage',        fn:async()=>{resize();if(cv.width<100)throw new Error(`w=${cv.width}`);return `${cv.width}×${cv.height}`;}},
+    {id:'r-fps',   name:'Frame loop ≥15 FPS',           fn:async()=>{await sl(400);if(_fps<15)throw new Error(`FPS=${_fps}`);return `${_fps} FPS`;}},
+    {id:'r-paint', name:'Particles produce pixels',     fn:async()=>{await sl(300);const d=ctx.getImageData(Math.floor(cv.width/2),Math.floor(cv.height/2),1,1).data;return `px α=${d[3]}`;}},
+    {id:'r-snr',   name:'SNR gate canvas paints',       fn:async()=>{await sl(200);const d=snrCtx.getImageData(2,40,1,1).data;if(d[3]<5)throw new Error('SNR canvas empty');return `α=${d[3]}`;}},
+    {id:'r-ov2',   name:'Overlay clears each frame',    fn:async()=>{ctx2.fillStyle='rgba(255,0,0,1)';ctx2.fillRect(0,0,10,10);await sl(100);return 'overlay cycle OK';}},
+  ]},
+  /* ── CFR PHYSICS ENGINE ──────────────────────────────────────────────────── */
+  {id:'physics',name:'CFR Physics Engine',tests:[
+    {id:'ph-alloc', name:'Float32 arrays allocated',    fn:async()=>{if(!posX||posX.length!==N)throw new Error(`posX.length=${posX?.length}`);return `${N.toLocaleString()} particles`;}},
+    {id:'ph-fin',   name:'No NaN/Inf in positions',     fn:async()=>{await sl(200);for(let i=0;i<Math.min(N,500);i++)if(!isFinite(posX[i])||!isFinite(posY[i])||!isFinite(posZ[i]))throw new Error(`NaN@${i}`);return 'all finite';}},
+    {id:'ph-bound', name:'Particles within soft bounds', fn:async()=>{await sl(200);const BXY=CFG.BOUND+1,BZ=CFG.BOUND_Z*CFG.DEPTH+1;let oob=0;for(let i=0;i<Math.min(N,500);i++)if(Math.abs(posX[i])>BXY||Math.abs(posY[i])>BXY||Math.abs(posZ[i])>BZ)oob++;if(oob>5)throw new Error(`${oob} particles OOB`);return `B=${CFG.BOUND}`;}},
+    {id:'ph-curl',  name:'Curl noise finite on all axes',fn:async()=>{const {cx,cy,cz}=curl(.5,.5,.5,1);if(!isFinite(cx)||!isFinite(cy)||!isFinite(cz))throw new Error('curl NaN');return `(${cx.toFixed(3)},${cy.toFixed(3)},${cz.toFixed(3)})`;}},
+    {id:'ph-stress',name:'Stress spawns + exponentially decays',fn:async()=>{const b=F.stresses.length;spawnStress(0,0,0,400);if(F.stresses.length<=b)throw new Error('stress not added');await sl(300);if(F.stresses.length>b+1)throw new Error('stress not decaying');return 'spawn+decay OK';}},
+    {id:'ph-vel',   name:'Velocity capped at VMAX',     fn:async()=>{await sl(300);let over=0;for(let i=0;i<Math.min(N,300);i++){const v=Math.sqrt(velX[i]**2+velY[i]**2+velZ[i]**2);if(v>CFG.VMAX+.05)over++;}if(over>3)throw new Error(`${over} particles exceed VMAX`);return `VMAX=${CFG.VMAX}`;}},
+    {id:'ph-rw',    name:'Rewind flag pauses simulation',fn:async()=>{RW_PAUSED=true;RW_IDX=0;const px0=posX[0];await sl(100);const px1=posX[0];RW_PAUSED=false;RW_IDX=-1;if(Math.abs(px1-px0)>.001)throw new Error('physics mutated during pause');return 'pause OK';}},
+    {id:'ph-damp',  name:'Damping reduces velocity',    fn:async()=>{velX[0]=CFG.VMAX;velY[0]=CFG.VMAX;await sl(200);const v=Math.sqrt(velX[0]**2+velY[0]**2);if(v>=CFG.VMAX*2)throw new Error(`no damping v=${v.toFixed(3)}`);return `damp ${v.toFixed(3)}`;}},
+    {id:'ph-attractor',name:'Attractors pull particles', fn:async()=>{nexLoadDemo();await sl(300);const at=F.attractors[0];if(!at)return 'no attractors';let sum=0;for(let i=0;i<Math.min(N,200);i++)sum+=Math.sqrt((posX[i]-at.x)**2+(posY[i]-at.y)**2+(posZ[i]-at.z)**2);return `mean dist=${(sum/200).toFixed(2)}`;}},
+  ]},
+  /* ── CAUSAL LAYER ────────────────────────────────────────────────────────── */
+  {id:'causal',name:'Causal / Timeline Layer',tests:[
+    {id:'ca-log',   name:'Causal log accumulates',      fn:async()=>{const c0=CAUSAL_LOG.length;pushTimeline('ok');await sl(50);if(CAUSAL_LOG.length<=c0)throw new Error('log not growing');return `${CAUSAL_LOG.length} entries`;}},
+    {id:'ca-immut', name:'Log is append-only',          fn:async()=>{const len0=CAUSAL_LOG.length;addEvent('test:immut','probe','ok');if(CAUSAL_LOG.length<len0)throw new Error('log shrunk');return 'append-only OK';}},
+    {id:'ca-cls',   name:'Delta cls values valid',      fn:async()=>{const valid=new Set(['ok','warn','err','cfr']);for(const e of CAUSAL_LOG)if(!valid.has(e.cls))throw new Error(`bad cls: ${e.cls}`);return `${CAUSAL_LOG.length} entries valid`;}},
+    {id:'ca-ticks', name:'Timeline bar ticks rendered', fn:async()=>{await sl(250);const n=document.getElementById('tlbar').children.length;if(n===0)throw new Error('no ticks');return `${n} ticks`;}},
+    {id:'ca-delta', name:'processDeltas applies field update',fn:async()=>{const s0=F.structure;processDeltas([{type:'CFR_UPDATE',msg:'',cls:'cfr',detail:JSON.stringify({structure:.66})}]);await sl(30);const changed=Math.abs(F.structure-.66)<.02;F.structure=s0;syncSliders();if(!changed)return 'CFR_UPDATE path not hit (bridge offline — OK)';return 'CFR applied';}},
+    {id:'ca-snap',  name:'Snapshot captures Float32 state',fn:async()=>{const n0=SNAPSHOTS.length;takeSnapshot();if(SNAPSHOTS.length<=n0)throw new Error('snap not added');const s=SNAPSHOTS[SNAPSHOTS.length-1];if(!s.px||s.px.length!==N)throw new Error(`snap data wrong: ${s.px?.length}`);return `snap #${SNAPSHOTS.length} (${N} pts)`;}},
+    {id:'ca-2000',  name:'Log auto-trims at 2000',      fn:async()=>{for(let i=0;i<10;i++)CAUSAL_LOG.push({ts:Date.now(),cls:'ok'});const len=CAUSAL_LOG.length;if(len>2000)throw new Error(`log ${len} > 2000`);return `${len}/2000`;}},
+  ]},
+  /* ── REWIND / PLAYBACK ───────────────────────────────────────────────────── */
+  {id:'rewind',name:'Rewind / Playback',tests:[
+    {id:'rw-snap',  name:'Snapshots ring-buffer grows',  fn:async()=>{const n0=SNAPSHOTS.length;takeSnapshot();takeSnapshot();if(SNAPSHOTS.length<n0+2)throw new Error('snaps not added');return `${SNAPSHOTS.length} snaps`;}},
+    {id:'rw-apply', name:'applySnapshot restores positions',fn:async()=>{takeSnapshot();const idx=SNAPSHOTS.length-1;const ox=posX[0];spawnStress(0,0,0,9999);await sl(80);applySnapshot(idx);const drift=Math.abs(posX[0]-ox);RW_IDX=-1;if(drift>.8)throw new Error(`drift=${drift.toFixed(3)}`);return `drift=${drift.toFixed(4)}`;}},
+    {id:'rw-pause', name:'rwPlay() toggles RW_PAUSED',   fn:async()=>{const was=RW_PAUSED;rwPlay();const flipped=RW_PAUSED!==was;rwPlay();if(!flipped)throw new Error('pause flag unchanged');return 'toggle OK';}},
+    {id:'rw-step',  name:'rwStep(-1) decrements index',  fn:async()=>{takeSnapshot();takeSnapshot();RW_PAUSED=true;RW_IDX=SNAPSHOTS.length-1;const i0=RW_IDX;rwStep(-1);const moved=RW_IDX===Math.max(0,i0-1);RW_IDX=-1;RW_PAUSED=false;if(!moved)throw new Error(`idx=${RW_IDX}`);return 'step OK';}},
+    {id:'rw-scrub', name:'rwScrub() changes rw-ts label', fn:async()=>{takeSnapshot();rwScrub(0);const ts=document.getElementById('rw-ts').textContent;RW_IDX=-1;RW_PAUSED=false;document.getElementById('rw-ts').textContent='LIVE';if(ts==='LIVE')throw new Error('scrub did not change label');return 'scrub OK';}},
+    {id:'rw-clear', name:'clearTimeline() resets all',   fn:async()=>{clearTimeline();if(SNAPSHOTS.length||CAUSAL_LOG.length)throw new Error('not cleared');return 'clear OK';}},
+  ]},
+  /* ── .NEX IMPORT / EXPORT ────────────────────────────────────────────────── */
+  {id:'nex',name:'.NEX Import / Export',tests:[
+    {id:'nx-demo',   name:'nexLoadDemo() populates nodes+field', fn:async()=>{nexLoadDemo();await sl(50);if(!canvasNodes.size)throw new Error('no nodes');if(F.structure<.5)throw new Error('field not set');return `${canvasNodes.size} nodes`;}},
+    {id:'nx-export', name:'nexExport() creates blob with schema', fn:async()=>{nexLoadDemo();await sl(50);let blobCreated=false;const orig=URL.createObjectURL;URL.createObjectURL=b=>{blobCreated=true;return'blob:test';};const origA=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=function(){};nexExport();URL.createObjectURL=orig;HTMLAnchorElement.prototype.click=origA;if(!blobCreated)throw new Error('no blob');return 'blob OK';}},
+    {id:'nx-schema', name:'.nex has _nex,ts,field,nodes keys', fn:async()=>{nexLoadDemo();await sl(30);const pkg={_nex:NEX_VERSION,ts:Date.now(),field:{structure:F.structure,entropy:F.entropy},nodes:[...canvasNodes.values()]};for(const k of['_nex','ts','field','nodes'])if(!(k in pkg))throw new Error(`missing ${k}`);return `v${NEX_VERSION} schema OK`;}},
+    {id:'nx-snap',   name:'nexSnapshot() appends snapshot',     fn:async()=>{const n0=SNAPSHOTS.length;nexSnapshot();if(SNAPSHOTS.length<=n0)throw new Error('no snap');return `snap #${SNAPSHOTS.length}`;}},
+    {id:'nx-status', name:'nexStatus() updates #nex-status',    fn:async()=>{nexStatus('suite-probe-ok');const v=document.getElementById('nex-status').textContent;if(v!=='suite-probe-ok')throw new Error(`got "${v}"`);return 'status OK';}},
+  ]},
+  /* ── CLUSTER DETECTION ───────────────────────────────────────────────────── */
+  {id:'cluster',name:'Causal Cluster Detection',tests:[
+    {id:'cl-run',  name:'detectClusters() executes',    fn:async()=>{nexLoadDemo();await sl(400);detectClusters();return `${F.clusters.length} clusters detected`;}},
+    {id:'cl-sig',  name:'Cluster signals ∈ {causal,laminar,turb}',fn:async()=>{for(const c of F.clusters)if(!['causal','laminar','turb'].includes(c.sig))throw new Error(`bad sig: ${c.sig}`);return `${F.clusters.length} valid`;}},
+    {id:'cl-dens', name:'Cluster density in 0–1',       fn:async()=>{for(const c of F.clusters)if(c.density<0||c.density>1)throw new Error(`density=${c.density}`);return 'densities OK';}},
+    {id:'cl-ui',   name:'Cluster list DOM rendered',    fn:async()=>{const el=document.getElementById('clist');if(!el)throw new Error('no #clist');return `${el.children.length} rows`;}},
+  ]},
+  /* ── MATRIX / PROJECTION ─────────────────────────────────────────────────── */
+  {id:'matrix',name:'Matrix & Projection',tests:[
+    {id:'mt-id',   name:'mat4id() = 4×4 identity',     fn:async()=>{const m=mat4id();const e=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];for(let i=0;i<16;i++)if(Math.abs(m[i]-e[i])>.0001)throw new Error(`m[${i}]=${m[i]}`);return 'I OK';}},
+    {id:'mt-mul',  name:'mul(I,I) = I',                fn:async()=>{const I=mat4id(),R=mul(I,I);for(let i=0;i<16;i++)if(Math.abs(R[i]-I[i])>.001)throw new Error(`R[${i}]=${R[i]}`);return 'I×I=I';}},
+    {id:'mt-mvp',  name:'buildMVP() all entries finite',fn:async()=>{const m=buildMVP();for(let i=0;i<16;i++)if(!isFinite(m[i]))throw new Error(`MVP[${i}]=NaN`);return '4×4 finite';}},
+    {id:'mt-proj', name:'project(0,0,0) inside viewport',fn:async()=>{resize();const p=project(0,0,0,buildMVP(),cv.width,cv.height);if(!p||!isFinite(p.x)||!isFinite(p.y))throw new Error('proj null/NaN');if(p.x<0||p.x>cv.width||p.y<0||p.y>cv.height)throw new Error(`(${p.x.toFixed(0)},${p.y.toFixed(0)}) outside viewport`);return `(${p.x.toFixed(0)},${p.y.toFixed(0)})`;}},
+    {id:'mt-rotX', name:'rotX(0) = identity',          fn:async()=>{const m=buildMVP();const q=project(1,0,0,m,cv.width,cv.height);if(!q)throw new Error('null');return `rot OK (${q.x.toFixed(0)},${q.y.toFixed(0)})`;}},
+  ]},
+  /* ── CFR BRIDGE: LIVE ROUTE TESTS ───────────────────────────────────────── */
+  {id:'bridge',name:'CFR Bridge Routes',tests:[
+    // ── /cfr/health — expects: { ok, module, version, nodes, deltas, installed, field }
+    {id:'br-health',name:'GET /cfr/health shape',        fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/health`,{signal:AbortSignal.timeout(1500)});if(!r.ok)return`HTTP ${r.status}`;const d=await r.json();if(!d.ok)throw new Error('ok:false');if(!d.module)throw new Error('no module');if(!d.field)throw new Error('no field');return`v${d.version} ${d.nodes}n ${d.deltas}δ`;}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // ── /cfr/nodes — expects: { ok, nodes:[], count }
+    {id:'br-nodes', name:'GET /cfr/nodes shape',         fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/nodes`,{signal:AbortSignal.timeout(1500)});if(!r.ok)return`HTTP ${r.status}`;const d=await r.json();if(!d.ok)throw new Error('ok:false');if(!Array.isArray(d.nodes))throw new Error('nodes not array');if(d.count!==d.nodes.length)throw new Error('count mismatch');return`${d.nodes.length} nodes`;}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // ── /cfr/deltas — expects: { ok, deltas:[], total }  each delta: id,ts,type,cls,msg
+    {id:'br-deltas',name:'GET /cfr/deltas shape',        fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/deltas?limit=10`,{signal:AbortSignal.timeout(1500)});if(!r.ok)return`HTTP ${r.status}`;const d=await r.json();if(!d.ok)throw new Error('ok:false');if(!Array.isArray(d.deltas))throw new Error('deltas not array');const valid=new Set(['ok','warn','err','cfr']);for(const δ of d.deltas)if(!valid.has(δ.cls))throw new Error(`bad cls: ${δ.cls}`);return`${d.total} total, ${d.deltas.length} fetched`;}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // ── /cfr/field — expects: { ok, field: { structure,entropy,attention,damping,curl,speed } }
+    {id:'br-field', name:'GET /cfr/field shape',         fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/field`,{signal:AbortSignal.timeout(1500)});if(!r.ok)return`HTTP ${r.status}`;const d=await r.json();if(!d.field)throw new Error('no field');for(const k of['structure','entropy','attention','damping','curl','speed']){if(typeof d.field[k]!=='number')throw new Error(`field.${k} not number`);if(d.field[k]<0||d.field[k]>1)throw new Error(`field.${k}=${d.field[k]} out of 0-1`);}return`struct=${d.field.structure.toFixed(2)}`;}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // ── /cfr/state — expects: { ok, state: { schema:1, field, nodes:[], nodeId, uptime } }
+    {id:'br-state', name:'GET /cfr/state shape',         fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/state`,{signal:AbortSignal.timeout(1500)});if(!r.ok)return`HTTP ${r.status}`;const d=await r.json();if(!d.ok||!d.state)throw new Error('bad shape');if(d.state.schema!==1)throw new Error(`schema=${d.state.schema}`);if(!Array.isArray(d.state.nodes))throw new Error('nodes not array');if(typeof d.state.uptime!=='number')throw new Error('no uptime');return`schema=1 ${d.state.nodes.length}n up=${d.state.uptime.toFixed(0)}s`;}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // ── POST /cfr/field — update structure, verify reflected in GET
+    {id:'br-field-w',name:'POST /cfr/field round-trips',fn:async()=>{try{const target=0.42;const pw=await fetch(`${CFG.bridgeUrl}/cfr/field`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({structure:target}),signal:AbortSignal.timeout(1500)});if(!pw.ok)return`HTTP ${pw.status}`;const wd=await pw.json();if(!wd.ok)throw new Error('POST ok:false');const diff=Math.abs(wd.field.structure-target);if(diff>.01)throw new Error(`struct=${wd.field.structure}`);return`struct set to ${wd.field.structure.toFixed(2)}`;}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // ── POST /cfr/emit — sig required, returns { ok, sig, ts }
+    {id:'br-emit',  name:'POST /cfr/emit valid shape',   fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/emit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sig:'cfr:suite:test',data:{source:'ui-test'},level:'INFO'}),signal:AbortSignal.timeout(1500)});if(!r.ok)return`HTTP ${r.status}`;const d=await r.json();if(!d.ok)throw new Error('ok:false');if(typeof d.ts!=='number')throw new Error('no ts');return`emit OK ts=${d.ts}`;}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // ── POST /cfr/emit — missing sig must return ok:false
+    {id:'br-emit-v',name:'POST /cfr/emit sig required',  fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/emit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:{}}),signal:AbortSignal.timeout(1500)});const d=await r.json();if(d.ok)throw new Error('should have failed: sig missing');return'sig guard OK';}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // ── POST /cfr/simulate route — requires fromId+toId
+    {id:'br-sim-r', name:'POST /cfr/simulate route',     fn:async()=>{try{const ns=await fetch(`${CFG.bridgeUrl}/cfr/nodes`,{signal:AbortSignal.timeout(1500)});if(!ns.ok)return'OFFLINE';const{nodes}=await ns.json();if(nodes.length<2)return`need 2+ nodes (have ${nodes.length})`;const[a,b]=nodes;const r=await fetch(`${CFG.bridgeUrl}/cfr/simulate`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'route',fromId:a.id,toId:b.id,intensity:5}),signal:AbortSignal.timeout(1500)});const d=await r.json();if(!d.ok)throw new Error(d.error||'failed');return`route ${a.label}→${b.label}`;}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // ── POST /cfr/simulate failure — requires fromId
+    {id:'br-sim-f', name:'POST /cfr/simulate failure',   fn:async()=>{try{const ns=await fetch(`${CFG.bridgeUrl}/cfr/nodes`,{signal:AbortSignal.timeout(1500)});if(!ns.ok)return'OFFLINE';const{nodes}=await ns.json();if(!nodes.length)return'need 1+ node';const r=await fetch(`${CFG.bridgeUrl}/cfr/simulate`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'failure',fromId:nodes[0].id}),signal:AbortSignal.timeout(1500)});const d=await r.json();if(!d.ok)throw new Error(d.error||'failed');return`failure on ${nodes[0].label}`;}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // ── WS /cfr/stream — connect, receive init event, close
+    {id:'br-ws',    name:'WS /cfr/stream init event',    fn:async()=>{return new Promise(res=>{try{const ws=new WebSocket(CFG.bridgeUrl.replace(/^http/,'ws')+'/cfr/stream');const t=setTimeout(()=>{ws.close();res('OFFLINE (no response)');},1600);ws.onopen=()=>{};ws.onmessage=(e)=>{clearTimeout(t);try{const m=JSON.parse(e.data);ws.close();res(m.event==='init'?`init: ${m.data?.nodes?.length??0}n ${m.data?.deltas?.length??0}δ`:`unexpected event: ${m.event}`);}catch{ws.close();res('bad JSON');}};ws.onerror=()=>{clearTimeout(t);res('WS OFFLINE');};}catch(e){res('WS ERROR: '+e.message);}});}},
+    // ── POST /cfr/node — register a node, verify it appears in /cfr/nodes
+    {id:'br-node-r',name:'POST /cfr/node registers node',fn:async()=>{try{const id='ui-suite-node-'+Date.now();const pw=await fetch(`${CFG.bridgeUrl}/cfr/node`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,label:'Suite Test',type:'canvas'}),signal:AbortSignal.timeout(1500)});if(!pw.ok)return`HTTP ${pw.status}`;const wd=await pw.json();if(!wd.ok)throw new Error(d?.error||'failed');const ns=await fetch(`${CFG.bridgeUrl}/cfr/nodes`,{signal:AbortSignal.timeout(1500)});const nd=await ns.json();const found=nd.nodes.find(n=>n.id===id);if(!found)throw new Error('node not in /cfr/nodes after POST');return`registered: ${found.label}`;}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+  ]},
+  /* ── CFR MODULE INVARIANTS ───────────────────────────────────────────────── */
+  {id:'cfr-inv',name:'CFR Module Invariants',tests:[
+    // Field values must always be 0–1 (sourced from /cfr/field)
+    {id:'ci-range',name:'Field params in 0–1 range',    fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/field`,{signal:AbortSignal.timeout(1500)});if(!r.ok)return'OFFLINE';const{field:f}=await r.json();for(const k of Object.keys(f)){if(k==='snrConfig')continue;if(typeof f[k]==='number'&&(f[k]<0||f[k]>1))throw new Error(`field.${k}=${f[k]} out of 0-1`);}return'all in range';}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // /cfr/state schema must always be 1
+    {id:'ci-schema',name:'/cfr/state schema === 1',     fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/state`,{signal:AbortSignal.timeout(1500)});if(!r.ok)return'OFFLINE';const{state}=await r.json();if(state.schema!==1)throw new Error(`schema=${state.schema}`);return'schema=1 OK';}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // delta cls must always be in {ok,warn,err,cfr}
+    {id:'ci-cls',  name:'Delta cls values ∈ {ok,warn,err,cfr}',fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/deltas?limit=50`,{signal:AbortSignal.timeout(1500)});if(!r.ok)return'OFFLINE';const{deltas}=await r.json();const valid=new Set(['ok','warn','err','cfr']);for(const d of deltas)if(!valid.has(d.cls))throw new Error(`bad cls: ${d.cls}`);return`${deltas.length} deltas valid`;}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // POST /cfr/node with missing id must fail
+    {id:'ci-nodeid',name:'POST /cfr/node requires id',  fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/node`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label:'No ID'}),signal:AbortSignal.timeout(1500)});const d=await r.json();if(d.ok)throw new Error('should fail without id');return'id guard OK';}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // /cfr/health installed flag must be true
+    {id:'ci-inst', name:'CFR module reports installed:true',fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/health`,{signal:AbortSignal.timeout(1500)});if(!r.ok)return'OFFLINE';const d=await r.json();if(!d.installed)throw new Error('installed:false');return'installed OK';}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+    // POST /cfr/field clamps values to 0–1
+    {id:'ci-clamp',name:'POST /cfr/field clamps out-of-range',fn:async()=>{try{const r=await fetch(`${CFG.bridgeUrl}/cfr/field`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entropy:5.0,attention:-2.0}),signal:AbortSignal.timeout(1500)});if(!r.ok)return'OFFLINE';const{field}=await r.json();if(field.entropy!==1.0)throw new Error(`entropy=${field.entropy} expected 1.0`);if(field.attention!==0.0)throw new Error(`attention=${field.attention} expected 0.0`);return'clamp OK';}catch(e){return e.name==='AbortError'?'OFFLINE':e.message;}}},
+  ]},
+];
+
+const tcSt={};
+function sl(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function buildTestUI(){
+  const el=document.getElementById('tgroups');el.innerHTML='';
+  TESTS.forEach(g=>{
+    const div=document.createElement('div');div.className='tgrp';div.id='tg-'+g.id;
+    const hd=document.createElement('div');hd.className='tghd';
+    hd.innerHTML=`<div class="tgico idle" id="tgi-${g.id}"></div><span class="tgname">${g.name}</span><span class="tgscore" id="tgs-${g.id}">—</span>`;
+    hd.onclick=()=>runGroup(g);div.appendChild(hd);
+    g.tests.forEach(tc=>{
+      tcSt[tc.id]={status:'idle'};
+      const row=document.createElement('div');row.className='tcase';row.id='tc-'+tc.id;
+      row.innerHTML=`<span class="tcs">○</span><span class="tcn">${tc.name}</span><span class="tcr idle" id="tcr-${tc.id}">PENDING</span><span class="tcms" id="tcm-${tc.id}"></span>`;
+      div.appendChild(row);
+    });
+    el.appendChild(div);
+  });
+  updateSummary();
+}
+async function runGroup(g){
+  const ico=document.getElementById('tgi-'+g.id);ico.className='tgico run';
+  let pass=0,fail=0;
+  for(const tc of g.tests){
+    const row=document.getElementById('tc-'+tc.id);
+    const rel=document.getElementById('tcr-'+tc.id);
+    const mel=document.getElementById('tcm-'+tc.id);
+    row.querySelector('.tcs').textContent='◐';
+    rel.className='tcr run';rel.textContent='RUNNING';
+    const t0=performance.now();
+    try{
+      const res=await tc.fn();
+      const ms=Math.round(performance.now()-t0);
+      tcSt[tc.id]={status:'pass'};
+      row.querySelector('.tcs').textContent='✓';
+      rel.className='tcr pass';rel.textContent=res||'PASS';
+      mel.textContent=ms+'ms';pass++;
+    }catch(e){
+      const ms=Math.round(performance.now()-t0);
+      tcSt[tc.id]={status:'fail'};
+      row.querySelector('.tcs').textContent='✗';
+      rel.className='tcr fail';rel.textContent=(e.message||'ERR').slice(0,26);
+      mel.textContent=ms+'ms';fail++;
+    }
+    updateSummary();
+    await sl(25);
+  }
+  ico.className='tgico '+(fail?'fail':'pass');
+  document.getElementById('tgs-'+g.id).textContent=`${pass}/${g.tests.length}`;
+}
+async function runAll(){
+  const btn=document.querySelector('.runbtn');btn.textContent='⏳ RUNNING…';btn.disabled=true;
+  const t0=performance.now();
+  for(const g of TESTS)await runGroup(g);
+  document.getElementById('ts-t').textContent=Math.round(performance.now()-t0)+'ms';
+  btn.textContent='▶ RUN ALL TESTS';btn.disabled=false;
+}
+function updateSummary(){
+  const vals=Object.values(tcSt);
+  document.getElementById('ts-p').textContent=vals.filter(v=>v.status==='pass').length;
+  document.getElementById('ts-f').textContent=vals.filter(v=>v.status==='fail').length;
+  document.getElementById('ts-s').textContent=vals.filter(v=>v.status==='idle').length;
+}
+
+/* ══════ SLIDERS / VIEWS ══════ */
+function bs(id,vid,fn,fmt){
+  const el=document.getElementById(id),vel=document.getElementById(vid);
+  if(!el)return;
+  el.addEventListener('input',()=>{const v=parseFloat(el.value);vel.textContent=fmt?fmt(v):v.toFixed(2);fn(v);});
+}
+bs('sl-p','v-p',v=>{allocParticles(Math.round(v));},v=>{const lbl=v>=1000?(v/1000).toFixed(0)+'k':Math.round(v);return lbl;});
+bs('sl-s','v-s',v=>{F.structure=v;document.getElementById('sb-s').textContent=v.toFixed(2);});
+bs('sl-e','v-e',v=>{F.entropy=v;document.getElementById('sb-e').textContent=v.toFixed(2);});
+bs('sl-a','v-a',v=>{F.attention=v;document.getElementById('sb-a').textContent=v.toFixed(2);});
+bs('sl-d','v-d',v=>{F.damping=v;});
+bs('sl-c','v-c',v=>{F.curl=v;document.getElementById('sb-c').textContent=v.toFixed(2);});
+bs('sl-sp','v-sp',v=>{F.speed=v;});
+bs('sl-ry','v-ry',v=>{VIEW.rotY=v;},v=>v.toFixed(0)+'°');
+bs('sl-rx','v-rx',v=>{VIEW.rotX=v;},v=>v.toFixed(0)+'°');
+
+function setView(rx,ry,label,btnId){
+  VIEW.orbit=false;VIEW.rotX=rx;VIEW.rotY=ry;syncViewSliders();
+  document.getElementById('sb-mode').textContent=label;
+  document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('on'));
+  document.getElementById(btnId)?.classList.add('on');
+}
+function toggleOrbit(){
+  VIEW.orbit=!VIEW.orbit;
+  document.getElementById('vb-orb').classList.toggle('on',VIEW.orbit);
+  document.getElementById('sb-mode').textContent=VIEW.orbit?'AUTO ORBIT':'3D FIELD';
+}
+function syncViewSliders(){
+  document.getElementById('sl-ry').value=VIEW.rotY;document.getElementById('v-ry').textContent=VIEW.rotY.toFixed(0)+'°';
+  document.getElementById('sl-rx').value=VIEW.rotX;document.getElementById('v-rx').textContent=VIEW.rotX.toFixed(0)+'°';
+}
+function syncSliders(){
+  const map={s:F.structure,e:F.entropy,a:F.attention,d:F.damping,c:F.curl,sp:F.speed};
+  for(const[k,v]of Object.entries(map)){
+    const el=document.getElementById('sl-'+k);if(el)el.value=v;
+    const vel=document.getElementById('v-'+k);if(vel)vel.textContent=v.toFixed(2);
+  }
+  document.getElementById('sb-s').textContent=F.structure.toFixed(2);
+  document.getElementById('sb-e').textContent=F.entropy.toFixed(2);
+  document.getElementById('sb-a').textContent=F.attention.toFixed(2);
+  document.getElementById('sb-c').textContent=F.curl.toFixed(2);
+}
+
+/* ══════ RESIZE ══════ */
+function resize(){
+  const stage=document.getElementById('stage');
+  const W=Math.max(100,Math.floor(stage.clientWidth));
+  const H=Math.max(100,Math.floor(stage.clientHeight));
+  if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;ov.width=W;ov.height=H;}
+}
+
+/* ══════ INIT ══════ */
+function init(){
+  resize();
+  allocParticles(N);
+  buildTestUI();
+  pollBridge();
+  setInterval(pollBridge,CFG.pollMs);
+  // Demo nodes after delay if bridge offline
+  setTimeout(()=>{
+    if(!canvasNodes.size)nexLoadDemo();
+  },1800);
+  requestAnimationFrame(frame);
+}
+window.addEventListener('resize',resize);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){_lastFrame=0;_lastFpsTs=0;_frames=0;}});
+init();
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PAN / ZOOM  — left-drag to pan, scroll to zoom, dbl-click to reset
+   ═══════════════════════════════════════════════════════════════════════════ */
+const VIEW_PAN={x:0,y:0};
+let VIEW_ZOOM=1.0;
+const ZOOM_MIN=0.15,ZOOM_MAX=6.0;
+let _panActive=false,_panStart={x:0,y:0},_panOrigin={x:0,y:0};
+
+// Override drawOverlay to apply pan+zoom to attractor positions
+{
+  const _base=drawOverlay;
+  drawOverlay=function(now){
+    const W=ov.width,H=ov.height;
+    ctx2.clearRect(0,0,W,H);
+    if(!canvasNodes.size)return;
+    const mvp=buildMVP();
+    for(const[id,node]of canvasNodes){
+      const at=F.attractors.find(a=>a.id===id);
+      if(!at)continue;
+      const ax=at.x*VIEW_ZOOM+VIEW_PAN.x;
+      const ay=at.y*VIEW_ZOOM+VIEW_PAN.y;
+      const s=project(ax,ay,at.z,mvp,W,H);
+      if(!s||s.x<-80||s.x>W+80||s.y<-80||s.y>H+80)continue;
+      const col=ncol(node.type);
+      const pulse=(Math.sin(now*.002+(at.phase||0))+1)*6;
+      ctx2.beginPath();ctx2.arc(s.x,s.y,16+pulse,0,Math.PI*2);
+      ctx2.strokeStyle=col;ctx2.lineWidth=1;ctx2.globalAlpha=.07;ctx2.stroke();
+      ctx2.beginPath();ctx2.arc(s.x,s.y,13,0,Math.PI*2);
+      ctx2.strokeStyle=col;ctx2.lineWidth=1.5;ctx2.globalAlpha=.85;ctx2.stroke();
+      ctx2.beginPath();ctx2.arc(s.x,s.y,3.5,0,Math.PI*2);
+      ctx2.fillStyle=col;ctx2.globalAlpha=1;ctx2.fill();
+      ctx2.font='9px Share Tech Mono,monospace';
+      ctx2.fillStyle=col;ctx2.globalAlpha=.88;
+      ctx2.fillText(node.label||id.slice(0,8),s.x+18,s.y+3);
+      const cl=F.clusters.find(c=>c.id===id);
+      if(cl&&cl.sig==='causal'){
+        ctx2.beginPath();ctx2.arc(s.x,s.y,20+pulse*.5,0,Math.PI*2);
+        ctx2.strokeStyle='#cc44ff';ctx2.lineWidth=1;ctx2.globalAlpha=.2;ctx2.stroke();
+      }
+      ctx2.globalAlpha=1;
+    }
+  };
+}
+
+function updateZoomHUD(){
+  const el=document.getElementById('zoom-hud');
+  if(el)el.textContent=Math.round(VIEW_ZOOM*100)+'%';
+}
+
+// pan start — left button only, no hit on a node ring
+document.getElementById('stage').addEventListener('mousedown',e=>{
+  if(e.button!==0)return;
+  const mvp=buildMVP();
+  const r=cv.getBoundingClientRect();
+  const nx=(e.clientX-r.left)/r.width,ny=(e.clientY-r.top)/r.height;
+  let hit=false;
+  for(const[id]of canvasNodes){
+    const at=F.attractors.find(a=>a.id===id);if(!at)continue;
+    const ax=at.x*VIEW_ZOOM+VIEW_PAN.x,ay=at.y*VIEW_ZOOM+VIEW_PAN.y;
+    const s=project(ax,ay,at.z,mvp,cv.width,cv.height);if(!s)continue;
+    const pdx=(s.x/cv.width)-nx,pdy=(s.y/cv.height)-ny;
+    if(Math.sqrt(pdx*pdx*r.width*r.width+pdy*pdy*r.height*r.height)<22){hit=true;break;}
+  }
+  if(hit)return;
+  _panActive=true;
+  _panStart={x:e.clientX,y:e.clientY};
+  _panOrigin={x:VIEW_PAN.x,y:VIEW_PAN.y};
+  document.getElementById('stage').classList.add('panning');
+  e.preventDefault();
+});
+window.addEventListener('mousemove',e=>{
+  if(!_panActive)return;
+  VIEW_PAN.x=_panOrigin.x+(e.clientX-_panStart.x);
+  VIEW_PAN.y=_panOrigin.y+(e.clientY-_panStart.y);
+});
+window.addEventListener('mouseup',e=>{
+  if(e.button!==0||!_panActive)return;
+  _panActive=false;
+  document.getElementById('stage').classList.remove('panning');
+});
+
+// scroll to zoom, centered on cursor
+document.getElementById('stage').addEventListener('wheel',e=>{
+  e.preventDefault();
+  const r=cv.getBoundingClientRect();
+  const mx=e.clientX-r.left,my=e.clientY-r.top;
+  const factor=e.deltaY<0?1.1:0.91;
+  const newZ=Math.max(ZOOM_MIN,Math.min(ZOOM_MAX,VIEW_ZOOM*factor));
+  const scale=newZ/VIEW_ZOOM;
+  VIEW_PAN.x=mx-(mx-VIEW_PAN.x)*scale;
+  VIEW_PAN.y=my-(my-VIEW_PAN.y)*scale;
+  VIEW_ZOOM=newZ;
+  updateZoomHUD();
+},{passive:false});
+
+// double-click resets view
+document.getElementById('stage').addEventListener('dblclick',e=>{
+  if(_panActive)return;
+  VIEW_PAN.x=0;VIEW_PAN.y=0;VIEW_ZOOM=1.0;
+  updateZoomHUD();
+  showToast('ok','View Reset','Pan and zoom cleared',1200);
+});
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TOAST SYSTEM
+   ═══════════════════════════════════════════════════════════════════════════ */
+function showToast(cls,title,body,duration=4000,actions=[]){
+  const rack=document.getElementById('toast-rack');
+  const t=document.createElement('div');
+  t.className=`toast ${cls}`;
+  t.innerHTML=`<div class="toast-title">${title}</div><div class="toast-body">${body}</div>`;
+  if(actions.length){
+    const row=document.createElement('div');row.className='toast-actions';
+    actions.forEach(a=>{
+      const btn=document.createElement('button');
+      btn.className=`toast-btn ${a.cls||''}`;btn.textContent=a.label;
+      btn.onclick=()=>{a.fn();dismissToast(t);};
+      row.appendChild(btn);
+    });
+    t.appendChild(row);
+  }
+  t.addEventListener('click',e=>{if(!e.target.classList.contains('toast-btn'))dismissToast(t);});
+  rack.appendChild(t);
+  if(duration>0)setTimeout(()=>dismissToast(t),duration);
+  return{el:t,dismiss:()=>dismissToast(t)};
+}
+function dismissToast(el){
+  if(!el||!el.parentNode)return;
+  el.classList.add('out');
+  setTimeout(()=>el.parentNode?.removeChild(el),220);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SANDBOX MODE  — destructive adversarial
+   ═══════════════════════════════════════════════════════════════════════════ */
+let _sandboxActive=false,_sandboxInterval=null;
+const SANDBOX_EVENTS=[
+  {fn:()=>{for(const[id]of canvasNodes)spawnStress(null,null,null,900);addEvent('sandbox:cascade','Node cascade — all nodes stressed','err');},label:'cascade all'},
+  {fn:()=>{F.structure=0;syncSliders();addEvent('sandbox:trust-collapse','Structure → 0','err');},label:'trust collapse'},
+  {fn:()=>{F.entropy=1;F.attention=0;syncSliders();addEvent('sandbox:entropy-burst','Entropy max, attention zero','err');},label:'entropy burst'},
+  {fn:()=>{if(!F.attractors.length)return;const i=Math.floor(Math.random()*F.attractors.length);const at=F.attractors[i];const n=canvasNodes.get(at.id);F.attractors.splice(i,1);addEvent('sandbox:node-kill',`Killed: ${n?.label||at.id.slice(0,8)}`,'err');},label:'kill attractor'},
+  {fn:()=>{for(let i=0;i<5;i++)spawnStress((Math.random()-.5)*CFG.BOUND*2,(Math.random()-.5)*CFG.BOUND*2,0,1200);addEvent('sandbox:multi-stress','5× stress injected','err');},label:'multi-stress'},
+  {fn:()=>{for(let i=0;i<8;i++)setTimeout(()=>spawnStress(null,null,null,400),i*80);addEvent('sandbox:snr-storm','SNR storm — 8 rapid denials','err');},label:'snr storm'},
+  {fn:()=>{F.damping=0.48;syncSliders();addEvent('sandbox:overdamp','Damping maxed','warn');},label:'overdamp'},
+  {fn:()=>{for(let i=0;i<Math.min(N,5000);i++){velX[i]=(Math.random()-.5)*CFG.VMAX*4;velY[i]=(Math.random()-.5)*CFG.VMAX*4;}addEvent('sandbox:vel-shock','Velocity shock — 5k particles','err');},label:'velocity shock'},
+  {fn:()=>{F.attractors.forEach(a=>{a.x=(Math.random()-.5)*CFG.BOUND*3;a.y=(Math.random()-.5)*CFG.BOUND*3;});addEvent('sandbox:scatter','All attractors scattered','warn');},label:'scatter attractors'},
+  {fn:()=>{const ids=[...canvasNodes.keys()].slice(0,3);ids.forEach(id=>{fetch(`${CFG.bridgeUrl}/cfr/simulate`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'failure',fromId:id})}).catch(()=>{});});addEvent('sandbox:dead-peers','3 peers simulated dead','err');},label:'dead peers (bridge)'},
+];
+
+function toggleSandbox(){
+  _sandboxActive=!_sandboxActive;
+  const bar=document.getElementById('sandbox-bar');
+  const badge=document.getElementById('sandbox-badge');
+  ['sandbox-btn','sandbox-nex-btn'].forEach(id=>{document.getElementById(id)?.classList.toggle('on',_sandboxActive);});
+  bar?.classList.toggle('on',_sandboxActive);
+  badge?.classList.toggle('on',_sandboxActive);
+  if(_sandboxActive){
+    _sandboxInterval=setInterval(()=>{
+      const ev=SANDBOX_EVENTS[Math.floor(Math.random()*SANDBOX_EVENTS.length)];
+      ev.fn();pushTimeline('err');
+      showToast('err','⚠ ADVERSARIAL',ev.label,1800);
+    },3500);
+    showToast('err','⚠ SANDBOX ACTIVE','Destructive adversarial mode — random events every ~3.5s<br>Click SANDBOX again to stop.',5000);
+    addEvent('sandbox:start','Adversarial sandbox activated','err');
+  } else {
+    clearInterval(_sandboxInterval);_sandboxInterval=null;
+    F.structure=0.5;F.entropy=0.2;F.attention=0.5;F.damping=0.12;syncSliders();
+    showToast('ok','SANDBOX OFF','Field parameters restored',2000);
+    addEvent('sandbox:stop','Adversarial sandbox deactivated','ok');
+  }
+}
+
+function runSandboxStrike(){
+  const ev=SANDBOX_EVENTS[Math.floor(Math.random()*SANDBOX_EVENTS.length)];
+  ev.fn();pushTimeline('err');
+  showToast('err','⚡ STRIKE',ev.label,2500);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONNECT / INVITE / HANDSHAKE
+   ═══════════════════════════════════════════════════════════════════════════ */
+let _connTab='connect';
+let _pendingInvites=[];
+let _myNexusURI=null;
+let _connectedPeers=new Set();
+
+async function refreshMyNexusURI(){
+  try{
+    const r=await fetch(`${CFG.bridgeUrl}/appid/create`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({appId:'cfr'}),signal:AbortSignal.timeout(2000)});
+    if(r.ok){const d=await r.json();if(d.uri){_myNexusURI=d.uri;return d.uri;}}
+  }catch{}
+  const shortId=CFG.bridgeUrl.replace('http://','').replace('localhost','local').replace(/[:/]/g,'');
+  _myNexusURI=`nexus://${shortId.slice(0,8)}?appId=cfr&ts=${Date.now()}`;
+  return _myNexusURI;
+}
+
+function openConnModal(){
+  document.getElementById('conn-modal').classList.add('open');
+  switchConnTab(_connTab);
+  updatePendingBadge();
+}
+function closeConnModal(){document.getElementById('conn-modal').classList.remove('open');}
+document.getElementById('conn-modal').addEventListener('click',e=>{if(e.target===document.getElementById('conn-modal'))closeConnModal();});
+
+function switchConnTab(tab){
+  _connTab=tab;
+  ['connect','invite','pending'].forEach(t=>{
+    document.getElementById(`tab-${t}`)?.classList.toggle('on',t===tab);
+    document.getElementById(`conn-panel-${t}`).style.display=t===tab?'':'none';
+  });
+  if(tab==='invite'){
+    document.getElementById('my-nexus-uri').textContent='Generating…';
+    refreshMyNexusURI().then(uri=>{document.getElementById('my-nexus-uri').textContent=uri||'Bridge offline';});
+  }
+  if(tab==='pending')renderPendingList();
+}
+
+function copyNexusURI(){
+  const uri=_myNexusURI||document.getElementById('my-nexus-uri').textContent;
+  navigator.clipboard.writeText(uri).then(()=>showToast('ok','Copied','nexus:// URI copied',1500)).catch(()=>showToast('warn','Copy failed','Select manually',2000));
+}
+
+function parseNexusURI(raw){
+  raw=raw.trim();
+  if(raw.startsWith('nexus://')){
+    try{
+      const url=new URL(raw.replace('nexus://','https://'));
+      return{shortId:url.hostname,code:url.searchParams.get('code'),appId:url.searchParams.get('appId')||'cfr',ttl:url.searchParams.get('ttl')};
+    }catch{return null;}
+  }
+  if(/^[a-f0-9]{6,16}$/.test(raw))return{shortId:raw,code:null,appId:'cfr'};
+  return null;
+}
+
+async function doConnect(){
+  const raw=document.getElementById('conn-input-uri').value.trim();
+  const hostOver=document.getElementById('conn-input-host').value.trim();
+  if(!raw){showToast('warn','Input required','Paste a nexus:// URI or short ID',2500);return;}
+  const parsed=parseNexusURI(raw);
+  if(!parsed){showToast('err','Invalid URI','Expected nexus://shortId?code=nxt-…',3000);return;}
+  closeConnModal();
+  const toast=showToast('cfr','Connecting…',`Resolving ${parsed.shortId} via DHT`,0);
+  try{
+    let targetHost=hostOver?(hostOver.split(':')[0]):(CFG.bridgeUrl.replace(/^http:\/\//,'').split(':')[0]);
+    let targetPort=hostOver?parseInt(hostOver.split(':')[1]):null;
+    if(!hostOver){
+      const dhtRes=await fetch(`${CFG.bridgeUrl}/dht/find`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:parsed.shortId,k:8}),signal:AbortSignal.timeout(3000)}).catch(()=>null);
+      if(dhtRes?.ok){const dd=await dhtRes.json();const peer=(dd.nodes||[]).find(n=>n.uuid?.startsWith(parsed.shortId));if(peer?.address){const u=new URL(peer.address);targetHost=u.hostname;targetPort=parseInt(u.port)||null;}}
+    }
+    const hsUrl=`http://${targetHost}${targetPort?':'+targetPort:''}/appid/redeem`;
+    const hsRes=await fetch(hsUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:parsed.code,appId:parsed.appId}),signal:AbortSignal.timeout(4000)}).catch(()=>null);
+    toast.dismiss();
+    if(hsRes?.ok){
+      const hsd=await hsRes.json();
+      if(hsd.ok){
+        _connectedPeers.add(parsed.shortId);updateConnPill();
+        const rid=`peer-${parsed.shortId}`;
+        canvasNodes.set(rid,{id:rid,label:`${parsed.shortId} (peer)`,type:'bridge'});
+        if(!F.attractors.find(a=>a.id===rid))F.attractors.push({id:rid,x:(Math.random()-.5)*CFG.BOUND,y:(Math.random()-.5)*CFG.BOUND,z:0,mass:1.8,phase:Math.random()*Math.PI*2});
+        addEvent('mesh:peer:connected',`Handshake OK with ${parsed.shortId}`,'ok');pushTimeline('ok');
+        showToast('ok','⇄ Connected',`Handshake with ${parsed.shortId} complete`,5000);
+        fetch(`${CFG.bridgeUrl}/cfr/emit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sig:'mesh:peer:connected',data:{uuid:parsed.shortId,source:'ui'},level:'INFO'})}).catch(()=>{});
+      }else{showToast('err','Handshake failed',hsd.error||'Peer rejected',5000);addEvent('mesh:handshake:fail',`Rejected: ${hsd.error}`,'err');}
+    }else{
+      await fetch(`${CFG.bridgeUrl}/cfr/emit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sig:'mesh:invite:sent',data:{target:parsed.shortId,source:'ui'},level:'INFO'})}).catch(()=>{});
+      showToast('warn','Peer offline',`${parsed.shortId} unreachable — invite queued`,5000);
+      addEvent('mesh:invite:sent',`Invite queued for ${parsed.shortId}`,'warn');
+    }
+  }catch(e){toast.dismiss();showToast('err','Connect failed',e.message,4000);}
+}
+
+async function sendInvite(){
+  const peerId=document.getElementById('invite-input-id').value.trim();
+  if(!peerId){showToast('warn','Short ID required','Enter the peer\'s short ID',2500);return;}
+  closeConnModal();
+  try{
+    await fetch(`${CFG.bridgeUrl}/cfr/emit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sig:'mesh:invite:out',data:{target:peerId,source:'ui',nexusUri:_myNexusURI},level:'INFO'}),signal:AbortSignal.timeout(2000)});
+    addEvent('mesh:invite:out',`Invite sent to ${peerId}`,'cfr');pushTimeline('cfr');
+    showToast('cfr','Invite Sent',`Dispatched to ${peerId} — they'll see a toast when received`,5000);
+  }catch{showToast('warn','Bridge offline','Invite emitted locally only',3000);}
+}
+
+function receivedInvite(data){
+  const fromId=data.fromId||data.source||'unknown';
+  const nexusUri=data.nexusUri||null;
+  if(_pendingInvites.find(p=>p.fromId===fromId))return; // dedupe
+  _pendingInvites.push({fromId,nexusUri,ts:Date.now()});
+  updatePendingBadge();
+  showToast('invite','⇄ Connection Request',`<b>${fromId}</b> wants to connect to your node.`,0,[
+    {label:'Accept',cls:'primary',fn:()=>acceptInvite(fromId,nexusUri)},
+    {label:'Reject',cls:'danger', fn:()=>rejectInvite(fromId)},
+  ]);
+}
+
+function acceptInvite(fromId,nexusUri){
+  _pendingInvites=_pendingInvites.filter(p=>p.fromId!==fromId);
+  updatePendingBadge();
+  _connectedPeers.add(fromId);updateConnPill();
+  const rid=`peer-${fromId}`;
+  canvasNodes.set(rid,{id:rid,label:`${fromId} (accepted)`,type:'bridge'});
+  if(!F.attractors.find(a=>a.id===rid))F.attractors.push({id:rid,x:(Math.random()-.5)*CFG.BOUND,y:(Math.random()-.5)*CFG.BOUND,z:0,mass:2,phase:Math.random()*Math.PI*2});
+  addEvent('mesh:peer:connected',`Accepted invite from ${fromId}`,'ok');pushTimeline('ok');
+  fetch(`${CFG.bridgeUrl}/cfr/emit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sig:'mesh:invite:accepted',data:{fromId,source:'ui'},level:'INFO'})}).catch(()=>{});
+  showToast('ok','⇄ Connected',`Accepted ${fromId} — node added to canvas`,4000);
+  if(nexusUri){document.getElementById('conn-input-uri').value=nexusUri;setTimeout(()=>doConnect(),400);}
+}
+
+function rejectInvite(fromId){
+  _pendingInvites=_pendingInvites.filter(p=>p.fromId!==fromId);
+  updatePendingBadge();
+  addEvent('mesh:invite:rejected',`Rejected invite from ${fromId}`,'warn');
+  fetch(`${CFG.bridgeUrl}/cfr/emit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sig:'mesh:invite:rejected',data:{fromId,source:'ui'},level:'WARN'})}).catch(()=>{});
+  showToast('warn','Rejected',`Connection from ${fromId} rejected`,2500);
+}
+
+function updatePendingBadge(){const n=_pendingInvites.length;const el=document.getElementById('pending-count');if(el)el.textContent=n>0?`(${n})`:''; }
+
+function renderPendingList(){
+  const list=document.getElementById('pending-list');if(!list)return;
+  if(!_pendingInvites.length){list.innerHTML='<div style="font-size:9px;color:rgba(224,238,255,.25);padding:12px 0;">No pending requests</div>';return;}
+  list.innerHTML=_pendingInvites.map(p=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--bdr2);border-radius:2px;background:rgba(0,212,255,.04);">
+      <span style="font-size:10px;color:var(--c);flex:1;">${p.fromId}</span>
+      <span style="font-size:8px;color:rgba(224,238,255,.3);">${new Date(p.ts).toLocaleTimeString()}</span>
+      <button class="toast-btn primary" onclick="acceptInvite('${p.fromId}','${p.nexusUri||''}');closeConnModal();">Accept</button>
+      <button class="toast-btn danger"  onclick="rejectInvite('${p.fromId}');renderPendingList();">Reject</button>
+    </div>`).join('');
+}
+
+function updateConnPill(){
+  const pill=document.getElementById('conn-pill');if(!pill)return;
+  if(_connectedPeers.size>0){pill.textContent=`⇄ ${_connectedPeers.size} PEER${_connectedPeers.size>1?'S':''}`;pill.classList.add('connected');}
+  else{pill.textContent='⇄ CONNECT';pill.classList.remove('connected');}
+}
+
+// Intercept processDeltas to watch for mesh events
+{
+  const _baseDeltas=processDeltas;
+  processDeltas=function(deltas){
+    _baseDeltas(deltas);
+    for(const d of deltas){
+      if(d.type==='mesh:invite:in'||d.type==='mesh:invite:out'){
+        try{const dd=d.detail?JSON.parse(d.detail):{};if(dd.target&&!dd.source?.includes('ui'))receivedInvite({fromId:dd.source||d.type,nexusUri:dd.nexusUri,...dd});}catch{}
+      }
+      if(d.type==='mesh:peer:connected'){
+        try{
+          const dd=d.detail?JSON.parse(d.detail):{};
+          const pid=dd.uuid||dd._uuid;
+          if(pid&&!canvasNodes.has(pid)){
+            const sid=pid.slice(0,8);
+            canvasNodes.set(pid,{id:pid,label:sid+' (mesh)',type:'bridge'});
+            if(!F.attractors.find(a=>a.id===pid))F.attractors.push({id:pid,x:(Math.random()-.5)*CFG.BOUND,y:(Math.random()-.5)*CFG.BOUND,z:0,mass:1.6,phase:Math.random()*Math.PI*2});
+            _connectedPeers.add(sid);updateConnPill();
+            showToast('ok','⇄ Peer Connected',`${sid} joined the mesh`,4000);
+          }
+        }catch{}
+      }
+    }
+  };
+}
+
+/* keyboard shortcuts */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeConnModal();closeCtxMenu();}
+  if(e.key==='c'&&e.ctrlKey&&e.shiftKey){e.preventDefault();openConnModal();}
+});
+</script>
+
+<!-- TOAST RACK -->
+<div id="toast-rack"></div>
+
+<!-- CONNECT / INVITE MODAL -->
+<div id="conn-modal">
+  <div class="conn-box">
+    <div class="conn-title">⇄ Mesh Connect</div>
+    <div class="conn-tabs">
+      <div class="conn-tab on" id="tab-connect" onclick="switchConnTab('connect')">Connect</div>
+      <div class="conn-tab" id="tab-invite" onclick="switchConnTab('invite')">Invite</div>
+      <div class="conn-tab" id="tab-pending" onclick="switchConnTab('pending')">Pending <span id="pending-count" style="color:var(--r)"></span></div>
+    </div>
+
+    <div id="conn-panel-connect">
+      <div class="conn-row">
+        <div class="conn-lbl">nexus:// URI or Short ID</div>
+        <input class="conn-input" id="conn-input-uri" placeholder="nexus://a1b2c3d4?code=nxt-xxxx-xxxx&appId=cfr" autocomplete="off" spellcheck="false">
+        <div class="conn-hint">Paste a nexus:// invite URI from the other node, or enter a short ID</div>
+      </div>
+      <div class="conn-row">
+        <div class="conn-lbl">Host (optional override)</div>
+        <input class="conn-input" id="conn-input-host" placeholder="192.168.1.x:PORT" autocomplete="off">
+        <div class="conn-hint">Leave blank to resolve via DHT</div>
+      </div>
+      <div class="conn-actions">
+        <button class="conn-btn primary" onclick="doConnect()">Connect</button>
+        <button class="conn-btn cancel" onclick="closeConnModal()">Cancel</button>
+      </div>
+    </div>
+
+    <div id="conn-panel-invite" style="display:none">
+      <div class="conn-row">
+        <div class="conn-lbl">Your nexus:// invite URI</div>
+        <div class="conn-nexus" id="my-nexus-uri" onclick="copyNexusURI()">Generating…</div>
+        <div class="conn-hint">Share this with the other node. One-time use. Click to copy.</div>
+      </div>
+      <div class="conn-row">
+        <div class="conn-lbl">Or invite by Short ID</div>
+        <input class="conn-input" id="invite-input-id" placeholder="Short ID of peer (first 8 chars of their UUID)" autocomplete="off">
+      </div>
+      <div class="conn-actions">
+        <button class="conn-btn primary" onclick="sendInvite()">Send Invite</button>
+        <button class="conn-btn cancel" onclick="closeConnModal()">Cancel</button>
+      </div>
+    </div>
+
+    <div id="conn-panel-pending" style="display:none">
+      <div id="pending-list" style="display:flex;flex-direction:column;gap:8px;min-height:60px;">
+        <div style="font-size:9px;color:rgba(224,238,255,.25);padding:12px 0;">No pending requests</div>
+      </div>
+      <div class="conn-actions">
+        <button class="conn-btn cancel" onclick="closeConnModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

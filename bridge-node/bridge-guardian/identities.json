@@ -1,0 +1,60 @@
+{
+  "chatgpt": {
+    "id": "chatgpt",
+    "name": "ChatGPT",
+    "url": "https://chatgpt.com",
+    "version": "4.0.0",
+    "inputSelector": "#prompt-textarea",
+    "inputAction": "type",
+    "submitSelector": "[data-testid='send-button']",
+    "outputSelector": "[data-message-author-role='assistant'] .markdown",
+    "outputTrigger": "mutation",
+    "streamComplete": "[data-is-streaming='false']",
+    "conversationSelector": "[data-testid='conversation-turn']",
+    "capabilities": ["chat", "code", "ideas", "research"],
+    "nexusUrl": "nexus://chatgpt"
+  },
+  "claude": {
+    "id": "claude",
+    "name": "Claude",
+    "url": "https://claude.ai/new",
+    "version": "4.0.0",
+    "inputSelector": ".ProseMirror[contenteditable='true']",
+    "inputAction": "fill",
+    "submitSelector": "button[aria-label='Send Message']",
+    "outputSelector": "[data-is-streaming]",
+    "outputTrigger": "mutation",
+    "streamComplete": ".font-claude-message",
+    "conversationSelector": ".font-claude-message",
+    "capabilities": ["chat", "code", "ideas", "research", "loop"],
+    "nexusUrl": "nexus://claude"
+  },
+  "gemini": {
+    "id": "gemini",
+    "name": "Gemini",
+    "url": "https://gemini.google.com/app",
+    "version": "4.0.0",
+    "inputSelector": ".ql-editor",
+    "inputAction": "fill",
+    "submitSelector": "button.send-button",
+    "outputSelector": ".response-container-content",
+    "outputTrigger": "mutation",
+    "streamComplete": "model-response",
+    "conversationSelector": "model-response",
+    "capabilities": ["chat", "code", "ideas"],
+    "nexusUrl": "nexus://gemini"
+  },
+  "ollama": {
+    "id": "ollama",
+    "name": "Ollama",
+    "url": "http://localhost:11434",
+    "version": "4.0.0",
+    "apiMode": true,
+    "apiEndpoint": "/api/chat",
+    "defaultModel": "llama3",
+    "inputSelector": null,
+    "outputSelector": null,
+    "capabilities": ["chat", "code", "loop"],
+    "nexusUrl": "nexus://ollama"
+  }
+}

@@ -1,0 +1,151 @@
+BRIDGE OS — PROPRIETARY SOFTWARE LICENSE
+Copyright (c) 2024–2026 James Brooks (trading as Erosmancer)
+All rights reserved.
+
+NOTICE OF PROPRIETARY RIGHTS
+
+This software, Bridge OS, and all associated source code, documentation,
+architecture, algorithms, protocols, and implementations (collectively,
+the "Software") are the exclusive proprietary property of James Brooks
+("Author"), developed under the brand identity Erosmancer and hosted at
+rheon.world.
+
+GRANT OF RIGHTS
+
+No rights are granted by this notice. The publication of this source code
+on GitHub constitutes a public record of authorship and prior art, and
+does not constitute a license to use, copy, modify, merge, publish,
+distribute, sublicense, or sell copies of the Software or any portion
+thereof.
+
+RESTRICTIONS
+
+You may not, without the express written permission of the Author:
+
+  1. Use the Software or any portion thereof for commercial purposes.
+  2. Distribute, sublicense, or sell copies of the Software.
+  3. Modify, adapt, or create derivative works based on the Software.
+  4. Incorporate any portion of the Software into another product or
+     system, whether commercial or non-commercial.
+  5. Remove or alter any proprietary notices, labels, or marks.
+
+PERMITTED USES
+
+The following uses are permitted without prior written consent:
+
+  - Reading and studying the source code for personal, non-commercial,
+    educational purposes.
+  - Forking the repository solely for the purpose of submitting pull
+    requests to the Author.
+  - Running the Software locally on your own hardware for personal,
+    non-commercial evaluation.
+
+INTELLECTUAL PROPERTY
+
+The following elements of the Software are asserted as original works
+of authorship by James Brooks:
+
+  - The SISO (Single Input, Single Output) event bus architecture as
+    implemented in bridge-core, including the pending-event buffer and
+    gate registration replay mechanism.
+
+  - The trust atom chain: the architectural pattern whereby a node's
+    UUID is derived as SHA-256(Ed25519 public key), and that same
+    cryptographic identity threads continuously through behavioral
+    memory (bridge-IME), the enforcement gate (bridge-sngate), and the
+    causal event graph (bridge-causal) as a single unbroken chain.
+
+  - The score-never-blocks invariant: the enforcement architecture in
+    which a trust score alone cannot produce a deny decision — an
+    explicit matching rule is required — combined with rule introspection
+    (matchPath recording) and shadow rule detection (detectShadowedRules).
+
+  - The probationary trust ramp: the mechanism whereby new cryptographic
+    identities begin at a sub-neutral trust score and earn neutrality
+    through accumulated behavioral history, closing the rotating-UUID
+    attack surface present in score-only trust systems.
+
+  - The causal ring buffer with CQL (Causal Query Language): the
+    architecture of storing bus events as nodes in a typed-edge causal
+    graph with a million-entry ring buffer, write-ahead log eviction,
+    and a query language for traversing causal chains.
+
+  - The delta replay system: the mechanism for reconstructing any past
+    network state by replaying the causal event log forward from an
+    arbitrary timestamp.
+
+  - The sovereign BLE architecture: the implementation of full
+    Bluetooth Low Energy Central and Peripheral roles simultaneously
+    on Windows hardware using the Windows Runtime (WinRT)
+    Windows.Devices.Bluetooth namespace accessed via a persistent
+    PowerShell child process with a JSON line protocol, without
+    requiring driver replacement, USB hardware modification, or any
+    external npm dependencies.
+
+  - The GattServiceProvider peripheral implementation: the use of
+    Windows.Devices.Bluetooth.GenericAttributeProfile.GattServiceProvider
+    to host a complete Nordic UART Service GATT server on the local
+    hardware Bluetooth adapter, enabling inbound connections from
+    external devices without driver modification.
+
+  - The nexus:// URI bootstrap protocol: the encoding of node address,
+    one-time HMAC-signed trust code, permission scope, and TTL into a
+    single URI string enabling zero-configuration client bootstrapping
+    across local and wide-area networks.
+
+  - The seven-level address resolution cascade (DIRECT → LOCAL → LAN →
+    DDNS → GOSSIP → HINT → RELAY) as implemented in bridge-magnet.
+
+  - The unified transport adapter pattern with automatic fallback
+    (bridge-transport), including the BLE adapter with chunked ATT MTU
+    transmission, exact-slice reassembly, send queue, and MTU negotiation.
+
+  - The physics-as-diagnostic-interface pattern: the architectural
+    mapping of live operational state (trust score, gate denial rate,
+    connection count, causal event density) to physics simulation
+    parameters (structure, entropy, attention, damping) in the
+    Constraint Field Runtime visualization.
+
+  - The exploration pressure mechanism: the periodic random deflation
+    of behavioral trust scores (applied to a configurable percentage of
+    profile reads) to prevent over-stabilization in the Bayesian trust
+    estimation system.
+
+  - The sigma divergence alert system: the continuous peer polling and
+    statistical detection of nodes whose trust assessments deviate beyond
+    two standard deviations from the peer group mean.
+
+PRIOR ART RECORD
+
+The commit history of the public repository at
+https://github.com/HorrisEllis/Bridge-v2 constitutes a timestamped
+public record of the conception, development, and publication of the
+above intellectual property. First commit date and all subsequent
+commits are recorded with cryptographic integrity by the GitHub platform.
+
+The architecture documents bridge-os-v4.1.0-docs.docx (committed
+2026-05-01, SHA e538fb4 through cdc51d7) constitute additional
+contemporaneous documentation of the intellectual property described
+above.
+
+DISCLAIMER OF WARRANTIES
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED. THE AUTHOR MAKES NO REPRESENTATIONS ABOUT THE SUITABILITY
+OF THE SOFTWARE FOR ANY PURPOSE.
+
+LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY ARISING FROM THE USE OF OR INABILITY TO USE THE SOFTWARE.
+
+CONTACT
+
+For licensing inquiries, commercial use permissions, or partnership
+discussions, contact the Author at:
+
+  James Brooks (Erosmancer)
+  rheon.world
+  github.com/HorrisEllis
+
+This license was last updated: 2026-05-01

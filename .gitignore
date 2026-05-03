@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.bak
+*.tmp.*
+data/
+*.key
+bridge-node/data/
+bridge-node/node_modules/

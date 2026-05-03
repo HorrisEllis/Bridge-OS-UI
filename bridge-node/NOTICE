@@ -1,0 +1,25 @@
+BRIDGE OS
+Copyright (c) 2024–2026 James Brooks (Erosmancer)
+All rights reserved.
+
+This software is proprietary. See LICENSE for terms.
+Unauthorized use, reproduction, or distribution is prohibited.
+
+Author:     James Brooks
+Brand:      Erosmancer
+Website:    rheon.world
+Repository: github.com/HorrisEllis/Bridge-v2
+
+Key inventions asserted (see LICENSE for full descriptions):
+  - Trust atom chain (UUID → IME → sngate → causal)
+  - Score-never-blocks enforcement invariant
+  - Probationary trust ramp (rotating-UUID attack mitigation)
+  - Causal ring buffer with CQL query language
+  - Delta replay state reconstruction
+  - Sovereign BLE via WinRT PowerShell bridge (no driver modification)
+  - GattServiceProvider peripheral mode on internal hardware
+  - nexus:// bootstrap URI protocol
+  - Seven-level address resolution cascade
+  - Physics-as-diagnostic-interface (CFR field parameters)
+  - Exploration pressure anti-stabilization mechanism
+  - Sigma divergence alert system
